@@ -35,6 +35,7 @@ class CreateGuesthouseRoomsTable extends Migration
             $table->string('status', 50)->nullable();
             $table->bigInteger('create_user')->nullable();
             $table->bigInteger('update_user')->nullable();
+            $table->string('ical_import_url')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

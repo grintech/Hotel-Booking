@@ -30,26 +30,18 @@ class CreateGuesthouseTable extends Migration
             $table->string('video', 255)->nullable();
             $table->text('policy')->nullable();
             $table->smallInteger('star_rate')->nullable();
-            //Price
             $table->decimal('price', 12, 2)->nullable();
             $table->string('check_in_time', 255)->nullable();
             $table->string('check_out_time', 255)->nullable();
             $table->smallInteger('allow_full_day')->nullable();
             $table->decimal('sale_price', 12,2)->nullable();
-            //$table->tinyInteger('is_instant')->default(0)->nullable();
-            //$table->tinyInteger('allow_children')->default(0)->nullable();
-            //$table->tinyInteger('allow_infant')->default(0)->nullable();
-            //$table->tinyInteger('max_guests')->default(0)->nullable();
-            //$table->tinyInteger('bed')->default(0)->nullable();
-            //$table->tinyInteger('bathroom')->default(0)->nullable();
-            //$table->tinyInteger('square')->default(0)->nullable();
-            //$table->tinyInteger('enable_extra_price')->nullable();
-            //$table->text('extra_price')->nullable();
-            //$table->text('discount_by_days')->nullable();
-            //Extra Info
             $table->string('status', 50)->nullable();
             $table->bigInteger('create_user')->nullable();
             $table->bigInteger('update_user')->nullable();
+            $table->decimal('review_score')->nullable();
+            $table->string('ical_import_url')->nullable();
+            $table->tinyInteger('enable_extra_price')->nullable();
+            $table->text('extra_price')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
