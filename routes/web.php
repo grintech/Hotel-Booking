@@ -16,12 +16,6 @@ Route::post('/install/check-db', 'HomeController@checkConnectDatabase');
 Route::get('/update', 'HomeController@updateMigrate');
 Route::get('/test_functions', 'HomeController@test');
 
-//Cache
-Route::get('/clear-cache', function() {
-    Artisan::call('cache:clear');
-    return "Cleared!";
-});
-
 //Login
 Auth::routes();
 //Custom User Login and Register

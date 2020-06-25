@@ -9,6 +9,10 @@ Route::group(['prefix'=>'updater'],function (){
     Route::post('/do_update','UpdaterController@doUpdate')->name('core.admin.updater.do_update');
 });
 
+Route::group(['prefix' => 'commander', 'as' => 'commander.'] , function(){
+   Route::get('/{command}' , ['uses' => 'CommandController@call', 'as' => 'command']);
+});
+
 
 Route::group(['prefix'=>'plugins'],function (){
     Route::get('/','PluginsController@index')->name('core.admin.plugins.index');
