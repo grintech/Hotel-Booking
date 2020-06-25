@@ -106,6 +106,7 @@ if(!empty($custom_modules)){
         {
             $menuConfig = call_user_func([$moduleClass,'getAdminMenu']);
 
+            \Illuminate\Support\Facades\Log::info(json_encode($menuConfig));
             if(!empty($menuConfig)){
                 $menus = array_merge($menus,$menuConfig);
             }

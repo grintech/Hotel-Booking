@@ -587,7 +587,6 @@
         {
             $query = static::select('id', 'title as name');
             if (strlen($q)) {
-
                 $query->where('title', 'like', "%" . $q . "%");
             }
             $a = $query->limit(10)->get();

@@ -138,6 +138,22 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::findOrCreate('hotel_manage_others');
         Permission::findOrCreate('hotel_manage_attributes');
 
+        // Guesthouse
+        Permission::findOrCreate('guesthouse_view');
+        Permission::findOrCreate('guesthouse_create');
+        Permission::findOrCreate('guesthouse_update');
+        Permission::findOrCreate('guesthouse_delete');
+        Permission::findOrCreate('guesthouse_manage_others');
+        Permission::findOrCreate('guesthouse_manage_attributes');
+
+        //hike
+        Permission::findOrCreate('hike_view');
+        Permission::findOrCreate('hike_create');
+        Permission::findOrCreate('hike_update');
+        Permission::findOrCreate('hike_delete');
+        Permission::findOrCreate('hike_manage_others');
+        Permission::findOrCreate('hike_manage_attributes');
+
         // Car
         Permission::findOrCreate('car_view');
         Permission::findOrCreate('car_create');
@@ -196,6 +212,16 @@ class RolesAndPermissionsSeeder extends Seeder
         $vendor->givePermissionTo('hotel_create');
         $vendor->givePermissionTo('hotel_update');
         $vendor->givePermissionTo('hotel_delete');
+
+        $vendor->givePermissionTo('hike_view');
+        $vendor->givePermissionTo('hike_create');
+        $vendor->givePermissionTo('hike_update');
+        $vendor->givePermissionTo('hike_delete');
+
+        $vendor->givePermissionTo('guesthouse_view');
+        $vendor->givePermissionTo('guesthouse_create');
+        $vendor->givePermissionTo('guesthouse_update');
+        $vendor->givePermissionTo('guesthouse_delete');
 
         $vendor->givePermissionTo('car_view');
         $vendor->givePermissionTo('car_create');

@@ -1,6 +1,7 @@
 <?php
 namespace Modules\Hike;
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
 use Modules\Hike\Models\Hike;
 use Modules\ModuleServiceProvider;
@@ -32,9 +33,13 @@ class ModuleProvider extends ModuleServiceProvider
     public static function getAdminMenu()
     {
         $res = [];
-        if(Hike::isEnable()){
-            $res['hike'] = [
-                "position"=>41,
+        if(!Hike::isEnable()){
+            Log::info('Hike not enabled');
+            return [];
+        }
+        return [
+            'car'=>[
+                "position"=> 62,
                 'url'        => 'admin/module/hike',
                 'title'      => __("Hike"),
                 'icon'       => 'icon ion-md-umbrella',
@@ -71,9 +76,8 @@ class ModuleProvider extends ModuleServiceProvider
                         'permission' => 'hike_create',
                     ],
                 ]
-            ];
-        }
-        return $res;
+            ]
+        ];
     }
 
 
