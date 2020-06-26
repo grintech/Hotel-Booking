@@ -16,7 +16,8 @@ class CommandController extends AdminController {
         'route:clear',
         'cache:clear',
         'clear-compiled',
-        'cache:clear'
+        'cache:clear',
+        'cache:forget spatie.permission.cache'
     ];
 
     public function call($command){

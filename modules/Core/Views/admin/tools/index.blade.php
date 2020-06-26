@@ -180,6 +180,19 @@
                                         </a>
                                     </div>
                                 </div>
+                                <div class="col-md-4">
+                                    <div class="area-setting-item">
+                                        <a class="setting-item-link" target="_blank" href="{{ route('commander.command' , ['cache:forget spatie.permission.cache']) }}">
+                                                <span class="setting-item-media">
+                                                    <i class="icon ion-ios-nuclear"></i>
+                                                </span>
+                                            <span class="setting-item-info">
+                                                <span class="setting-item-title">Clear Permission</span>
+                                                <span class="setting-item-desc">Clear Cached Permissions</span>
+                                            </span>
+                                        </a>
+                                    </div>
+                                </div>
                             @endif
                         </div>
                     </div>
