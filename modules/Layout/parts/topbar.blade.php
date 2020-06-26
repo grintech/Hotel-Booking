@@ -13,11 +13,11 @@
                     @include('Language::frontend.switcher')
                 @if(!Auth::id())
                         <li class="login-item">
-                            <a href="#login" data-toggle="modal" data-target="#login" class="login">{{__('Login')}}</a>
+                            <a href="#login" data-toggle="modal" data-target="#login" class="login btn btn-sm btn-primary">{{__('Login')}}</a>
                         </li>
-                        <li class="signup-item">
+                        {{--<li class="signup-item">
                             <a href="#register" data-toggle="modal" data-target="#register" class="signup">{{__('Sign Up')}}</a>
-                        </li>
+                        </li>--}}
                     @else
                         <li class="login-item dropdown">
                             <a href="#" data-toggle="dropdown" class="login">{{__("Hi, :Name",['name'=>Auth::user()->getDisplayName()])}}

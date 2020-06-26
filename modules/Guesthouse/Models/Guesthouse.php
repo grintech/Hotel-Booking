@@ -780,7 +780,8 @@ class Guesthouse extends Bookable
 
     public static function getServiceIconFeatured()
     {
-        return "fa fa-building-o";
+        //return "fa fa-building-o";
+        return "search-property.svg";
     }
 
     public function rooms()

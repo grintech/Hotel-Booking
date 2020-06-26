@@ -868,7 +868,8 @@
             return '';
         }
         public static  function getServiceIconFeatured(){
-            return "icofont-island-alt";
+            //return "icofont-island-alt";
+            return "location-arrow.svg";
         }
         public static function isEnable(){
             return setting_item('tour_disable') == false;
