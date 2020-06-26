@@ -68,7 +68,7 @@
 			}
 			$breadcrumbs = [
 				[
-					'name' => __('Tours'),
+					'name' => __('Guided Tours'),
 					'url'  => route('tour.vendor.index')
 				],
 				[
@@ -76,7 +76,7 @@
 					'class' => 'active'
 				],
 			];
-			$page_title = __('Tours Availability');
+			$page_title = __('Guided Tours Availability');
 
 			return view($this->indexView,compact('rows','breadcrumbs','current_month','page_title','request'));
 		}
@@ -91,7 +91,7 @@
 
 			$tour = $this->tourClass::find($request->query('id'));
 			if(empty($tour)){
-                return $this->sendError(__('Tour not found'));
+                return $this->sendError(__('Guided Tour not found'));
 			}
 			$is_single = $request->query('for_single');
 
@@ -314,7 +314,7 @@
 			$target_id = $request->input('target_id');
 
 			if(empty($tour)){
-                return $this->sendError(__('Tour not found'));
+                return $this->sendError(__('Guided Tour not found'));
 			}
 
 			if(!$this->hasPermission('tour_manage_others')){

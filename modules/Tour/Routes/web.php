@@ -10,7 +10,7 @@
 |
 */
 use Illuminate\Support\Facades\Route;
-// Vendor Manage Tour
+// Vendor Manage Guided Tour
 Route::group(['prefix'=>'user/'.config('tour.tour_route_prefix'),'middleware' => ['auth','verified']],function(){
     Route::match(['get',],'/','ManageTourController@manageTour')->name('tour.vendor.index');
     Route::match(['get',],'/create','ManageTourController@createTour')->name('tour.vendor.create');
@@ -29,7 +29,7 @@ Route::group(['prefix'=>'user/'.config('tour.tour_route_prefix')],function(){
         Route::match(['get','post'],'/store','AvailabilityController@store')->name('tour.vendor.availability.store');
     });
 });
-// Tour
+// Guided Tour
 Route::group(['prefix'=>config('tour.tour_route_prefix')],function(){
     Route::get('/','\Modules\Tour\Controllers\TourController@index')->name('tour.search'); // Search
     Route::get('/{slug}','\Modules\Tour\Controllers\TourController@detail');// Detail
