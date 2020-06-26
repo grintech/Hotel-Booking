@@ -39,21 +39,39 @@ class Currency
 
     public static function getCurrent($need = 'currency_main',$default = '',$main_currency = false)
     {
-        $code = Session::get('bc_current_currency');
+        $sess = Session::get('bc_current_currency');
+        if($sess){
+            $code = Session::get('bc_current_currency');
+        }else{
+            $code = strtolower(geoip(request()->getClientIp())->getAttribute('currency'));
 
-        $code = $code ? $code : setting_item('currency_main');
-        if($main_currency){
-            $code = setting_item('currency_main');
-        }
-
-        $active = static::getActiveCurrency();
-
-        foreach ($active as $item){
-            if($code == $item['currency_main'])
-            {
-                return $item[$need] ?? $default;
+            $available_countries = setting_item_array('extra_currency');
+            $arra_col = array_column($available_countries, 'currency_main');
+            if(in_array($code , $arra_col, TRUE)){
+                Session::put('bc_current_currency',$code);
             }
+            else
+            {
+                Session::put('bc_current_currency','usd');
+            }
+
         }
+
+//        $code = Session::get('bc_current_currency');
+//
+//        $code = $code ? $code : setting_item('currency_main');
+//        if($main_currency){
+//            $code = setting_item('currency_main');
+//        }
+//
+//        $active = static::getActiveCurrency();
+//
+//        foreach ($active as $item){
+//            if($code == $item['currency_main'])
+//            {
+//                return $item[$need] ?? $default;
+//            }
+//        }
 
         return $default;
     }
