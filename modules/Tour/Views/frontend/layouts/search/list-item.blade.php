@@ -26,7 +26,7 @@
                         @endforeach
                     @else
                         <div class="col-lg-12">
-                            {{__("Tour not found")}}
+                            {{__("Guided Tour not found")}}
                         </div>
                     @endif
                 </div>
@@ -34,7 +34,7 @@
             <div class="bravo-pagination">
                 {{$rows->appends(request()->query())->links()}}
                 @if($rows->total() > 0)
-                    <span class="count-string">{{ __("Showing :from - :to of :total Tours",["from"=>$rows->firstItem(),"to"=>$rows->lastItem(),"total"=>$rows->total()]) }}</span>
+                    <span class="count-string">{{ __("Showing :from - :to of :total Guided Tours",["from"=>$rows->firstItem(),"to"=>$rows->lastItem(),"total"=>$rows->total()]) }}</span>
                 @endif
             </div>
         </div>

@@ -51,7 +51,7 @@ class ManageTourController extends FrontendController
             'rows'        => $list_tour->paginate(5),
             'breadcrumbs' => [
                 [
-                    'name' => __('Manage Tours'),
+                    'name' => __('Manage Guided Tours'),
                     'url'  => route('tour.vendor.index'),
                 ],
                 [
@@ -76,7 +76,7 @@ class ManageTourController extends FrontendController
             'attributes'    => $this->attributesClass::where('service', 'tour')->get(),
             'breadcrumbs'   => [
                 [
-                    'name' => __('Manage Tours'),
+                    'name' => __('Manage Guided Tours'),
                     'url'  => route('tour.vendor.index'),
                 ],
                 [
@@ -84,7 +84,7 @@ class ManageTourController extends FrontendController
                     'class' => 'active'
                 ],
             ],
-            'page_title'    => __("Create Tours"),
+            'page_title'    => __("Create Guided Tours"),
         ];
         return view('Tour::frontend.manageTour.detail', $data);
     }
@@ -96,7 +96,7 @@ class ManageTourController extends FrontendController
         $row = $this->tourClass::where("create_user", $user_id);
         $row = $row->find($id);
         if (empty($row)) {
-            return redirect(route('tour.vendor.index'))->with('warning', __('Tour not found!'));
+            return redirect(route('tour.vendor.index'))->with('warning', __('Guided Tour not found!'));
         }
         $translation = $row->translateOrOrigin($request->query('lang'));
         $data = [
@@ -108,7 +108,7 @@ class ManageTourController extends FrontendController
             "selected_terms" => $row->tour_term->pluck('term_id'),
             'breadcrumbs'    => [
                 [
-                    'name' => __('Manage Tours'),
+                    'name' => __('Manage Guided Tours'),
                     'url'  => route('tour.vendor.index'),
                 ],
                 [
@@ -116,7 +116,7 @@ class ManageTourController extends FrontendController
                     'class' => 'active'
                 ],
             ],
-            'page_title'     => __("Edit Tours"),
+            'page_title'     => __("Edit Guided Tours"),
         ];
         return view('Tour::frontend.manageTour.detail', $data);
     }
@@ -173,9 +173,9 @@ class ManageTourController extends FrontendController
                 $row->saveMeta($request);
             }
             if ($id > 0) {
-                return back()->with('success', __('Tour updated'));
+                return back()->with('success', __('Guided Tour updated'));
             } else {
-                return redirect(route('tour.vendor.edit', ['id' => $row->id]))->with('success', __('Tour created'));
+                return redirect(route('tour.vendor.edit', ['id' => $row->id]))->with('success', __('Guided Tour created'));
             }
         }
     }
@@ -241,7 +241,7 @@ class ManageTourController extends FrontendController
             'statues'     => config('booking.statuses'),
             'breadcrumbs' => [
                 [
-                    'name' => __('Manage Tours'),
+                    'name' => __('Manage Guided Tours'),
                     'url'  => route('tour.vendor.index'),
                 ],
                 [
@@ -279,7 +279,7 @@ class ManageTourController extends FrontendController
         $row = $this->tourClass::where("create_user", $user_id);
         $row = $row->find($id);
         if (empty($row)) {
-            return redirect(route('tour.vendor.index'))->with('warning', __('Tour not found!'));
+            return redirect(route('tour.vendor.index'))->with('warning', __('Guided Tour not found!'));
         };
         try {
             $clone = $row->replicate();
@@ -308,7 +308,7 @@ class ManageTourController extends FrontendController
                     }
                 }
             }
-            return redirect()->back()->with('success', __('Tour clone was successful'));
+            return redirect()->back()->with('success', __('Guided Tour clone was successful'));
         } catch (\Exception $exception) {
             $clone->delete();
             return redirect()->back()->with('warning', __($exception->getMessage()));

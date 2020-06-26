@@ -2,7 +2,7 @@
 @section('content')
     <div class="container-fluid">
         <div class="d-flex justify-content-between mb20">
-            <h1 class="title-bar">{{__("Tour Attributes")}}</h1>
+            <h1 class="title-bar">{{__("Guided Tour Attributes")}}</h1>
         </div>
         @include('admin.message')
         <div class="row">

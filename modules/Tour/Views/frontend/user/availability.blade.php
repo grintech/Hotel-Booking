@@ -2,7 +2,7 @@
 
 @section ('content')
     <h2 class="title-bar no-border-bottom">
-        {{ __("Availability Tours") }}
+        {{ __("Availability Guided Tours") }}
     </h2>
     <div class="language-navigation">
         <div class="panel-body">
