@@ -39,6 +39,8 @@ class Currency
 
     public static function getCurrent($need = 'currency_main',$default = '',$main_currency = false)
     {
+        //TODO uncomment to check auto currency selection
+        //request()->server->add(['REMOTE_ADDR' => '139.5.236.15']);
         $sess = Session::get('bc_current_currency');
         if($sess){
             $code = Session::get('bc_current_currency');
@@ -57,21 +59,21 @@ class Currency
 
         }
 
-//        $code = Session::get('bc_current_currency');
-//
-//        $code = $code ? $code : setting_item('currency_main');
-//        if($main_currency){
-//            $code = setting_item('currency_main');
-//        }
-//
-//        $active = static::getActiveCurrency();
-//
-//        foreach ($active as $item){
-//            if($code == $item['currency_main'])
-//            {
-//                return $item[$need] ?? $default;
-//            }
-//        }
+        $code = Session::get('bc_current_currency');
+
+        $code = $code ? $code : setting_item('currency_main');
+        if($main_currency){
+            $code = setting_item('currency_main');
+        }
+
+        $active = static::getActiveCurrency();
+
+        foreach ($active as $item){
+            if($code == $item['currency_main'])
+            {
+                return $item[$need] ?? $default;
+            }
+        }
 
         return $default;
     }
