@@ -11,10 +11,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-12 col-lg-9">
-                        @php
-                            //TODO Bug there is no method named review_data in Hike class, replaced by getReviewDataAttribute method
-                            $review_score = $row->getReviewDataAttribute
-                        @endphp
+                        @php $review_score = $row->review_data @endphp
                         @include('Hike::frontend.layouts.details.hike-detail')
                         @include('Hike::frontend.layouts.details.hike-review')
                     </div>
@@ -78,11 +75,7 @@
                     @endif
                 </div>
                 <div class="right">
-                    @if($row->getBookingEnquiryType() === "book")
-                        <a class="btn btn-primary bravo-button-book-mobile">{{__("Book Now")}}</a>
-                    @else
-                        <a class="btn btn-primary" data-toggle="modal" data-target="#enquiry_form_modal">{{__("Contact Now")}}</a>
-                   @endif
+                    <a class="btn btn-primary bravo-button-book-mobile">{{__("Book Now")}}</a>
                 </div>
             </div>
         </div>

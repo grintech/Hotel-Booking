@@ -28,6 +28,7 @@ class ModuleProvider extends ModuleServiceProvider
             'form_search_all_service'=>"\\Modules\\Template\\Blocks\\FormSearchAllService",
             'offer_block'=>"\\Modules\\Template\\Blocks\\OfferBlock",
             'how_it_works'=>"\\Modules\\Template\\Blocks\\HowItWork",
+            'image'=>"\\Modules\\Template\\Blocks\\Image",
         ];
     }
 }
