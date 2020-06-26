@@ -1,12 +1,5 @@
 <div class="g-header">
     <div class="left">
-        @if($row->star_rate)
-            <div class="star-rate">
-                @for ($star = 1 ;$star <= $row->star_rate ; $star++)
-                    <i class="fa fa-star"></i>
-                @endfor
-            </div>
-        @endif
         <h2>{{$translation->title}}</h2>
         @if($translation->address)
             <p class="address"><i class="fa fa-map-marker"></i>

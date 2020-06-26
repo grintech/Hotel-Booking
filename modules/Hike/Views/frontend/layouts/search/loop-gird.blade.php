@@ -69,20 +69,4 @@
         </span>
     </div>
     @endif
-    <div class="info">
-        <div class="duration">
-            <i class="icofont-wall-clock"></i>
-            {{duration_format($row->duration)}}
-        </div>
-        <div class="g-price">
-            <div class="prefix">
-                <i class="icofont-flash"></i>
-                <span class="fr_text">{{__("from")}}</span>
-            </div>
-            <div class="price">
-                <span class="onsale">{{ $row->display_sale_price }}</span>
-                <span class="text-price">{{ $row->display_price }}</span>
-            </div>
-        </div>
-    </div>
 </div>

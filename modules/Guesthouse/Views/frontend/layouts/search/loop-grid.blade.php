@@ -17,17 +17,6 @@
                 @endif
             @endif
         </a>
-        @if($row->star_rate)
-            <div class="star-rate">
-                <div class="list-star">
-                    <ul class="booking-item-rating-stars">
-                        @for ($star = 1 ;$star <= $row->star_rate ; $star++)
-                            <li><i class="fa fa-star"></i></li>
-                        @endfor
-                    </ul>
-                </div>
-            </div>
-        @endif
         <div class="service-wishlist {{$row->isWishList()}}" data-id="{{$row->id}}" data-type="{{$row->type}}">
             <i class="fa fa-heart"></i>
         </div>

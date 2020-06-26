@@ -84,23 +84,75 @@
 
 @section('footer')
     {!! App\Helpers\MapEngine::scripts() !!}
-    <script>
-        jQuery(function ($) {
-            @if($row->map_lat && $row->map_lng)
-            new BravoMapEngine('map_content', {
-                disableScripts: true,
-                fitBounds: true,
-                center: [{{$row->map_lat}}, {{$row->map_lng}}],
-                zoom:{{$row->map_zoom ?? "8"}},
-                ready: function (engineMap) {
-                    engineMap.addMarker([{{$row->map_lat}}, {{$row->map_lng}}], {
-                        icon_options: {}
-                    });
-                }
+    @if(setting_item('map_provider') == "osm")
+        <script src="https://rawgithub.com/mpetazzoni/leaflet-gpx/master/gpx.js"></script>
+        <script type="application/javascript">
+            function display_gpx(elt) {
+                if (!elt) return;
+
+                var url = '{{ asset("$translation->gpx_file") }}';
+
+                var map = L.map('map_content');
+                L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: 'Map data &copy; <a href="http://www.osm.org">OpenStreetMap</a>'
+                }).addTo(map);
+
+                var control = L.control.layers(null, null).addTo(map);
+
+                new L.GPX(url, {
+                    async: true,
+                    marker_options: {
+                        startIconUrl: 'http://github.com/mpetazzoni/leaflet-gpx/raw/master/pin-icon-start.png',
+                        endIconUrl:   'http://github.com/mpetazzoni/leaflet-gpx/raw/master/pin-icon-end.png',
+                        shadowUrl:    'http://github.com/mpetazzoni/leaflet-gpx/raw/master/pin-shadow.png',
+                    },
+                }).on('loaded', function(e) {
+                    var gpx = e.target;
+                    map.fitBounds(gpx.getBounds());
+                    control.addOverlay(gpx, gpx.get_name());
+                }).addTo(map);
+            }
+            display_gpx(document.getElementById('map_content'));
+        </script>
+    @else
+        <script src="{{ asset('js/loadgpx.js') }}"></script>
+        <script type="text/javascript">
+
+            var map;
+            $(function(){
+                initializeMap('{{ asset("$translation->gpx_file") }}');
             });
-            @endif
-        })
-    </script>
+
+            function initializeMap(gpxFile) {
+
+                var mapOptions = {
+                    zoom: 8,
+                    mapTypeId: google.maps.MapTypeId.ROADMAP
+                };
+                map = new google.maps.Map(document.getElementById("map_content"), mapOptions);
+                google.maps.event.trigger(map, "resize");
+                loadGPXFileIntoGoogleMap(gpxFile);
+            };
+
+            function loadGPXFileIntoGoogleMap(filename) {
+                // alert(filename);
+                $.ajax({url: filename,
+                    dataType: "xml",
+                    success: function(data) {
+                        var parser = new GPXParser(data, map);
+                        console.log(parser);
+                        parser.setTrackColour("#ff0000");
+                        parser.setTrackWidth(5);
+                        parser.setMinTrackPointDelta(0.001);
+                        parser.centerAndZoom(data);
+                        parser.addTrackpointsToMap();
+                        parser.addWaypointsToMap();
+                    }
+                });
+            }
+
+        </script>
+    @endif
     <script>
         var bravo_booking_data = {!! json_encode($booking_data) !!}
         var bravo_booking_i18n = {

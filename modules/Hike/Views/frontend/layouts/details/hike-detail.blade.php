@@ -28,75 +28,91 @@
 </div>
 @if(!empty($row->duration) or !empty($row->category_hike->name) or !empty($row->max_people) or !empty($row->location->name))
     <div class="g-tour-feature">
-    <div class="row">
-        @if($row->duration)
-            <div class="col-xs-6 col-lg-3 col-md-6">
+        <div class="row">
+        @if($row->distance)
+            <div class="col-md-5th-1 col-md-offset-0 col-sm-offset-2">
                 <div class="item">
                     <div class="icon">
-                        <i class="icofont-wall-clock"></i>
+                        <img class="sand-clock-manage" style="width: 48px; height: 42px;" data-toggle="tooltip" data-placement="top" src="{{asset('icon/sand-clock.svg')}}" alt="sand-clock">
+                        <!-- <i class="icofont-wall-clock"></i> -->
                     </div>
                     <div class="info">
-                        <h4 class="name">{{__("Duration")}}</h4>
+                        <h4 class="name">{{__("Distance")}}</h4>
                         <p class="value">
-                            {{duration_format($row->duration,true)}}
-                        </p>
-                    </div>
-                </div>
-            </div>
-        @endif
-        @if(!empty($row->category_hike->name))
-            @php $cat =  $row->category_hike->translateOrOrigin(app()->getLocale()) @endphp
-            <div class="col-xs-6 col-lg-3 col-md-6">
-                <div class="item">
-                    <div class="icon">
-                        <i class="icofont-beach"></i>
-                    </div>
-                    <div class="info">
-                        <h4 class="name">{{__("Hike Type")}}</h4>
-                        <p class="value">
-                            {{$cat->name ?? ''}}
-                        </p>
-                    </div>
-                </div>
-            </div>
-        @endif
-        @if($row->max_people)
-            <div class="col-xs-6 col-lg-3 col-md-6">
-                <div class="item">
-                    <div class="icon">
-                        <i class="icofont-travelling"></i>
-                    </div>
-                    <div class="info">
-                        <h4 class="name">{{__("Group Size")}}</h4>
-                        <p class="value">
-                            @if($row->max_people > 1)
-                                {{ __(":number persons",array('number'=>$row->max_people)) }}
+                            @if($row->distance > 1)
+                                {{ __(":number kilometers",array('number'=>$row->distance)) }}
                             @else
-                                {{ __(":number person",array('number'=>$row->max_people)) }}
+                                {{ __(":number kilometer",array('number'=>$row->distance)) }}
                             @endif
                         </p>
                     </div>
                 </div>
             </div>
         @endif
-        @if(!empty($row->location->name))
-                @php $location =  $row->location->translateOrOrigin(app()->getLocale()) @endphp
-            <div class="col-xs-6 col-lg-3 col-md-6">
+        @if($row->duration)
+            <div class="col-md-5th-1 col-md-offset-0 col-sm-offset-2">
                 <div class="item">
                     <div class="icon">
-                        <i class="icofont-island-alt"></i>
+                        <img class="sand-clock-manage" style="width: 48px; height: 42px;" data-toggle="tooltip" data-placement="top" src="{{asset('icon/tracking.svg')}}" alt="sand-clock">
+
+                        <!-- <i class="icofont-beach"></i> -->
                     </div>
                     <div class="info">
-                        <h4 class="name">{{__("Location")}}</h4>
+                        <h4 class="name">{{__("Duration")}}</h4>
                         <p class="value">
-                            {{$location->name ?? ''}}
+                            @if($row->duration > 1)
+                                {{ __(":number hours",array('number'=>$row->duration)) }}
+                            @else
+                                {{ __(":number hour",array('number'=>$row->duration)) }}
+                            @endif
                         </p>
                     </div>
                 </div>
             </div>
         @endif
+        @if($row->ascent)
+            <div class="col-md-5th-1 col-md-offset-0 col-sm-offset-2">
+                <div class="item">
+                    <div class="icon">
+                        <img class="sand-clock-manage" style="width: 48px; height: 42px;" data-toggle="tooltip" data-placement="top" src="{{asset('icon/caret-up.svg')}}" alt="sand-clock">
+                        <!-- <i class="icofont-travelling"></i> -->
+                    </div>
+                    <div class="info">
+                        <h4 class="name">{{__("Ascent")}}</h4>
+                        <p class="value">
+                            @if($row->ascent > 1)
+                                {{ __(":number meters",array('number'=>$row->ascent)) }}
+                            @else
+                                {{ __(":number meter",array('number'=>$row->ascent)) }}
+                            @endif
+                        </p>
+                    </div>
+                </div>
+            </div>
+        @endif
+        @if($row->descent)
+            <div class="col-md-5th-1 col-md-offset-0 col-sm-offset-2">
+                <div class="item">
+                    <div class="icon">
+                        <img class="sand-clock-manage" style="width: 48px; height: 42px;" data-toggle="tooltip" data-placement="top" src="{{asset('icon/caret-down.svg')}}" alt="sand-clock">
+                        <!-- <i class="icofont-travelling"></i> -->
+                    </div>
+                    <div class="info">
+                        <h4 class="name">{{__("Descent")}}</h4>
+                        <p class="value">
+                            @if($row->descent > 1)
+                                {{ __(":number meters",array('number'=>$row->descent)) }}
+                            @else
+                                {{ __(":number meter",array('number'=>$row->descent)) }}
+                            @endif
+                        </p>
+                    </div>
+                </div>
+            </div>
+        @endif
+        @include('Hike::frontend.layouts.details.hike-attributes')
+        </div>
     </div>
-</div>
 @endif
 @if($row->getGallery())
     <div class="g-gallery">

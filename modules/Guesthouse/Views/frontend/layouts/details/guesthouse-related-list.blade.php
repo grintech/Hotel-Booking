@@ -20,13 +20,6 @@
                             </a>
                         </div>
                         <div class="media-body">
-                            @if($item->star_rate)
-                                <div class="star-rate">
-                                    @for ($star = 1 ;$star <= $item->star_rate ; $star++)
-                                        <i class="fa fa-star"></i>
-                                    @endfor
-                                </div>
-                            @endif
                             <h4 class="media-heading">
                                 <a href="{{$item->getDetailUrl(false)}}">
                                     {{$translation_item->title}}
