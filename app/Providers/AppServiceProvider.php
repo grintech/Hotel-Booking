@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
@@ -34,11 +35,21 @@ class AppServiceProvider extends ServiceProvider
 
         Schema::defaultStringLength(191);
 
-        app()->setLocale('en');
-
         if(strpos($request->path(),'install') === false  && file_exists(storage_path().'/installed')){
 
             $locale = $request->segment(1);
+            if($locale == null){
+                $country = geoip($request->ip())->getAttribute('country');
+                $supportedLanguages = [
+                    'United States' => 'en',
+                    'Canada' => 'en',
+                    'India' => 'en',
+                    'France' => 'fr'
+                ];
+                if(array_key_exists($country, $supportedLanguages)){
+                    $locale = $supportedLanguages[$country];
+                }
+            }
             $languages = \Modules\Language\Models\Language::getActive();
             $localeCodes = Arr::pluck($languages,'locale');
             if(in_array($locale,$localeCodes)){
