@@ -39,10 +39,10 @@ class ModuleProvider extends ModuleServiceProvider
         }
         return [
             'car'=>[
-                "position"=> 62,
+                "position"=> 33,
                 'url'        => 'admin/module/hike',
                 'title'      => __("Hike"),
-                'icon'       => 'icon ion-md-umbrella',
+                'icon'       => 'fa fa-check',
                 'permission' => 'hike_view',
                 'children'   => [
                     'hike_view'=>[
