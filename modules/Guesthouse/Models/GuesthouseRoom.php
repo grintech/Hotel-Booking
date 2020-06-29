@@ -5,6 +5,7 @@ namespace Modules\Guesthouse\Models;
 use ICal\ICal;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Modules\Booking\Models\Bookable;
@@ -65,6 +66,9 @@ class GuesthouseRoom extends Bookable
         if(empty($filters['start_date']) or empty($filters['end_date'])) return true;
 
         $roomDates =  $this->getDatesInRange($filters['start_date'],$filters['end_date']);
+        //TODO return true if no room dates found else min() function at 141 throws exception
+        if(count($roomDates) == 0) return true;
+
         $allDates = [];
         $tmp_price = 0;
         $tmp_night = 0;
@@ -154,6 +158,7 @@ class GuesthouseRoom extends Bookable
 
     public function getDatesInRange($start_date,$end_date)
     {
+        Log::info($this->id);
         $query = $this->roomDateClass::query();
         $query->where('target_id',$this->id);
         $query->where('start_date','>=',date('Y-m-d H:i:s',strtotime($start_date)));

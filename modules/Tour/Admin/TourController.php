@@ -55,10 +55,10 @@ class TourController extends AdminController
             'rows'               => $query->with(['getAuthor','category_tour'])->paginate(20),
             'tour_categories'    => $this->tourCategoryClass::where('status', 'publish')->get()->toTree(),
             'tour_manage_others' => $this->hasPermission('tour_manage_others'),
-            'page_title'=>__("Tour Management"),
+            'page_title'=>__("Guided Tour Management"),
             'breadcrumbs'        => [
                 [
-                    'name' => __('Tours'),
+                    'name' => __('Guided Tours'),
                     'url'  => 'admin/module/tour'
                 ],
                 [
@@ -85,11 +85,11 @@ class TourController extends AdminController
             'translation' => new $this->tourTranslationClass(),
             'breadcrumbs'   => [
                 [
-                    'name' => __('Tours'),
+                    'name' => __('Guided Tours'),
                     'url'  => 'admin/module/tour'
                 ],
                 [
-                    'name'  => __('Add Tour'),
+                    'name'  => __('Add Guided Tour'),
                     'class' => 'active'
                 ],
             ]
@@ -120,11 +120,11 @@ class TourController extends AdminController
             'enable_multi_lang'=>true,
             'breadcrumbs'    => [
                 [
-                    'name' => __('Tours'),
+                    'name' => __('Guided Tours'),
                     'url'  => 'admin/module/tour'
                 ],
                 [
-                    'name'  => __('Edit Tour'),
+                    'name'  => __('Edit Guided Tour'),
                     'class' => 'active'
                 ],
             ]
@@ -161,9 +161,9 @@ class TourController extends AdminController
                 $row->saveMeta($request);
             }
             if($id > 0 ){
-                return back()->with('success',  __('Tour updated') );
+                return back()->with('success',  __('Guided Tour updated') );
             }else{
-                return redirect(route('tour.admin.edit',$row->id))->with('success', __('Tour created') );
+                return redirect(route('tour.admin.edit',$row->id))->with('success', __('Guided Tour created') );
             }
         }
     }

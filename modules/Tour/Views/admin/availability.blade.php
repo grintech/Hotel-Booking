@@ -4,7 +4,7 @@
     @php $services  = []; @endphp
     <div class="container-fluid">
         <div class="d-flex justify-content-between mb20">
-            <h1 class="title-bar">{{__("Tours Availability Calendar")}}</h1>
+            <h1 class="title-bar">{{__("Guided Tours Availability Calendar")}}</h1>
         </div>
         @include('admin.message')
         <div class="panel">
@@ -45,7 +45,7 @@
             </div>
         </div>
         @else
-            <div class="alert alert-warning">{{__("No tours found")}}</div>
+            <div class="alert alert-warning">{{__("No guided tours found")}}</div>
         @endif
         <div class="d-flex justify-content-center">
             {{$rows->appends($request->query())->links()}}

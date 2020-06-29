@@ -121,13 +121,13 @@
 <div class="row">
     <div class="col-sm-4">
         <h3 class="form-group-title">{{__("Review Options")}}</h3>
-        <p class="form-group-desc">{{__('Config review for tour')}}</p>
+        <p class="form-group-desc">{{__('Config review for guided tour')}}</p>
     </div>
     <div class="col-sm-8">
         <div class="panel">
             <div class="panel-body">
                 <div class="form-group">
-                    <label class="" >{{__("Enable review system for Tour?")}}</label>
+                    <label class="" >{{__("Enable review system for Guided Tour?")}}</label>
                     <div class="form-controls">
                         <label><input type="checkbox" name="tour_enable_review" value="1" @if(!empty($settings['tour_enable_review'])) checked @endif /> {{__("Yes, please enable it")}} </label>
                         <br>
@@ -135,7 +135,7 @@
                     </div>
                 </div>
                 <div class="form-group" data-condition="tour_enable_review:is(1)">
-                    <label class="" >{{__("Customer must book a tour before writing a review?")}}</label>
+                    <label class="" >{{__("Customer must book a guided tour before writing a review?")}}</label>
                     <div class="form-controls">
                         <label><input type="checkbox" name="tour_enable_review_after_booking" value="1"  @if(!empty($settings['tour_enable_review_after_booking'])) checked @endif /> {{__("Yes please")}} </label>
                         <br>
@@ -233,7 +233,7 @@
     <div class="row">
         <div class="col-sm-4">
             <h3 class="form-group-title">{{__("Booking Buyer Fees Options")}}</h3>
-            <p class="form-group-desc">{{__('Config buyer fees for tour')}}</p>
+            <p class="form-group-desc">{{__('Config buyer fees for guided tour')}}</p>
         </div>
         <div class="col-sm-8">
             <div class="panel">
@@ -357,7 +357,7 @@
             <div class="panel">
                 <div class="panel-body">
                     <div class="form-group">
-                        <label class="" >{{__("Tour create by vendor must be approved by admin?")}}</label>
+                        <label class="" >{{__("Guided Tour create by vendor must be approved by admin?")}}</label>
                         <div class="form-controls">
                             <label><input type="checkbox" name="tour_vendor_create_service_must_approved_by_admin" value="1" @if(!empty($settings['tour_vendor_create_service_must_approved_by_admin'])) checked @endif /> {{__("Yes please")}} </label>
                             <br>
@@ -430,11 +430,11 @@
 <hr>
 <div class="row">
     <div class="col-sm-4">
-        <h3 class="form-group-title">{{__("Disable tour module?")}}</h3>
+        <h3 class="form-group-title">{{__("Disable guided tour module?")}}</h3>
     </div>
     <div class="col-sm-8">
         <div class="panel">
-            <div class="panel-title"><strong>{{__("Disable tour module")}}</strong></div>
+            <div class="panel-title"><strong>{{__("Disable guided tour module")}}</strong></div>
             <div class="panel-body">
                 <div class="form-group">
                     <div class="form-controls">

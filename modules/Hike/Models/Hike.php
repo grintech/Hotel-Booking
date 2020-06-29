@@ -182,7 +182,6 @@
 
         public static function getLinkForPageSearch($locale = false, $param = [])
         {
-
             return url(app_get_locale(false, false, '/') . config('hike.hike_route_prefix') . "?" . http_build_query($param));
         }
 

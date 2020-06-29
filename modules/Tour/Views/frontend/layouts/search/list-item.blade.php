@@ -7,9 +7,9 @@
             <div class="topbar-search">
                 <div class="text">
                     @if($rows->total() > 1)
-                        {{ __(":count tours found",['count'=>$rows->total()]) }}
+                        {{ __(":count guided tours found",['count'=>$rows->total()]) }}
                     @else
-                        {{ __(":count tour found",['count'=>$rows->total()]) }}
+                        {{ __(":count guided tour found",['count'=>$rows->total()]) }}
                     @endif
                 </div>
                 <div class="control">

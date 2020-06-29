@@ -36,18 +36,18 @@ class ModuleProvider extends ModuleServiceProvider
             $res['tour'] = [
                 "position"=>40,
                 'url'        => 'admin/module/tour',
-                'title'      => __("Tour"),
+                'title'      => __("Guided Tour"),
                 'icon'       => 'icon ion-md-umbrella',
                 'permission' => 'tour_view',
                 'children'   => [
                     'tour_view'=>[
                         'url'        => 'admin/module/tour',
-                        'title'      => __('All Tours'),
+                        'title'      => __('All Guided Tours'),
                         'permission' => 'tour_view',
                     ],
                     'tour_create'=>[
                         'url'        => 'admin/module/tour/create',
-                        'title'      => __("Add Tour"),
+                        'title'      => __("Add a new Guided Tour"),
                         'permission' => 'tour_create',
                     ],
                     'tour_category'=>[
@@ -83,18 +83,18 @@ class ModuleProvider extends ModuleServiceProvider
         if(Tour::isEnable()){
             $res['tour'] = [
                 'url'   => route('tour.vendor.index'),
-                'title'      => __("Manage Tour"),
+                'title'      => __("Manage Guided Tour"),
                 'icon'       => Tour::getServiceIconFeatured(),
                 'permission' => 'tour_view',
                 'position'   => 31,
                 'children'   => [
                     [
                         'url'   => route('tour.vendor.index'),
-                        'title' => __("All Tours"),
+                        'title' => __("All Guided Tours"),
                     ],
                     [
                         'url'        => route('tour.vendor.create'),
-                        'title'      => __("Add Tour"),
+                        'title'      => __("Add a new Guided Tour"),
                         'permission' => 'tour_create',
                     ],
                     [
@@ -120,13 +120,13 @@ class ModuleProvider extends ModuleServiceProvider
         return [
             [
                 'class' => \Modules\Tour\Models\Tour::class,
-                'name'  => __("Tour"),
+                'name'  => __("Guided Tour"),
                 'items' => \Modules\Tour\Models\Tour::searchForMenu(),
                 'position'=>20
             ],
             [
                 'class' => \Modules\Tour\Models\TourCategory::class,
-                'name'  => __("Tour Category"),
+                'name'  => __("Guided Tour Category"),
                 'items' => \Modules\Tour\Models\TourCategory::searchForMenu(),
                 'position'=>30
             ],

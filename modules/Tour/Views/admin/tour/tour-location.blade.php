@@ -1,5 +1,5 @@
 <div class="panel">
-    <div class="panel-title"><strong>{{__("Tour Locations")}}</strong></div>
+    <div class="panel-title"><strong>{{__("Guided Tour Locations")}}</strong></div>
     <div class="panel-body">
         @if(is_default_lang())
             <div class="form-group">
@@ -54,8 +54,8 @@
             </div>
         @endif
         <div class="form-group">
-            <label class="control-label">{{__("Real tour address")}}</label>
-            <input type="text" name="address" class="form-control" placeholder="{{__("Real tour address")}}" value="{{$translation->address}}">
+            <label class="control-label">{{__("Real Guided tour address")}}</label>
+            <input type="text" name="address" class="form-control" placeholder="{{__("Real Guided tour address")}}" value="{{$translation->address}}">
         </div>
         @if(is_default_lang())
             <div class="form-group">

@@ -6,7 +6,7 @@
         <div class="container-fluid">
             <div class="d-flex justify-content-between mb20">
                 <div class="">
-                    <h1 class="title-bar">{{$row->id ? __('Edit: ').$row->title : __('Add new tour')}}</h1>
+                    <h1 class="title-bar">{{$row->id ? __('Edit: ').$row->title : __('Add new guided tour')}}</h1>
                     @if($row->slug)
                         <p class="item-url-demo">{{__("Permalink")}}: {{ url(config('tour.tour_route_prefix') ) }}/<a href="#" class="open-edit-input" data-name="slug">{{$row->slug}}</a>
                         </p>
@@ -14,7 +14,7 @@
                 </div>
                 <div class="">
                     @if($row->slug)
-                        <a class="btn btn-primary btn-sm" href="{{$row->getDetailUrl(request()->query('lang'))}}" target="_blank">{{__("View Tour")}}</a>
+                        <a class="btn btn-primary btn-sm" href="{{$row->getDetailUrl(request()->query('lang'))}}" target="_blank">{{__("View Guided Tour")}}</a>
                     @endif
                 </div>
             </div>
@@ -77,7 +77,7 @@
                         @endif
                         @if(is_default_lang())
                             <div class="panel">
-                                <div class="panel-title"><strong>{{__("Tour Featured")}}</strong></div>
+                                <div class="panel-title"><strong>{{__("Guided Tour Featured")}}</strong></div>
                                 <div class="panel-body">
                                     <div class="form-group">
                                         <input type="checkbox" name="is_featured" @if($row->is_featured) checked @endif value="1"> {{__("Enable featured")}}

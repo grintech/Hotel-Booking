@@ -1,9 +1,9 @@
 <div class="panel">
-    <div class="panel-title"><strong>{{__("Tour Content")}}</strong></div>
+    <div class="panel-title"><strong>{{__("Guided Tour Content")}}</strong></div>
     <div class="panel-body">
         <div class="form-group">
             <label>{{__("Title")}}</label>
-            <input type="text" value="{{$translation->title}}" placeholder="{{__("Tour title")}}" name="title" class="form-control">
+            <input type="text" value="{{$translation->title}}" placeholder="{{__("Guided Tour title")}}" name="title" class="form-control">
         </div>
         <div class="form-group">
             <label class="control-label">{{__("Content")}}</label>
@@ -43,7 +43,7 @@
                 <input type="text" name="video" class="form-control" value="{{$row->video}}" placeholder="{{__("Youtube link video")}}">
             </div>
             <div class="form-group">
-                <label class="control-label">{{__("Duration")}}</label>
+                <label class="control-label">{{__("Duration(hours)")}}</label>
 
                 <div class="input-group mb-3">
                     <input type="text" name="duration" class="form-control" value="{{$row->duration}}" placeholder="{{__("Duration")}}"  aria-describedby="basic-addon2">
@@ -55,14 +55,14 @@
             <div class="row">
                 <div class="col-lg-6">
                     <div class="form-group">
-                        <label class="control-label">{{__("Tour Min People")}}</label>
-                        <input type="text" name="min_people" class="form-control" value="{{$row->min_people}}" placeholder="{{__("Tour Min People")}}">
+                        <label class="control-label">{{__("Guided Tour Min People")}}</label>
+                        <input type="text" name="min_people" class="form-control" value="{{$row->min_people}}" placeholder="{{__("Guided Tour Min People")}}">
                     </div>
                 </div>
                 <div class="col-lg-6">
                     <div class="form-group">
-                        <label class="control-label">{{__("Tour Max People")}}</label>
-                        <input type="text" name="max_people" class="form-control" value="{{$row->max_people}}" placeholder="{{__("Tour Max People")}}">
+                        <label class="control-label">{{__("Guided Tour Max People")}}</label>
+                        <input type="text" name="max_people" class="form-control" value="{{$row->max_people}}" placeholder="{{__("Guided Tour Max People")}}">
                     </div>
                 </div>
             </div>
@@ -83,7 +83,7 @@
                         <div class="item" data-number="{{$key}}">
                             <div class="row">
                                 <div class="col-md-5">
-                                    <input type="text" name="faqs[{{$key}}][title]" class="form-control" value="{{$faq['title']}}" placeholder="{{__('Eg: When and where does the tour end?')}}">
+                                    <input type="text" name="faqs[{{$key}}][title]" class="form-control" value="{{$faq['title']}}" placeholder="{{__('Eg: When and where does the guided tour end?')}}">
                                 </div>
                                 <div class="col-md-6">
                                     <textarea name="faqs[{{$key}}][content]" class="form-control full-h" placeholder="...">{{$faq['content']}}</textarea>

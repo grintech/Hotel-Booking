@@ -23,9 +23,6 @@ class AttributeController extends AdminController
     public function index(Request $request)
     {
         $this->checkPermission('hike_manage_attributes');
-        /*
-         * hike service entry is created in database
-         * */
         $listAttr = $this->attributesClass::where("service", 'hike');
         if (!empty($search = $request->query('s'))) {
             $listAttr->where('name', 'LIKE', '%' . $search . '%');

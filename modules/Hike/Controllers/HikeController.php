@@ -33,7 +33,51 @@ class HikeController extends Controller {
 
     public function index(Request $request) {
         $is_ajax = $request->query('_ajax');
-        $list = call_user_func([$this->hikeClass, 'search'], $request);
+        $model_Hike = $this->hikeClass::select("bravo_hikes.*");
+        $model_Hike->where("bravo_hikes.status", "publish");
+        if (!empty($location_id = $request->query('location_id'))) {
+            $location = $this->locationClass::where('id', $location_id)->where("status", "publish")->first();
+            if (!empty($location)) {
+                $model_Hike->join('bravo_locations', function ($join) use ($location) {
+                    $join->on('bravo_locations.id', '=', 'bravo_hikes.location_id')
+                        ->where('bravo_locations._lft', '>=', $location->_lft)
+                        ->where('bravo_locations._rgt', '<=', $location->_rgt);
+                });
+            }
+        }
+
+        if (!empty($price_range = $request->query('price_range'))) {
+            $pri_from = explode(";", $price_range)[0];
+            $pri_to = explode(";", $price_range)[1];
+            $raw_sql_min_max = "( (IFNULL(bravo_hikes.sale_price,0) > 0 and bravo_hikes.sale_price >= ? ) OR (IFNULL(bravo_hikes.sale_price,0) <= 0 and bravo_hikes.price >= ?) ) 
+								AND ( (IFNULL(bravo_hikes.sale_price,0) > 0 and bravo_hikes.sale_price <= ? ) OR (IFNULL(bravo_hikes.sale_price,0) <= 0 and bravo_hikes.price <= ?) )";
+            $model_Hike->WhereRaw($raw_sql_min_max,[$pri_from,$pri_from,$pri_to,$pri_to]);
+        }
+        if (!empty($category_ids = $request->query('cat_id'))) {
+            if(!is_array($category_ids)) $category_ids = [$category_ids];
+            $list_cat = $this->hikeCategoryClass::whereIn('id', $category_ids)->where("status","publish")->get();
+            if(!empty($list_cat)){
+                $where_left_right = [];
+                foreach ($list_cat as $cat){
+                    $where_left_right[] = " ( bravo_hike_category._lft >= {$cat->_lft} AND bravo_hike_category._rgt <= {$cat->_rgt} ) ";
+                }
+                $sql_where_join = " ( " . implode("OR", $where_left_right) . " )  ";
+                $model_Hike
+                    ->join('bravo_hike_category', function ($join) use ($sql_where_join) {
+                        $join->on('bravo_hike_category.id', '=', 'bravo_hikes.category_id')
+                            ->WhereRaw($sql_where_join);
+                    });
+            }
+
+        }
+        $terms = $request->query('terms');
+        if (is_array($terms) && !empty($terms)) {
+            $model_Hike->join('bravo_hike_term as tt', 'tt.hike_id', "bravo_hikes.id")->whereIn('tt.term_id', $terms);
+        }
+        $model_Hike->orderBy("id", "desc");
+        $model_Hike->groupBy("bravo_hikes.id");
+
+        $list = $model_Hike->with(['location','hasWishList','translations'])->paginate(9);
         $markers = [];
         if (!empty($list)) {
             foreach ($list as $row) {
@@ -44,7 +88,6 @@ class HikeController extends Controller {
                     "lng" => (float)$row->map_lng,
                     "gallery" => $row->getGallery(true),
                     "infobox" => view('Hike::frontend.layouts.search.loop-gird', ['row' => $row, 'disable_lazyload' => 1, 'wrap_class' => 'infobox-item'])->render(),
-                    //TODO Change the icon here
                     'marker' => url('images/icons/png/pin.png'),
                 ];
             }

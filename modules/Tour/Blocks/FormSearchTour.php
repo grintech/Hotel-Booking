@@ -34,7 +34,7 @@ class FormSearchTour extends BaseBlock
 
     public function getName()
     {
-        return __('Tour: Form Search');
+        return __('Guided Tour: Form Search');
     }
 
     public function content($model = [])

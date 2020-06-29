@@ -33,7 +33,7 @@
         <div class="booking-calendar vec-wrap panel" id="booking-calendar" >
             <div class="panel-body">
                 <div class="vec-header-toolbar d-flex justify-content-between align-items-center">
-                    <div class=""><i><span class="count-string">{{ __("Showing :from - :to of :total Tour(s)",["from"=>$rows->firstItem(),"to"=>$rows->lastItem(),"total"=>$rows->total()]) }}</span></i></div>
+                    <div class=""><i><span class="count-string">{{ __("Showing :from - :to of :total Guided Tour(s)",["from"=>$rows->firstItem(),"to"=>$rows->lastItem(),"total"=>$rows->total()]) }}</span></i></div>
                     <div class="current-month">{{date('M-Y',$current_month)}}</div>
                     <div class="btn-group" role="group">
                         <a href="{{$prev_url}}" type="button" class="btn btn-secondary"><i class="icon ion-ios-arrow-back"></i></a>
@@ -43,7 +43,7 @@
                 <table class="vec-view-container" width="100%" cellpadding="0" cellspacing="0">
                     <thead class="vec-head">
                     <tr>
-                        <th width="300px" class="vec-event-header">{{__('Tours')}}</th>
+                        <th width="300px" class="vec-event-header">{{__('Guided Tours')}}</th>
                         <th class="vec-divider"></th>
                         <th class="vc-time-area">
                             <div class="vec-scroll-flip">

@@ -1,4 +1,3 @@
-
 <div class="bravo-form-search-all" style="background-image: linear-gradient(0deg,rgba(0, 0, 0, 0.2),rgba(0, 0, 0, 0.2)),url('{{$bg_image_url}}') !important">
     <div class="container">
         <div class="row">
@@ -9,7 +8,10 @@
                     <div class="g-form-control">
                         <ul class="nav nav-tabs" role="tablist">
                             @if(!empty($service_types))
-                                @php $number = 0; @endphp
+                                @php
+                                    $number = 0;
+                                    sort($service_types, SORT_STRING);
+                                @endphp
                                 @foreach ($service_types as $service_type)
                                     @php
                                         $allServices = get_bookable_services();

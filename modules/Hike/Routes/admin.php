@@ -23,9 +23,9 @@ Route::match(['get'],'/attribute/term_edit','AttributeController@terms')->name('
 Route::match(['get'],'/attribute/term_edit/edit/{id}','AttributeController@term_edit')->name('hike.admin.attribute.term.edit');
 Route::post('/attribute/term_store/{id}','AttributeController@term_store')->name('hike.admin.attribute.term.store');
 
-
-Route::group(['prefix'=>'availability'],function(){
-    Route::get('/','AvailabilityController@index')->name('hike.admin.availability.index');
-    Route::get('/loadDates','AvailabilityController@loadDates')->name('hike.admin.availability.loadDates');
-    Route::get('/store','AvailabilityController@store')->name('hike.admin.availability.store');
-});
+//TODO cross check in old module, is this route segment is disabled?
+//Route::group(['prefix'=>'availability'],function(){
+//    Route::get('/','AvailabilityController@index')->name('hike.admin.availability.index');
+//    Route::get('/loadDates','AvailabilityController@loadDates')->name('hike.admin.availability.loadDates');
+//    Route::get('/store','AvailabilityController@store')->name('hike.admin.availability.store');
+//});

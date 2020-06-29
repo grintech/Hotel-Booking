@@ -59,7 +59,7 @@ class ManageTourController extends FrontendController
                     'class' => 'active'
                 ],
             ],
-            'page_title'  => __("Manage Tours"),
+            'page_title'  => __("Manage Guided Tours"),
         ];
         return view('Tour::frontend.manageTour.index', $data);
     }

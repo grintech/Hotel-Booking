@@ -6,7 +6,7 @@
     <h2 class="title-bar">
         {{__("Manage Guided Tours")}}
         @if(Auth::user()->hasPermissionTo('tour_create'))
-            <a href="{{ route("tour.vendor.create") }}" class="btn-change-password">{{__("Add Guided Tour")}}</a>
+            <a href="{{ route("tour.vendor.create") }}" class="btn-change-password">{{__("Add a new Guided Tour")}}</a>
         @endif
     </h2>
     @include('admin.message')

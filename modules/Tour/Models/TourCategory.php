@@ -22,7 +22,7 @@ class TourCategory extends BaseModel
 
     public static function getModelName()
     {
-        return __("Tour Category");
+        return __("Guided Tour Category");
     }
 
     public static function searchForMenu($q = false)

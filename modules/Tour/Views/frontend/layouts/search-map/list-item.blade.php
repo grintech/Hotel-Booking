@@ -18,7 +18,7 @@
         </div>
     @else
         <div class="not-found-box">
-            <h3 class="n-title">{{__("We couldn't find any tours.")}}</h3>
+            <h3 class="n-title">{{__("We couldn't find any guided tours.")}}</h3>
             <p class="p-desc">{{__("Try changing your filter criteria")}}</p>
             {{--<a href="#" onclick="return false;" click="" class="btn btn-danger">{{__("Clear Filters")}}</a>--}}
         </div>

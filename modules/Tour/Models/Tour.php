@@ -74,7 +74,7 @@
 
         public static function getModelName()
         {
-            return __("Tour");
+            return __("Guided Tour");
         }
 
         protected $bookingClass;
@@ -114,7 +114,7 @@
          */
         static public function getSeoMetaForPageList()
         {
-            $meta['seo_title'] = __("Search for Tours");
+            $meta['seo_title'] = __("Search for Guided Tours");
             if (!empty($title = setting_item_with_lang("tour_page_list_seo_title", false))) {
                 $meta['seo_title'] = $title;
             } else if (!empty($title = setting_item_with_lang("tour_page_search_title"))) {
@@ -522,7 +522,7 @@
                     $open_hours = $meta->open_hours;
                     $nDate = date('N', strtotime($start_date));
                     if (!isset($open_hours[$nDate]) or empty($open_hours[$nDate]['enable'])) {
-                        return $this->sendError(__("This tour is not open on your selected day"));
+                        return $this->sendError(__("This guided tour is not open on your selected day"));
                     }
                 }
             }
@@ -783,9 +783,9 @@
 
             if(empty($number)) return false;
             if ($number > 1) {
-                return __(":number Tours", ['number' => $number]);
+                return __(":number Guided Tours", ['number' => $number]);
             }
-            return __(":number Tour", ['number' => $number]);
+            return __(":number Guided Tour", ['number' => $number]);
         }
 
         /**

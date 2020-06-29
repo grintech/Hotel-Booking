@@ -2,18 +2,18 @@
     <div class="panel-title"><strong>{{__("Pricing")}}</strong></div>
     <div class="panel-body">
         @if(is_default_lang())
-            <h3 class="panel-body-title">{{__("Tour Price")}}</h3>
+            <h3 class="panel-body-title">{{__("Guided Tour Price")}}</h3>
             <div class="row">
                 <div class="col-lg-6">
                     <div class="form-group">
                         <label class="control-label">{{__("Price")}}</label>
-                        <input type="number" min="0" name="price" class="form-control" value="{{$row->price}}" placeholder="{{__("Tour Price")}}">
+                        <input type="number" min="0" name="price" class="form-control" value="{{$row->price}}" placeholder="{{__("Guided Tour Price")}}">
                     </div>
                 </div>
                 <div class="col-lg-6">
                     <div class="form-group">
                         <label class="control-label">{{__("Sale Price")}}</label>
-                        <input type="text" name="sale_price" class="form-control" value="{{$row->sale_price}}" placeholder="{{__("Tour Sale Price")}}">
+                        <input type="text" name="sale_price" class="form-control" value="{{$row->sale_price}}" placeholder="{{__("Guided Tour Sale Price")}}">
                     </div>
                 </div>
                 <div class="col-lg-12">

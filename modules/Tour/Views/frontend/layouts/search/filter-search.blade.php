@@ -25,7 +25,25 @@
                         $pri_from = explode(";", $price_range)[0];
                         $pri_to = explode(";", $price_range)[1];
                     }
-                    $currency = App\Currency::getCurrency( App\Currency::getCurrent() );
+                    $sess = Session::get('bc_current_currency');
+                    if($sess){
+                        $code = Session::get('bc_current_currency');
+                    }
+                    else{
+                        $code = strtolower(geoip(request()->getClientIp())->getAttribute('currency'));
+
+                        $available_countries = setting_item_array('extra_currency');
+                        $arra_col = array_column($available_countries, 'currency_main');
+                        if(in_array($code , $arra_col, TRUE)){
+                            Session::put('bc_current_currency',$code);
+                        }
+                        else
+                        {
+                            Session::put('bc_current_currency','usd');
+                        }
+
+                    }
+                    $currency = App\Currency::getCurrency(Session::get('bc_current_currency'));
                     ?>
                     <input type="hidden" class="filter-price irs-hidden-input" name="price_range"
                            data-symbol=" {{$currency['symbol'] ?? ''}}"

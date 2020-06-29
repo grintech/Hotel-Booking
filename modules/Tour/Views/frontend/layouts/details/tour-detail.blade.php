@@ -38,7 +38,11 @@
                     <div class="info">
                         <h4 class="name">{{__("Duration")}}</h4>
                         <p class="value">
-                            {{duration_format($row->duration,true)}}
+                            @if($row->duration > 1)
+                                {{ __(":number hours",array('number'=>$row->duration)) }}
+                            @else
+                                {{ __(":number hour",array('number'=>$row->duration)) }}
+                            @endif
                         </p>
                     </div>
                 </div>
@@ -52,7 +56,7 @@
                         <i class="icofont-beach"></i>
                     </div>
                     <div class="info">
-                        <h4 class="name">{{__("Tour Type")}}</h4>
+                        <h4 class="name">{{__("Guided Tour Type")}}</h4>
                         <p class="value">
                             {{$cat->name ?? ''}}
                         </p>
@@ -144,7 +148,7 @@
 @if($row->map_lat && $row->map_lng)
 <div class="g-location">
     <div class="location-title">
-        <h3>{{__("Tour Location")}}</h3>
+        <h3>{{__("Guided Tour Location")}}</h3>
         @if($translation->address)
             <div class="address">
                 <i class="icofont-location-arrow"></i>

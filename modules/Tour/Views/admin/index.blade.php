@@ -2,9 +2,9 @@
 @section('content')
     <div class="container-fluid">
         <div class="d-flex justify-content-between mb20">
-            <h1 class="title-bar">{{__("All Tour")}}</h1>
+            <h1 class="title-bar">{{__("All Guided Tour")}}</h1>
             <div class="title-actions">
-                <a href="{{url('admin/module/tour/create')}}" class="btn btn-primary">{{__("Add new tour")}}</a>
+                <a href="{{url('admin/module/tour/create')}}" class="btn btn-primary">{{__("Add new guided tour")}}</a>
             </div>
         </div>
         @include('admin.message')
