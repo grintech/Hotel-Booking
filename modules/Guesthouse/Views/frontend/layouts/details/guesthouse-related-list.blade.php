@@ -1,5 +1,5 @@
 @if(count($guesthouse_related) > 0)
-    <div class="bravo-list-guesthouse-related-widget">
+    <div class="bravo-list-hotel-related-widget">
         <h3 class="heading">{{__("Related Guesthouse")}}</h3>
         <div class="list-item">
             @foreach($guesthouse_related as $k=>$item)
