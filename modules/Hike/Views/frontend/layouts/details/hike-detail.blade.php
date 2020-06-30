@@ -28,7 +28,7 @@
 </div>
 @if(!empty($row->duration) or !empty($row->category_hike->name) or !empty($row->max_people) or !empty($row->location->name))
     <div class="g-tour-feature">
-        <div class="row justify-content-between">
+        <div class="row justify-content-between px-3">
         @if($row->distance)
             <div class="col-md-5th-1 col-md-offset-0 col-sm-offset-2">
                 <div class="item">
@@ -110,11 +110,11 @@
                 </div>
             </div>
         @endif
-        {{--@if($row->techniques)
+        @if($row->techniques)
             <div class="col-md-5th-1 col-md-offset-0 col-sm-offset-2">
                 <div class="item">
                     <div class="icon">
-                        <img class="sand-clock-manage" data-toggle="tooltip" data-placement="top" src="{{asset('icon/hill.svg')}}" alt="sand-clock">
+                        <img class="sand-clock-manage" style="width: 48px; height: 42px;" data-toggle="tooltip" data-placement="top" src="{{asset('icon/hill.svg')}}" alt="sand-clock">
                         <!-- <i class="icofont-travelling"></i> -->
                     </div>
                     <div class="info">
@@ -129,7 +129,7 @@
                     </div>
                 </div>
             </div>
-        @endif--}}
+        @endif
         @include('Hike::frontend.layouts.details.hike-attributes')
         </div>
     </div>

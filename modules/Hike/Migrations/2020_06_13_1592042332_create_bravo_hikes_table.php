@@ -13,15 +13,15 @@ class CreateBravoHikesTable extends Migration
             $table->string('title', 765)->nullable();
             $table->string('slug', 765)->nullable();
             $table->text('content');
-            $table->text('the_tour');
-            $table->text('Turn_by_turn_locations');
-            $table->text('getting_there');
-            $table->text('literature');
-            $table->text('current_information');
-            $table->text('gpx_file');
+            $table->text('the_tour')->nullable();
+            $table->text('Turn_by_turn_locations')->nullable();
+            $table->text('getting_there')->nullable();
+            $table->text('literature')->nullable();
+            $table->text('current_information')->nullable();
+            $table->text('gpx_file')->nullable();
             $table->integer('image_id')->nullable();
             $table->integer('banner_image_id')->nullable();
-            $table->text('short_desc');
+            $table->text('short_desc')->nullable();
             $table->integer('category_id')->nullable();
             $table->integer('location_id')->nullable();
             $table->string('address', 765)->nullable();
@@ -36,7 +36,7 @@ class CreateBravoHikesTable extends Migration
             $table->integer('duration')->nullable();
             $table->integer('min_people')->nullable();
             $table->integer('max_people')->nullable();
-            $table->text('faqs');
+            $table->text('faqs')->nullable();
             $table->string('status', 150)->nullable();
             $table->datetime('publish_date')->nullable();
             $table->bigInteger('create_user')->nullable();
@@ -45,22 +45,22 @@ class CreateBravoHikesTable extends Migration
             $table->bigInteger('origin_id')->nullable();
             $table->string('lang', 30)->nullable();
             $table->tinyInteger('default_state')->nullable();
-            $table->text('include');
-            $table->text('exclude');
-            $table->text('itinerary');
-            $table->text('highest_point');
-            $table->text('lowest_point');
-            $table->text('experience');
-            $table->text('landscape');
-            $table->text('best_time');
-            $table->text('safety_information');
+            $table->text('include')->nullable();
+            $table->text('exclude')->nullable();
+            $table->text('itinerary')->nullable();
+            $table->text('highest_point')->nullable();
+            $table->text('lowest_point')->nullable();
+            $table->text('experience')->nullable();
+            $table->text('landscape')->nullable();
+            $table->text('best_time')->nullable();
+            $table->text('safety_information')->nullable();
             $table->string('distance')->nullable();
             $table->string('ascent')->nullable();
             $table->string('descent')->nullable();
-            $table->timestamps();
             $table->string('technique', 25)->nullable();
             $table->string('techniques', 25)->nullable();
-
+            $table->text('ical_import_url')->nullable();
+            $table->timestamps();
         });
     }
 

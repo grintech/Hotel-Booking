@@ -560,21 +560,31 @@ jQuery(function ($) {
         updateGuestCountText(parent);
     });
 
-    $('.select-guests-dropdown input').keyup(function(e){
-        var parent = $(this).closest('.form-select-guests');
-        updateGuestCountText(parent);
-    });
-    $('.select-guests-dropdown input').change(function(e){
+    $('.select-guests-dropdown input').on('keyup change', function(e){
         var parent = $(this).closest('.form-select-guests');
         updateGuestCountText(parent);
     });
 
     function updateGuestCountText(parent){
+        if(parent.is('#participants')){
+            var participants = parseInt(parent.find('[name=tourists]').val());
+            var pHtml = parent.find('.render .adults .multi').data('html');
+            parent.find('.render .adults .multi').html(pHtml.replace(':count',participants));
+
+            if(participants > 1){
+                parent.find('.render .adults .multi').removeClass('d-none');
+                parent.find('.render .adults .one').addClass('d-none');
+            }else{
+                parent.find('.render .adults .multi').addClass('d-none');
+                parent.find('.render .adults .one').removeClass('d-none');
+            }
+
+            return
+        }
         var adults = parseInt(parent.find('[name=adults]').val());
         var children = parseInt(parent.find('[name=children]').val());
 
         var adultsHtml = parent.find('.render .adults .multi').data('html');
-        console.log(parent,adultsHtml);
         parent.find('.render .adults .multi').html(adultsHtml.replace(':count',adults));
 
         var childrenHtml = parent.find('.render .children .multi').data('html');

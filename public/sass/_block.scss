@@ -451,6 +451,7 @@
          }
          .bravo-list-locations{
              .title{
+                 margin-top: 30px;
                  font-size: 28px;
                  margin-bottom: 25px;
                  @media(max-width: 766px){
@@ -1064,9 +1065,9 @@
                          width: 15px;
                          background: #fff;
                      }
-                     #bravo_tour{
-                         max-width: 1000px;
-                     }
+                     //#bravo_tour{
+                     //    max-width: 1000px;
+                     //}
                      #bravo_car{
                          max-width: 1000px;
                      }
