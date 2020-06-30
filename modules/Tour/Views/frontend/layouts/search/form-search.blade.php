@@ -1,4 +1,4 @@
-<form action="{{ route("tour.search") }}" class="form bravo_form" method="get">
+<form action="{{ route("tour.search") }}" class="form bravo_form form_search_tour" method="get">
     <div class="g-field-search">
         <div class="row">
             @php $tour_search_fields = setting_item_array('tour_search_fields');
@@ -18,6 +18,9 @@
                             @break
                             @case ('date')
                                 @include('Tour::frontend.layouts.search.fields.date')
+                            @break
+                            @case ('tourist')
+                                @include('Tour::frontend.layouts.search.fields.tourist')
                             @break
                         @endswitch
                     </div>

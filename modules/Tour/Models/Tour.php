@@ -977,6 +977,11 @@
                 }
             }
 
+            if(!empty( $tourists = $request->query("tourists") )){
+                $model_Tour->where('bravo_tours.min_people', '<=', $tourists);
+                $model_Tour->where('bravo_tours.max_people', '>=', $tourists);
+            }
+
             $model_Tour->orderBy("is_featured", "desc");
             $model_Tour->orderBy("id", "desc");
             $model_Tour->groupBy("bravo_tours.id");

@@ -21,6 +21,7 @@
                                 'service_name'=>__("Service name"),
                                 'location'=>__("Location"),
                                 'date'=>__("Date"),
+                                'tourist' => __("Tourist")
                             ];
                             @endphp
                             @foreach($tour_search_fields as $key=>$item)
