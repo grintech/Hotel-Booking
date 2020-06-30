@@ -16,8 +16,8 @@
                         @include('Hike::frontend.layouts.details.hike-review')
                     </div>
                     <div class="col-md-12 col-lg-3">
-{{--                        @include('Hike::frontend.layouts.details.vendor')--}}
-{{--                        @include('Hike::frontend.layouts.details.hike-form-book')--}}
+                        @include('Hike::frontend.layouts.details.vendor')
+                        @include('Hike::frontend.layouts.details.hike-form-book')
 {{--                        @include('Hike::frontend.layouts.details.open-hours')--}}
                     </div>
                 </div>
