@@ -35,7 +35,7 @@
 {{--Customized Version--}}
 <form action="{{url(app_get_locale(false,false,'/').config('hike.hike_route_prefix'))}}" class="form bravo_form" method="get">
     <div class="g-field-search">
-        <div class="row">
+        <div class="row" style="margin-bottom: 5px;">
             <div class="col-md-12 border-right">
                 <div class="form-group">
                     <i class="field-icon fa icofont-map"></i>
