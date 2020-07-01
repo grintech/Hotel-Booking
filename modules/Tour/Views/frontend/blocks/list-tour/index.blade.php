@@ -1,4 +1,4 @@
-<div class="bravo-list-tour {{$style_list}}">
+<div class="bravo-list-tour mt-4 {{$style_list}}">
     <div class="container">
         @if($title)
             <div class="title">
