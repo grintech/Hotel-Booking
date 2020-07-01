@@ -2,9 +2,9 @@
 deployment:
   tasks:
     - export REPOSITORYPATH=/home/g9fj0ibft8bx/repositories/wildyness
-    - export DEPLOYPATH=/home/g9fj0ibft8bx/public_html/wildyness
-    - rsync -r --exclude={'${REPOSITORYPATH}/.exclude.txt'} $REPOSITORYPATH $DEPLOYPATH
-    - rsync -r --exclude={'${REPOSITORYPATH}/public/.exclude.txt'} '${REPOSITORYPATH}/public' '${DEPLOYPATH}/public'
+    - export DEPLOYPATH=/home/g9fj0ibft8bx/public_html/wildyness/
+    - rsync -r --exclude-from={'${REPOSITORYPATH}/.exclude.txt'} $REPOSITORYPATH $DEPLOYPATH
+    - rsync -r --exclude-from={'${REPOSITORYPATH}/public/.exclude.txt'} '${REPOSITORYPATH}public' '${DEPLOYPATH}public'
     - cd $DEPLOYPATH
     - composer install
     - php artisan cache:clear

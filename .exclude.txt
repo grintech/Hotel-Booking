@@ -2,3 +2,4 @@ public
 .env
 .htaccess
 storage
+.git
