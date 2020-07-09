@@ -55,7 +55,7 @@
                                 $traverse($location->children, $prefix . '-');
                             }
                         };
-                        $traverse($hike_location);
+                        $traverse($tour_location);
                         ?>
                         <div class="smart-search">
                             <input type="text" class="smart-search-location parent_text form-control" {{ ( empty(setting_item("hike_location_search_style")) or setting_item("hike_location_search_style") == "normal" ) ? "readonly" : ""  }} placeholder="{{__("Where are you going?")}}" value="{{ $location_name }}" data-onLoad="{{__("Loading...")}}"

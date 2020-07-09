@@ -44,7 +44,7 @@ class FormSearchHike extends BaseBlock
             $limit_location = 1000;
         }
         $data = [
-            'hike_location' => Location::where("status","publish")->limit($limit_location)->with(['translations'])->get()->toTree(),
+            'tour_location' => Location::where("status","publish")->limit($limit_location)->with(['translations'])->get()->toTree(),
             'bg_image_url'  => '',
         ];
         $data = array_merge($model, $data);
