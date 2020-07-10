@@ -134,7 +134,6 @@ class HikeController extends AdminController
     }
 
     public function store( Request $request, $id ){
-
         if($id > 0){
             $this->checkPermission('hike_update');
             $row = $this->hikeClass::find($id);
@@ -171,7 +170,7 @@ class HikeController extends AdminController
                 return back()->with('success',  __('Only GPX Files are Allowed.') );
             }
             $file = $request->file('gpx_file');
-            $name = time().'.'.$file->getClientOriginalName();
+            $name = time().'.'.$file->getClientOriginalExtension();
             $destinationPath = public_path('/uploads/tour_gpx_files');
             $file->move($destinationPath, $name);
             $row->gpx_file = '/uploads/tour_gpx_files/'.$name;

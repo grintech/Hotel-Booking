@@ -29,23 +29,22 @@ class GuesthouseController extends Controller
 
     public function index(Request $request)
     {
-
         $is_ajax = $request->query('_ajax');
         $list = call_user_func([$this->guesthouseClass,'search'],$request);
         $markers = [];
-        if (!empty($list)) {
-            foreach ($list as $row) {
-                $markers[] = [
-                    "id"      => $row->id,
-                    "title"   => $row->title,
-                    "lat"     => (float)$row->map_lat,
-                    "lng"     => (float)$row->map_lng,
-                    "gallery" => $row->getGallery(true),
-                    "infobox" => view('Guesthouse::frontend.layouts.search.loop-grid', ['row' => $row,'disable_lazyload'=>1,'wrap_class'=>'infobox-item'])->render(),
-                    'marker'  => url('images/icons/png/pin.png'),
-                ];
+            if (!empty($list)) {
+                foreach ($list as $row) {
+                    $markers[] = [
+                        "id"      => $row->id,
+                        "title"   => $row->title,
+                        "lat"     => (float)$row->map_lat,
+                        "lng"     => (float)$row->map_lng,
+                        "gallery" => $row->getGallery(true),
+                        "infobox" => view('Guesthouse::frontend.layouts.search.loop-grid', ['row' => $row,'disable_lazyload'=>1,'wrap_class'=>'infobox-item'])->render(),
+                        'marker'  => url('images/icons/png/pin.png'),
+                    ];
+                }
             }
-        }
         $limit_location = 15;
         if( empty(setting_item("guesthouse_location_search_style")) or setting_item("guesthouse_location_search_style") == "normal" ){
             $limit_location = 1000;
@@ -94,7 +93,7 @@ class GuesthouseController extends Controller
         $data = [
             'row'          => $row,
             'translation'       => $translation,
-            'guesthouse_related' => $guesthouse_related,
+            'hotel_related' => $guesthouse_related,
             'booking_data' => $row->getBookingData(),
             'review_list'  => $review_list,
             'seo_meta'  => $row->getSeoMetaWithTranslation(app()->getLocale(),$translation),

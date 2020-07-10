@@ -85,12 +85,13 @@
 @section('footer')
     {!! App\Helpers\MapEngine::scripts() !!}
     @if(setting_item('map_provider') == "osm")
-        <script src="https://rawgithub.com/mpetazzoni/leaflet-gpx/master/gpx.js"></script>
+        <script src="{{ asset('js/gpx-parser.js') }}"></script>
         <script type="application/javascript">
             function display_gpx(elt) {
                 if (!elt) return;
 
                 var url = '{{ asset("$translation->gpx_file") }}';
+                console.log(url)
 
                 var map = L.map('map_content');
                 L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {

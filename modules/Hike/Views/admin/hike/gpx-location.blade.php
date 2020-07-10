@@ -18,7 +18,7 @@
                             <label for="file-upload" class="control-label custom-file-upload">
                                 <i class="fa fa-cloud-upload"></i> {{ isset($translation->gpx_file)?str_replace('/uploads/tour_gpx_files/','',$translation->gpx_file):__("Upload GPX File")}}
                             </label>
-                            <input id="file-upload" name='gpx_file' type="file"
+                            <input id="file-upload" name="gpx_file" accept=".gpx" type="file"
                                    value="{{ isset($translation->gpx_file)?$translation->gpx_file:__('Upload GPX File')}}"
                                    style="display:none;">
                         </div>

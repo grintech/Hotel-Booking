@@ -99,7 +99,7 @@ class HikeController extends Controller {
         $data = [
             'rows' => $list,
             'hike_category' => $this->hikeCategoryClass::where('status', 'publish')->with(['translations'])->get()->toTree(),
-            'hike_location' => $this->locationClass::where('status', 'publish')->with(['translations'])->limit($limit_location)->get()->toTree(),
+            'tour_location' => $this->locationClass::where('status', 'publish')->with(['translations'])->limit($limit_location)->get()->toTree(),
             'hike_min_max_price' => $this->hikeClass::getMinMaxPrice(),
             'markers' => $markers,
             "blank" => 1,

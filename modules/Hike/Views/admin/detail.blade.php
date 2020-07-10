@@ -1,7 +1,7 @@
 @extends('admin.layouts.app')
 
 @section('content')
-    <form action="{{route('hike.admin.store',['id'=>($row->id) ? $row->id : '-1','lang'=>request()->query('lang')])}}" method="post">
+    <form action="{{route('hike.admin.store',['id'=>($row->id) ? $row->id : '-1','lang'=>request()->query('lang')])}}" method="post" enctype="multipart/form-data">
         @csrf
         <div class="container-fluid">
             <div class="d-flex justify-content-between mb20">
@@ -27,6 +27,7 @@
                     <div class="col-md-9">
                         @include('Hike::admin.hike.hike-content')
                         @include('Hike::admin.hike.gpx-location')
+                        @include('Hike::admin.hike.hike-location')
                         @if(is_default_lang())
                             {{--@include('Hike::admin.hike.pricing')--}}
                             @include('Hike::admin.hike.availability')
