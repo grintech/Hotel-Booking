@@ -4,7 +4,14 @@ $user = Auth::user();
 $locale = App::getLocale();
 ?>
 <div class="header-logo flex-shrink-0">
-    <h3 class="logo-text"><a href="{{url('/admin')}}">{{__('Wildyness')}} <span class="app-version">{{config('app.version')}}</span></a></h3>
+    @if($logo_id = setting_item("logo_id"))
+        @php $logo = get_file_url($logo_id,'full') @endphp
+        <a href="https://wildyness.com" class="bravo-logo">
+            <img class="admin-logo" src="{{$logo}}" alt="{{setting_item("site_title")}}">
+        </a>
+    @else
+        <h3 class="logo-text"><a href="{{url('/admin')}}">{{__(setting_item("site_title"))}} <span class="app-version">{{config('app.version')}}</span></a></h3>
+    @endif
 </div>
 <div class="header-widgets d-flex flex-grow-1">
     <div class="widgets-left d-flex flex-grow-1 align-items-center">

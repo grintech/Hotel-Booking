@@ -106,7 +106,6 @@ if(!empty($custom_modules)){
         {
             $menuConfig = call_user_func([$moduleClass,'getAdminMenu']);
 
-            \Illuminate\Support\Facades\Log::info(json_encode($menuConfig));
             if(!empty($menuConfig)){
                 $menus = array_merge($menus,$menuConfig);
             }
@@ -222,7 +221,11 @@ if (!empty($menus)){
         @php $menuItem['class'] .= " ".str_ireplace("/","_",$menuItem['url']) @endphp
         <li class="{{$menuItem['class']}}"><a href="{{ url($menuItem['url']) }}">
                 @if(!empty($menuItem['icon']))
-                    <span class="icon text-center"><i class="{{$menuItem['icon']}}"></i></span>
+                    @if(array_key_exists('image-icon-support' , $menuItem) && $menuItem['image-icon-support'])
+                        <img src="{{ $menuItem['icon'] }}" style="max-width: 25px; margin-left: -5px; margin-right: 13px;">
+                    @else
+                        <span class="icon text-center"><i class="{{$menuItem['icon']}}"></i></span>
+                    @endif
                 @endif
                 {!! clean($menuItem['title'],[
                     'Attr.AllowedClasses'=>null

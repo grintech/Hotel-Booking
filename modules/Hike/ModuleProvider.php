@@ -42,7 +42,8 @@ class ModuleProvider extends ModuleServiceProvider
                 "position"=> 33,
                 'url'        => 'admin/module/hike',
                 'title'      => __("Hike"),
-                'icon'       => 'fa fa-check',
+                'icon'       => asset('icon/tracking-white.svg'),
+                'image-icon-support' => true,
                 'permission' => 'hike_view',
                 'children'   => [
                     'hike_view'=>[

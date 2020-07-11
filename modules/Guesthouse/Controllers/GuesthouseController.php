@@ -93,7 +93,7 @@ class GuesthouseController extends Controller
         $data = [
             'row'          => $row,
             'translation'       => $translation,
-            'hotel_related' => $guesthouse_related,
+            'guesthouse_related' => $guesthouse_related,
             'booking_data' => $row->getBookingData(),
             'review_list'  => $review_list,
             'seo_meta'  => $row->getSeoMetaWithTranslation(app()->getLocale(),$translation),

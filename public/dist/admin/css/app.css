@@ -1,5 +1,7 @@
 @charset "UTF-8";
-
+.admin-logo{
+  max-width: 200px;
+}
 .mb40 {
   margin-bottom: 40px;
 }

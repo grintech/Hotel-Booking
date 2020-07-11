@@ -17,7 +17,7 @@
                     </div>
                     <div class="col-md-12 col-lg-3">
                         @include('Hike::frontend.layouts.details.vendor')
-                        @include('Hike::frontend.layouts.details.hike-form-book')
+{{--                        @include('Hike::frontend.layouts.details.hike-form-book')--}}
 {{--                        @include('Hike::frontend.layouts.details.open-hours')--}}
                     </div>
                 </div>
@@ -91,7 +91,6 @@
                 if (!elt) return;
 
                 var url = '{{ asset("$translation->gpx_file") }}';
-                console.log(url)
 
                 var map = L.map('map_content');
                 L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
