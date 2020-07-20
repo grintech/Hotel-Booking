@@ -1,4 +1,4 @@
-<div class="bravo_filter">
+<div class="bravo_filter" style="position: sticky; position: -webkit-sticky; top: 10px;">
     <form action="{{url(app_get_locale(false,false,'/').config('car.car_route_prefix'))}}" class="bravo_form_filter">
         @if( !empty(Request::query('location_id')) )
             <input type="hidden" name="location_id" value="{{Request::query('location_id')}}">

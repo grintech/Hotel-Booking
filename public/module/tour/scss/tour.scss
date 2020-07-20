@@ -51,6 +51,9 @@
             border: 1px solid #D7DCE3;
             border-radius: 3px;
             margin-bottom: 30px;
+            position: sticky;
+            position: -webkit-sticky;
+            top: 10px;
             .filter-title {
                 font-size: 16px;
                 color: #1A2B48;
