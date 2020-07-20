@@ -16,9 +16,11 @@
                         @include('Tour::frontend.layouts.details.tour-review')
                     </div>
                     <div class="col-md-12 col-lg-3">
-                        @include('Tour::frontend.layouts.details.vendor')
-                        @include('Tour::frontend.layouts.details.tour-form-book')
-                        @include('Tour::frontend.layouts.details.open-hours')
+                        <div class="" style="position: sticky; position: -webkit-sticky; top: 10px;">
+                            @include('Tour::frontend.layouts.details.vendor')
+                            @include('Tour::frontend.layouts.details.tour-form-book')
+                            @include('Tour::frontend.layouts.details.open-hours')
+                        </div>
                     </div>
                 </div>
                 <div class="row end_tour_sticky">

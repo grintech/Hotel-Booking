@@ -2,7 +2,7 @@
 //if(!setting_item('hike_enable_inbox')) return;
 $vendor = $row->author;
 ?>
-<div class="owner-info widget-box" style="position: -webkit-sticky; position: sticky; top: 10px;">
+<div class="owner-info widget-box">
     <div class="media">
         <div class="media-left">
             <a href="{{route('user.profile',['id'=>$vendor->id])}}" target="_blank" >

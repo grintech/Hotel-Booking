@@ -16,8 +16,10 @@
                         @include('Event::frontend.layouts.details.review')
                     </div>
                     <div class="col-md-12 col-lg-3">
-                        @include('Tour::frontend.layouts.details.vendor')
-                        @include('Event::frontend.layouts.details.form-book')
+                        <div class="" style="position: sticky; position: -webkit-sticky; top: 10px;">
+                            @include('Tour::frontend.layouts.details.vendor')
+                            @include('Event::frontend.layouts.details.form-book')
+                        </div>
                     </div>
                 </div>
                 <div class="row end_tour_sticky">

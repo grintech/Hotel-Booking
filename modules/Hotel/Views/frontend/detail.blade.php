@@ -16,11 +16,13 @@
                         @include('Hotel::frontend.layouts.details.hotel-review')
                     </div>
                     <div class="col-md-12 col-lg-3">
-                        @include('Tour::frontend.layouts.details.vendor')
-                        @include('Hotel::frontend.layouts.details.hotel-form-enquiry')
-                        @include('Hotel::frontend.layouts.details.hotel-related-list')
-                        <div class="g-all-attribute is_pc">
-                            @include('Hotel::frontend.layouts.details.hotel-attributes')
+                        <div class="" style="position: sticky; position: -webkit-sticky; top: 10px;">
+                            @include('Tour::frontend.layouts.details.vendor')
+                            @include('Hotel::frontend.layouts.details.hotel-form-enquiry')
+                            @include('Hotel::frontend.layouts.details.hotel-related-list')
+                            <div class="g-all-attribute is_pc">
+                                @include('Hotel::frontend.layouts.details.hotel-attributes')
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -17,11 +17,13 @@
                         @include('Guesthouse::frontend.layouts.details.guesthouse-review')
                     </div>
                     <div class="col-md-12 col-lg-3">
-                        @include('Tour::frontend.layouts.details.vendor')
-                        @include('Guesthouse::frontend.layouts.details.guesthouse-form-enquiry')
-                        @include('Guesthouse::frontend.layouts.details.guesthouse-related-list')
-                        <div class="g-all-attribute is_pc">
-                            @include('Guesthouse::frontend.layouts.details.guesthouse-attributes')
+                        <div class="" style="position: sticky; position: -webkit-sticky; top: 10px;">
+                            @include('Tour::frontend.layouts.details.vendor')
+                            @include('Guesthouse::frontend.layouts.details.guesthouse-form-enquiry')
+                            @include('Guesthouse::frontend.layouts.details.guesthouse-related-list')
+                            <div class="g-all-attribute is_pc">
+                                @include('Guesthouse::frontend.layouts.details.guesthouse-attributes')
+                            </div>
                         </div>
                     </div>
                 </div>
