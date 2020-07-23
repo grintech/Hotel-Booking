@@ -14,6 +14,10 @@ class ReviewController extends Controller
     {
     }
 
+    public function index(){
+        return redirect('/');
+    }
+
     public function addReview(Request $request)
     {
         $service_type = $request->input('review_service_type');
