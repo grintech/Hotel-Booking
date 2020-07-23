@@ -312,7 +312,6 @@
                         bookingCoreApp.showError(this.i18n.date_required);
                     }
                 }
-
                 $.ajax({
                     url:bookingCore.url+'/guesthouse/checkAvailability',
                     data:{

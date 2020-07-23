@@ -16,6 +16,10 @@ class NewsController extends FrontendController
         parent::__construct();
     }
 
+    public function apiUser(Request $request){
+        return $request->user();
+    }
+
     public function index(Request $request)
     {
         $model_News = News::query()->select("core_news.*");
