@@ -38,7 +38,6 @@
             'landscape',
             'best_time',
             'safety_information',
-            'gpx_file',
             'image_id',
             'banner_image_id',
             'short_desc',
