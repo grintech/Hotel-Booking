@@ -31,7 +31,7 @@
             <li> {{__('DATE ')}}  {{ display_date($row->updated_at)}}  </li>
         </ul>
     </div>
-    <div class="post-content"> {!! $translation->content !!}</div>
+    <div class="post-content" style=" border-top: solid 2px #1a2b48; padding:20px 40px; background-color: #f8f9fa;"> {!! $translation->content !!}</div>
     <div class="space-between">
         @if (!empty($tags = $row->getTags()) and count($tags) > 0)
             <div class="tags">
