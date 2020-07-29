@@ -3,7 +3,7 @@
         <h4>{{ $item->title }}</h4>
     </div>
     <ul class="thumb-list">
-        @php $list_blog = $model_news->with(['getCategory','translations'])->orderBy('id','desc')->paginate(5) @endphp
+        @php $list_blog = $model_news->with(['getCategory','translations'])->orderBy('id','desc')->limit(3)->get() @endphp
         @if($list_blog)
             @foreach($list_blog as $blog)
                 @php $translation = $blog->translateOrOrigin(app()->getLocale()) @endphp
