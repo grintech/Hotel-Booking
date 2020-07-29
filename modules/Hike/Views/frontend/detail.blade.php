@@ -95,6 +95,7 @@
                 var url = '{{ asset("$translation->gpx_file") }}';
 
                 var map = L.map('map_content');
+                map.scrollWheelZoom.disable();
                 L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     attribution: 'Map data &copy; <a href="http://www.osm.org">OpenStreetMap</a>'
                 }).addTo(map);

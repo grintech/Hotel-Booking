@@ -88,6 +88,7 @@
             var zoom = me.getOption('zoom');
 
             me.map = L.map(me.id).setView(center, zoom);
+            me.map.scrollWheelZoom.disable();
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -279,6 +280,7 @@
                 zoom: zoom,
                 maxZoom:15
             });
+            me.map.scrollWheelZoom.disable();
 
             var rd = me.getOption('ready');
             if(typeof rd == "function"){
