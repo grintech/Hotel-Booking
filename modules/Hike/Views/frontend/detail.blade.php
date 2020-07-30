@@ -17,7 +17,7 @@
                     </div>
                     <div class="col-md-12 col-lg-3">
                         <div class="" style="position: sticky; position: -webkit-sticky; top: 10px;">
-                            @include('Hike::frontend.layouts.details.vendor')
+                            @include('Tour::frontend.layouts.details.vendor')
                             {{--                        @include('Hike::frontend.layouts.details.hike-form-book')--}}
                             {{--                        @include('Hike::frontend.layouts.details.open-hours')--}}
                         </div>

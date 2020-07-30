@@ -27,4 +27,7 @@ $vendor = $row->author;
             @endif
         </div>
     </div>
+    @if($vendor->bio)
+        <p class="mt-1">{!! substr($vendor->bio, 0 , 100) !!} <a style="font-size: 12px;" href="{{route('user.profile',['id'=>$vendor->id])}}" target="_blank">Read More</a></p>
+    @endif
 </div>
