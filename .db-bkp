@@ -1,1 +1,1 @@
-/usr/bin/mysqldump -u walkbes1_wildy -p'h(Sd@1Qbvx4t' walkbes1_wildyness > /home4/walkbes1/backup/wildyness-${date +%s}.sql && find /home4/walkbes1/backup -mindepth 1 -mtime +5 -delete
+/usr/bin/mysqldump -u walkbes1_wildy -p'h(Sd@1Qbvx4t' walkbes1_wildyness > /home4/walkbes1/backup/`date +"\%Y-\%m-\%d_\%H-\%M"`-wildyness.sql && find /home4/walkbes1/backup -mindepth 1 -mtime +5 -delete
