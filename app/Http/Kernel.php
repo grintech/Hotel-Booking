@@ -24,7 +24,6 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\TrustProxies::class,
         \App\Http\Middleware\InitConfigsFromDatabase::class,
         \App\Http\Middleware\RedirectForMultiLanguage::class,
-        HTMLMinify::class,
     ];
 
     /**
