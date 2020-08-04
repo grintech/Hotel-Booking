@@ -71,6 +71,16 @@
                                         </select>
                                     </div>
                                     <div class="form-group">
+                                        <label>{{  __('Location')}} </label>
+                                        <select name="location_id" class="form-control">
+                                            <option value="">{{ __('-- Please Select --')}} </option>
+                                            @foreach($locations as $location)
+                                                <option value="{{ $location->id }}">{{ $location->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
                                         <label class="control-label"> {{ __('Tag')}}</label>
                                         <div class="">
                                             <input type="text" data-role="tagsinput" value="{{$row->tag}}" placeholder="{{ __('Enter tag')}}" name="tag" class="form-control tag-input">

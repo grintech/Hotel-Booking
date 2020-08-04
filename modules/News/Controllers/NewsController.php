@@ -3,6 +3,8 @@ namespace Modules\News\Controllers;
 
 use Illuminate\Http\Request;
 use Modules\FrontendController;
+use Modules\Guesthouse\Models\Guesthouse;
+use Modules\Hike\Models\Hike;
 use Modules\Language\Models\Language;
 use Modules\News\Models\News;
 use Modules\News\Models\NewsCategory;
@@ -47,6 +49,8 @@ class NewsController extends FrontendController
             'model_category'    => NewsCategory::query()->where("status", "publish"),
             'model_tag'         => Tag::query(),
             'model_news'        => News::query()->where("status", "publish"),
+            'model_hikes'       => Hike::where("status", "publish"),
+            'model_guesthouses' => Guesthouse::where("status", "publish"),
             'custom_title_page' => $title_page ?? "",
             'breadcrumbs'       => [
                 [
@@ -76,6 +80,8 @@ class NewsController extends FrontendController
             'model_category'    => NewsCategory::where("status", "publish"),
             'model_tag'         => Tag::query(),
             'model_news'        => News::where("status", "publish"),
+            'model_hikes'       => Hike::where(["status" => "publish", "location_id" => $row->location_id]),
+            'model_guesthouses' => Guesthouse::where(["status" => "publish", "location_id" => $row->location_id]),
             'custom_title_page' => $title_page ?? "",
             'breadcrumbs'       => [
                 [

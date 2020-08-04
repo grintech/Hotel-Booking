@@ -4,6 +4,7 @@ namespace Modules\News\Admin;
 use Illuminate\Http\Request;
 use Modules\AdminController;
 use Modules\Language\Models\Language;
+use Modules\Location\Models\Location;
 use Modules\News\Models\NewsCategory;
 use Modules\News\Models\News;
 use Modules\News\Models\NewsTranslation;
@@ -62,6 +63,7 @@ class NewsController extends AdminController
         ]);
         $data = [
             'categories'        => NewsCategory::get()->toTree(),
+            'locations'        => Location::select('id', 'name')->get(),
             'row'         => $row,
             'breadcrumbs' => [
                 [
@@ -92,6 +94,7 @@ class NewsController extends AdminController
 
         $data = [
             'row'  => $row,
+            'locations'        => Location::select('id', 'name')->get(),
             'translation'  => $translation,
             'categories' => NewsCategory::get()->toTree(),
             'tags' => $row->getTags(),
