@@ -10,6 +10,7 @@ use Modules\News\Models\News;
 use Modules\News\Models\NewsCategory;
 use Modules\News\Models\NewsTranslation;
 use Modules\News\Models\Tag;
+use Modules\Tour\Models\Tour;
 
 class NewsController extends FrontendController
 {
@@ -51,6 +52,7 @@ class NewsController extends FrontendController
             'model_news'        => News::query()->where("status", "publish"),
             'model_hikes'       => Hike::where("status", "publish"),
             'model_guesthouses' => Guesthouse::where("status", "publish"),
+            'model_tours'       => Tour::where("status", "publish"),
             'custom_title_page' => $title_page ?? "",
             'breadcrumbs'       => [
                 [
@@ -82,6 +84,7 @@ class NewsController extends FrontendController
             'model_news'        => News::where("status", "publish"),
             'model_hikes'       => Hike::where(["status" => "publish", "location_id" => $row->location_id]),
             'model_guesthouses' => Guesthouse::where(["status" => "publish", "location_id" => $row->location_id]),
+            'model_tours'       => Tour::where(["status" => "publish", "location_id" => $row->location_id]),
             'custom_title_page' => $title_page ?? "",
             'breadcrumbs'       => [
                 [

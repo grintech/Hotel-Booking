@@ -132,8 +132,9 @@
                                                     <option @if(!empty($item->type) && $item->type=='category') selected @endif value="category">{{__("Category")}}</option>
                                                     <option @if(!empty($item->type) && $item->type=='tag') selected @endif value="tag">{{__("Tags")}}</option>
                                                     <option @if(!empty($item->type) && $item->type=='content_text') selected @endif value="content_text">{{__("Content Text")}}</option>
-                                                    <option @if(!empty($item->type) && $item->type=='guesthouses') selected @endif value="content_text">{{__("Related Guesthouses")}}</option>
-                                                    <option @if(!empty($item->type) && $item->type=='hikes') selected @endif value="content_text">{{__("Related Hikes")}}</option>
+                                                    <option @if(!empty($item->type) && $item->type=='guesthouses') selected @endif value="guesthouses">{{__("Related Guesthouses")}}</option>
+                                                    <option @if(!empty($item->type) && $item->type=='hikes') selected @endif value="hikes">{{__("Related Hikes")}}</option>
+                                                    <option @if(!empty($item->type) && $item->type=='hikes') selected @endif value="tours">{{__("Related Guided Tours")}}</option>
                                                 </select>
                                             </div>
                                             <div class="col-md-1">
@@ -163,6 +164,7 @@
                                                 <option value="content_text">{{__("Content Text")}}</option>
                                                 <option value="guesthouses">{{__("Related Guesthouses")}}</option>
                                                 <option value="hikes">{{__("Related Hikes")}}</option>
+                                                <option value="tours">{{__("Related Guided Tours")}}</option>
                                             </select>
                                         </div>
                                         <div class="col-md-1">
