@@ -17,7 +17,9 @@
                     @endif
                     <div class="content">
                         <h5 class="thumb-list-item-title">
-                            <a href="{{ $blog->getDetailUrl(app()->getLocale()) }}">{{$translation->title}}</a>
+                            <a href="{{ $blog->getDetailUrl(app()->getLocale()) }}">
+                                {{ strlen($translation->title) > 40 ? substr($translation->title, 0 , 39) . ' ...' : $translation->title}}
+                            </a>
                         </h5>
                     </div>
                 </li>
