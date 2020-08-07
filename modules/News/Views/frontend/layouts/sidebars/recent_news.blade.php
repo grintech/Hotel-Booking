@@ -16,14 +16,6 @@
                         </div>
                     @endif
                     <div class="content">
-                        @if(!empty($blog->getCategory->name))
-                            <div class="cate">
-                                <a href="{{$blog->getCategory->getDetailUrl()}}">
-                                    @php $translation_cat = $blog->getCategory->translateOrOrigin(app()->getLocale()); @endphp
-                                    {{$translation_cat->name ?? ''}}
-                                </a>
-                            </div>
-                        @endif
                         <h5 class="thumb-list-item-title">
                             <a href="{{ $blog->getDetailUrl(app()->getLocale()) }}">{{$translation->title}}</a>
                         </h5>
