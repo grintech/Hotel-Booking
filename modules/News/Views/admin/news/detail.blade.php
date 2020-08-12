@@ -75,7 +75,7 @@
                                         <select name="location_id" class="form-control">
                                             <option value="">{{ __('-- Please Select --')}} </option>
                                             @foreach($locations as $location)
-                                                <option value="{{ $location->id }}">{{ $location->name }}</option>
+                                                <option value="{{ $location->id }}" @if($row->location_id == $location->id) selected @endif>{{ $location->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>

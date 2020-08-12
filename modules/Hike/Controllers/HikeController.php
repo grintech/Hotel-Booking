@@ -6,10 +6,12 @@ use App\Http\Controllers\Controller;
 use DB;
 use Illuminate\Http\Request;
 use Modules\Core\Models\Attributes;
+use Modules\Guesthouse\Models\Guesthouse;
 use Modules\Hike\Models\Hike;
 use Modules\Hike\Models\HikeCategory;
 use Modules\Location\Models\Location;
 use Modules\Review\Models\Review;
+use Modules\Tour\Models\Tour;
 
 class HikeController extends Controller {
     protected $hikeClass;
@@ -131,9 +133,11 @@ class HikeController extends Controller {
         }
         $translation = $row->translateOrOrigin(app()->getLocale());
         $hike_related = [];
+        $guesthouse_related = [];
         $location_id = $row->location_id;
         if (!empty($location_id)) {
             $hike_related = $this->hikeClass::where('location_id', $location_id)->where("status", "publish")->take(4)->whereNotIn('id', [$row->id])->with(['location', 'translations', 'hasWishList'])->get();
+            $guesthouse_related = Guesthouse::where('location_id', $location_id)->where("status", "publish")->take(4)->with(['translations'])->get();
         }
         $review_list = Review::where('object_id', $row->id)
             ->where('object_model', 'hike')
@@ -145,6 +149,7 @@ class HikeController extends Controller {
             'row' => $row,
             'translation' => $translation,
             'hike_related' => $hike_related,
+            'guesthouse_related' => $guesthouse_related,
             'booking_data' => $row->getBookingData(),
             'review_list' => $review_list,
             'seo_meta' => $row->getSeoMetaWithTranslation(app()->getLocale(), $translation),

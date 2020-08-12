@@ -175,6 +175,68 @@
 
     //Page Detail Tour
     .bravo_detail_tour {
+        .sidebar-widget{
+            margin-bottom: 30px;
+            /*margin-top: 30px;*/
+            .sidebar-title {
+                position: relative;
+                h4 {
+                    font-size: 16px;
+                    color: #1A2B48;
+                    font-weight: 500;
+                    background-color: #fff;
+                    position: relative;
+                    display: inline-block;
+                    z-index: 9;
+                    padding-right: 25px;
+                    padding-bottom: 20px;
+                    margin: 0;
+                }
+                &:after {
+                    content: "";
+                    height: 1px;
+                    background: #D7DCE3;
+                    display: block;
+                    position: absolute;
+                    top: 9px;
+                    width: 100%;
+                    margin-top: 0px;
+                }
+            }
+        }
+        .widget_bloglist{
+            ul {
+                padding: 0;
+                margin: 0;
+                li {
+                    list-style: none;
+                    display: -webkit-box;
+                    display: -ms-flexbox;
+                    display: flex;
+                    margin-bottom: 20px;
+                    .thumb img {
+                        border-radius: 3px;
+                        margin-right: 15px;
+                        max-width: 100px;
+                    }
+                    .content .cate {
+                        text-transform: uppercase;
+                        a {
+                            font-size: 12px;
+                            font-weight: 600;
+                        }
+                    }
+                    .content .thumb-list-item-title {
+                        font-weight: 500;
+                        a {
+                            color: #1A2B48;
+                            line-height: 10px;
+                            font-size: 14px;
+                        }
+                    }
+                }
+            }
+        }
         .bravo_banner {
             background-color: #fff !important;
             background-position: center !important;

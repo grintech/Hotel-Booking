@@ -8,6 +8,7 @@ use Modules\Location\Models\Location;
 use Modules\Review\Models\Review;
 use Modules\Core\Models\Attributes;
 use DB;
+use Modules\Tour\Models\Tour;
 
 class GuesthouseController extends Controller
 {
@@ -85,15 +86,18 @@ class GuesthouseController extends Controller
         }
         $translation = $row->translateOrOrigin(app()->getLocale());
         $guesthouse_related = [];
+        $tour_related = [];
         $location_id = $row->location_id;
         if (!empty($location_id)) {
             $guesthouse_related = $this->guesthouseClass::where('location_id', $location_id)->where("status", "publish")->take(4)->whereNotIn('id', [$row->id])->with(['location','translations','hasWishList'])->get();
+            $tour_related = Tour::where('location_id', $location_id)->where("status", "publish")->take(3)->with(['translations'])->get();
         }
         $review_list = Review::where('object_id', $row->id)->where('object_model', 'guesthouse')->where("status", "approved")->orderBy("id", "desc")->with('author')->paginate(setting_item('guesthouse_review_number_per_page', 5));
         $data = [
             'row'          => $row,
             'translation'       => $translation,
             'guesthouse_related' => $guesthouse_related,
+            'tour_related' => $tour_related,
             'booking_data' => $row->getBookingData(),
             'review_list'  => $review_list,
             'seo_meta'  => $row->getSeoMetaWithTranslation(app()->getLocale(),$translation),

@@ -24,6 +24,7 @@
                             <div class="g-all-attribute is_pc">
                                 @include('Guesthouse::frontend.layouts.details.guesthouse-attributes')
                             </div>
+                            @include('Guesthouse::frontend.layouts.details.tour-related')
                         </div>
                     </div>
                 </div>
