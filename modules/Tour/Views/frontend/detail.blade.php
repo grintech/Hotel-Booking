@@ -20,7 +20,7 @@
                             @include('Tour::frontend.layouts.details.vendor')
                             @include('Tour::frontend.layouts.details.tour-form-book')
                             @include('Tour::frontend.layouts.details.open-hours')
-                            @include('Tour::frontend.layouts.details.guesthouse-related')
+                            @include('Tour::frontend.layouts.details.sidebar')
                         </div>
                     </div>
                 </div>

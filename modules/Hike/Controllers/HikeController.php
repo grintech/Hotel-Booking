@@ -133,11 +133,13 @@ class HikeController extends Controller {
         }
         $translation = $row->translateOrOrigin(app()->getLocale());
         $hike_related = [];
-        $guesthouse_related = [];
+        $guesthouse_related = false;
+        $tour_related = false;
         $location_id = $row->location_id;
         if (!empty($location_id)) {
             $hike_related = $this->hikeClass::where('location_id', $location_id)->where("status", "publish")->take(4)->whereNotIn('id', [$row->id])->with(['location', 'translations', 'hasWishList'])->get();
-            $guesthouse_related = Guesthouse::where('location_id', $location_id)->where("status", "publish")->take(4)->with(['translations'])->get();
+            $guesthouse_related = Guesthouse::where('location_id', $location_id)->where("status", "publish")->take(4)->with(['translations']);
+            $tour_related = Tour::where('location_id', $location_id)->where("status", "publish")->take(4)->with(['translations']);
         }
         $review_list = Review::where('object_id', $row->id)
             ->where('object_model', 'hike')
@@ -150,6 +152,7 @@ class HikeController extends Controller {
             'translation' => $translation,
             'hike_related' => $hike_related,
             'guesthouse_related' => $guesthouse_related,
+            'tour_related' => $tour_related,
             'booking_data' => $row->getBookingData(),
             'review_list' => $review_list,
             'seo_meta' => $row->getSeoMetaWithTranslation(app()->getLocale(), $translation),

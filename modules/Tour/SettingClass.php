@@ -45,6 +45,8 @@ class SettingClass extends BaseSettingsClass
                     'tour_deposit_type',
                     'tour_deposit_amount',
                     'tour_deposit_fomular',
+
+                    'tour_sidebar'
                 ],
                 'html_keys'=>[
 

@@ -134,7 +134,7 @@
                                                     <option @if(!empty($item->type) && $item->type=='content_text') selected @endif value="content_text">{{__("Content Text")}}</option>
                                                     <option @if(!empty($item->type) && $item->type=='guesthouses') selected @endif value="guesthouses">{{__("Related Guesthouses")}}</option>
                                                     <option @if(!empty($item->type) && $item->type=='hikes') selected @endif value="hikes">{{__("Related Hikes")}}</option>
-                                                    <option @if(!empty($item->type) && $item->type=='hikes') selected @endif value="tours">{{__("Related Guided Tours")}}</option>
+                                                    <option @if(!empty($item->type) && $item->type=='tours') selected @endif value="tours">{{__("Related Guided Tours")}}</option>
                                                 </select>
                                             </div>
                                             <div class="col-md-1">

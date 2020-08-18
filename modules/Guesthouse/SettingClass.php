@@ -45,6 +45,7 @@ class SettingClass extends BaseSettingsClass
                     'guesthouse_deposit_type',
                     'guesthouse_deposit_amount',
                     'guesthouse_deposit_fomular',
+                    'guesthouse_sidebar',
                 ],
                 'html_keys'=>[
 

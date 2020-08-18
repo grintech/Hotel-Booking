@@ -1,6 +1,9 @@
+@php
+    $tour_related = $tour_related ? $tour_related->get() : [];
+@endphp
 @if(count($tour_related) > 0)
     <div class="bravo-list-hotel-related-widget">
-        <h3 class="heading">{{__("Related Tours")}}</h3>
+        <h3 class="heading">{{ $item->title }}</h3>
         <div class="list-item">
             @foreach($tour_related as $tour)
                 @php $translation = $tour->translateOrOrigin(app()->getLocale()) @endphp

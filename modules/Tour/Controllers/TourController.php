@@ -3,6 +3,7 @@
     namespace Modules\Tour\Controllers;
     use App\Http\Controllers\Controller;
     use Modules\Guesthouse\Models\Guesthouse;
+    use Modules\Hike\Models\Hike;
     use Modules\Tour\Models\Tour;
     use Illuminate\Http\Request;
     use Modules\Tour\Models\TourCategory;
@@ -91,12 +92,13 @@
                 return redirect('/');
             }
             $translation = $row->translateOrOrigin(app()->getLocale());
-            $tour_related = [];
-            $guesthouse_related = [];
+            $tour_related = false;
+            $guesthouse_related = false;
             $location_id = $row->location_id;
             if (!empty($location_id)) {
                 $tour_related = $this->tourClass::where('location_id', $location_id)->where("status","publish")->take(4)->whereNotIn('id', [$row->id])->with(['location','translations','hasWishList'])->get();
-                $guesthouse_related =Guesthouse::where('location_id', $location_id)->where("status","publish")->take(4)->with(['translations'])->get();
+                $guesthouse_related = Guesthouse::where('location_id', $location_id)->where("status","publish")->take(4)->with(['translations']);
+                $hike_related = Hike::where('location_id', $location_id)->where("status","publish")->take(4)->with(['translations']);
             }
             $review_list = Review::where('object_id', $row->id)
                 ->where('object_model', 'tour')
@@ -109,6 +111,7 @@
                 'translation' => $translation,
                 'tour_related' => $tour_related,
                 'guesthouse_related' => $guesthouse_related,
+                'hike_related' => $hike_related,
                 'booking_data' => $row->getBookingData(),
                 'review_list' => $review_list,
                 'seo_meta' => $row->getSeoMetaWithTranslation(app()->getLocale(), $translation),

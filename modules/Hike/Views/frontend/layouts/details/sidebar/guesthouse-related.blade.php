@@ -1,7 +1,10 @@
+@php
+    $guesthouse_related = $guesthouse_related ?  $guesthouse_related->get() : [];
+@endphp
 @if(count($guesthouse_related) > 0)
     <div class="sidebar-widget widget_bloglist" style="margin-top: 30px">
         <div class="sidebar-title">
-            <h4>Guesthouses Available</h4>
+            <h4>{{ $item->title }}</h4>
         </div>
         <ul class="thumb-list">
             @foreach($guesthouse_related as $guesthouse)

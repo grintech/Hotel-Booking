@@ -16,7 +16,7 @@
                         @include('Guesthouse::frontend.layouts.details.guesthouse-detail')
                         @include('Guesthouse::frontend.layouts.details.guesthouse-review')
                     </div>
-                    <div class="col-md-12 col-lg-3">
+                    <div class="col-md-12 col-lg-3 mb-4">
                         <div class="" style="position: sticky; position: -webkit-sticky; top: 10px;">
                             @include('Tour::frontend.layouts.details.vendor')
                             @include('Guesthouse::frontend.layouts.details.guesthouse-form-enquiry')
@@ -24,7 +24,7 @@
                             <div class="g-all-attribute is_pc">
                                 @include('Guesthouse::frontend.layouts.details.guesthouse-attributes')
                             </div>
-                            @include('Guesthouse::frontend.layouts.details.tour-related')
+                            @include('Guesthouse::frontend.layouts.details.sidebar')
                         </div>
                     </div>
                 </div>

@@ -39,12 +39,12 @@ class SettingClass extends BaseSettingsClass
                     'hike_allow_vendor_can_change_their_booking_status',
                     'hike_search_fields',
                     'hike_map_search_fields',
-
                     'hike_allow_review_after_making_completed_booking',
                     'hike_deposit_enable',
                     'hike_deposit_type',
                     'hike_deposit_amount',
                     'hike_deposit_fomular',
+                    'hike_sidebar',
                 ],
                 'html_keys'=>[
 
