@@ -1,5 +1,5 @@
 <div class="bravo_header">
-    <div class="{{$container_class ?? 'container'}}">
+    <div class="{{$container_class ?? 'container-fluid'}}">
         <div class="content">
             <div class="header-left">
                 <a href="{{url(app_get_locale(false,'/'))}}" class="bravo-logo">
