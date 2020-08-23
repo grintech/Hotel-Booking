@@ -24,11 +24,12 @@
         <ul>
             @if(!empty($row->getAuthor))
                 <li>
-                    <span> {{ __('BY ')}} </span>
-                    {{$row->getAuthor->getDisplayName() ?? ''}}
+                    <img class="avatar" src="{{$row->getAuthor->getAvatarUrl()}}" alt="{{$row->getAuthor->getDisplayName()}}">
+                    <span> {{ __('By ')}} </span>
+                    <a href="{{route('user.profile',['id'=>$row->getAuthor->id])}}" target="_blank">{{$row->getAuthor->getDisplayName() ?? ''}}</a>
                 </li>
             @endif
-            <li> {{__('DATE ')}}  {{ display_date($row->updated_at)}}  </li>
+            <li> <span class="fa fa-calendar"></span> {{ display_date($row->updated_at, 'F d, Y')}}  </li>
         </ul>
     </div>
     <div class="post-content" style=" border-top: solid 2px #1a2b48; padding:20px 40px; background-color: #f8f9fa;"> {!! $translation->content !!}</div>

@@ -222,7 +222,7 @@ function php_to_moment_format($format){
     return $momentFormat;
 }
 
-function display_date($time){
+function display_date($time, $format = false){
 
     if($time){
         if(is_string($time)){
@@ -230,13 +230,13 @@ function display_date($time){
         }
 
         if(is_object($time)){
-            return $time->format(get_date_format());
+            return $time->format($format ? $format : get_date_format());
         }
     }else{
        $time=strtotime(today());
     }
 
-    return date(get_date_format(),$time);
+    return date($format ? $format : get_date_format(),$time);
 }
 
 function display_datetime($time){
