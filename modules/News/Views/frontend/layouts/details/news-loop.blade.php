@@ -40,7 +40,7 @@
                                 {{$row->getAuthor->getDisplayName() ?? ''}}
                             </li>
                         @endif
-                        <li> {{__('DATE ')}}  {{ display_date($row->updated_at)}}  </li>
+                        {{--<li> {{__('DATE ')}}  {{ display_date($row->updated_at)}}  </li>--}}
                     </ul>
                 </div>
                 <div class="post-desciption">
