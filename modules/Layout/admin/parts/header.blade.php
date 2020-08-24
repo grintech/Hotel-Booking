@@ -58,8 +58,9 @@ $locale = App::getLocale();
         <div class="dropdown header-widget widget-user">
             <div data-toggle="dropdown" class="user-dropdown d-flex align-items-center" aria-haspopup="true" aria-expanded="false">
                 <span class="user-avatar flex-shrink-0">
-                    @if($user->avatar_url):
-                    <img class="image-responsive" src="{{$user->avatar_url}}" alt="{{$user->getDisplayName()}}">
+                    @php $avatar =  $user->getAvatarUrl() @endphp
+                    @if($avatar)
+                        <img class="image-responsive" style="height: 40px; width: 40px; border-radius: 50%;" src="{{$avatar}}" alt="{{$user->getDisplayName()}}">
                     @else
                         <span class="avatar-text">{{ucfirst($user->getDisplayName()[0])}}</span>
                     @endif

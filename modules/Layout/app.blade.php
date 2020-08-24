@@ -29,62 +29,6 @@
     <link href="{{ asset('dist/frontend/css/app.css?_ver='.config('app.version')) }}" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ asset("libs/daterange/daterangepicker.css") }}" >
 
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
-        .bravo-form-search-all{
-            min-height: 100vh;
-            margin-top: -94px;
-        }
-
-        .bravo_header .content img{
-            transition: all .3s ease-out;
-        }
-
-        .bravo_wrap .bravo_header.fixed-top .content .header-left .bravo-menu ul li a {
-            color: #1a2b48;
-        }
-
-        .bravo_wrap .bravo_header .content .header-left .bravo-menu ul li a{
-            transition: all .2s ease-out;
-            color: white;
-            text-transform: none;
-            font-weight: bold;
-        }
-        .bravo_header.fixed-top .container-fluid,  .bravo_header.fixed-top .container-fluid {
-            transition: background-color .2s ease-out;
-            padding: 0;
-        }
-        .bravo_header.fixed-top .container-fluid,  .bravo_header.fixed-top .container-fluid .content {
-            background-color: white;
-            box-shadow: 1px 0 1px #1a2b48;
-            /*box-shadow: 2px 3px 8px rgba(0,0,0,.1);*/
-        }
-
-        .bravo_header.fixed-top{
-            background-color: unset;
-        }
-        .bravo_header .content img{
-            max-height: 65px;
-            filter: brightness(0) invert(1);
-        }
-        .bravo_header .content img.fixed-logo{
-            max-height: 60px;
-            filter: none;
-        }
-        .bravo_wrap .page-template-content .bravo-form-search-all .text-heading{
-            text-align: center;
-        }
-        .bravo_wrap .page-template-content .bravo-form-search-all .sub-heading{
-            text-align: center;
-        }
-        .bravo_wrap .page-template-content .bravo-form-search-all{
-            padding: 200px 0;
-        }
-        body{
-            font-family: 'Quicksand', sans-serif;
-        }
-    </style>
-
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link rel='stylesheet' id='google-font-css-css'  href='https://fonts.googleapis.com/css?family=Poppins%3A300%2C400%2C500%2C600' type='text/css' media='all' />
@@ -160,6 +104,61 @@
     {!! setting_item_with_lang_raw('head_scripts') !!}
 
     @php event(new \Modules\Layout\Events\LayoutEndHead()); @endphp
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
+        .bravo-form-search-all{
+            min-height: 100vh;
+            margin-top: -94px;
+        }
+
+        .bravo_header .content img{
+            transition: all .3s ease-out;
+        }
+
+        .bravo_wrap .bravo_header.fixed-top .content .header-left .bravo-menu ul li a {
+            color: #1a2b48;
+        }
+
+        .bravo_wrap .bravo_header .content .header-left .bravo-menu ul li a{
+            transition: all .2s ease-out;
+            color: white;
+            text-transform: none;
+            font-weight: bold;
+        }
+        .bravo_header.fixed-top .container-fluid,  .bravo_header.fixed-top .container-fluid {
+            transition: background-color .2s ease-out;
+            padding: 0;
+        }
+        .bravo_header.fixed-top .container-fluid,  .bravo_header.fixed-top .container-fluid .content {
+            background-color: white;
+            box-shadow: 1px 0 1px #1a2b48;
+            /*box-shadow: 2px 3px 8px rgba(0,0,0,.1);*/
+        }
+
+        .bravo_header.fixed-top{
+            background-color: unset;
+        }
+        .bravo_header .content img{
+            max-height: 65px;
+            filter: brightness(0) invert(1);
+        }
+        .bravo_header .content img.fixed-logo{
+            max-height: 60px;
+            filter: none;
+        }
+        .bravo_wrap .page-template-content .bravo-form-search-all .text-heading{
+            text-align: center;
+        }
+        .bravo_wrap .page-template-content .bravo-form-search-all .sub-heading{
+            text-align: center;
+        }
+        .bravo_wrap .page-template-content .bravo-form-search-all{
+            padding: 200px 0;
+        }
+        body{
+            font-family: 'Quicksand', sans-serif;
+        }
+    </style>
 </head>
 <body class="frontend-page {{$body_class ?? ''}} @if(setting_item_with_lang('enable_rtl')) is-rtl @endif">
     @php event(new \Modules\Layout\Events\LayoutBeginBody()); @endphp
