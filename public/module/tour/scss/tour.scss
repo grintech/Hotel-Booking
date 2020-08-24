@@ -470,9 +470,10 @@
                   margin-bottom: 30px;
                   .description {
                       padding: 20px;
+                      border-top: solid 2px #1a2b48;
                       background-color: #f8f9fa;
                       font-size: 14px;
-                      color: #5E6D77;
+                      color: #1a2b48;
                       font-weight: 400;
                       position: relative;
                       @media(max-width: 766px){
