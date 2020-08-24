@@ -1,11 +1,11 @@
-<div class="bravo_header">
+<div class="bravo_header bravo-header-sticky">
     <div class="{{$container_class ?? 'container-fluid'}}">
         <div class="content">
             <div class="header-left">
                 <a href="{{url(app_get_locale(false,'/'))}}" class="bravo-logo">
                     @if($logo_id = setting_item("logo_id"))
                         <?php $logo = get_file_url($logo_id,'full') ?>
-                        <img src="{{$logo}}" alt="{{setting_item("site_title")}}">
+                        <img id="app-logo" src="{{$logo}}" alt="{{setting_item("site_title")}}">
                     @endif
                 </a>
                 <div class="bravo-menu">
