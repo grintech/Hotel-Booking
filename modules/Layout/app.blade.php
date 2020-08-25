@@ -91,25 +91,21 @@
             ],
         };
     </script>
-    <!-- Styles -->
-    @yield('head')
-    {{--Custom Style--}}
-    <link href="{{ route('core.style.customCss') }}" rel="stylesheet">
-    <link href="{{ asset('libs/carousel-2/owl.carousel.css') }}" rel="stylesheet">
-    @if(setting_item_with_lang('enable_rtl'))
-        <link href="{{ asset('dist/frontend/css/rtl.css') }}" rel="stylesheet">
-    @endif
-
-    {!! setting_item('head_scripts') !!}
-    {!! setting_item_with_lang_raw('head_scripts') !!}
-
-    @php event(new \Modules\Layout\Events\LayoutEndHead()); @endphp
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
         .bravo-form-search-all{
             min-height: 100vh;
             margin-top: -94px;
         }
+
+        /*.bravo_wrap .bravo_header{*/
+        /*    background: none;*/
+        /*    z-index: 10;*/
+        /*}*/
+
+        /*.bravo_wrap .bravo_header .content{*/
+        /*    background: none;*/
+        /*}*/
 
         .bravo_header .content img{
             transition: all .3s ease-out;
@@ -159,6 +155,19 @@
             font-family: 'Quicksand', sans-serif;
         }
     </style>
+    <!-- Styles -->
+    @yield('head')
+    {{--Custom Style--}}
+    <link href="{{ route('core.style.customCss') }}" rel="stylesheet">
+    <link href="{{ asset('libs/carousel-2/owl.carousel.css') }}" rel="stylesheet">
+    @if(setting_item_with_lang('enable_rtl'))
+        <link href="{{ asset('dist/frontend/css/rtl.css') }}" rel="stylesheet">
+    @endif
+
+    {!! setting_item('head_scripts') !!}
+    {!! setting_item_with_lang_raw('head_scripts') !!}
+
+    @php event(new \Modules\Layout\Events\LayoutEndHead()); @endphp
 </head>
 <body class="frontend-page {{$body_class ?? ''}} @if(setting_item_with_lang('enable_rtl')) is-rtl @endif">
     @php event(new \Modules\Layout\Events\LayoutBeginBody()); @endphp
@@ -177,7 +186,7 @@
     <script>
         if ($(window).width() > 992) {
             $(window).scroll(function(){
-                if ($(this).scrollTop() > 500) {
+                if ($(this).scrollTop() > 300) {
                     $('.bravo-header-sticky').addClass("fixed-top");
                     $('#app-logo').addClass('fixed-logo');
                     // add padding top to show content behind navbar

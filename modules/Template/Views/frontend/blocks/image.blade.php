@@ -1,10 +1,12 @@
  <style type="text/css">
-       .bravo_banner {
+     .bravo_banner {
+         z-index: -5;
+         margin-top: -92px;
     background-color: #1a2b48;
     background-position: 50%;
     background-repeat: no-repeat;
     background-size: cover;
-    padding: 100px 0;
+    padding: 120px 0;
     position: relative;
 }
 .bravo_banner h1{
