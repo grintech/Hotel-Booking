@@ -21,9 +21,9 @@
                             @include('Tour::frontend.layouts.details.vendor')
                             @include('Guesthouse::frontend.layouts.details.guesthouse-form-enquiry')
                             {{--@include('Guesthouse::frontend.layouts.details.guesthouse-related-list')--}}
-                            <div class="g-all-attribute is_pc">
-                                @include('Guesthouse::frontend.layouts.details.guesthouse-attributes')
-                            </div>
+{{--                            <div class="g-all-attribute is_pc">--}}
+{{--                                @include('Guesthouse::frontend.layouts.details.guesthouse-attributes')--}}
+{{--                            </div>--}}
                             @include('Guesthouse::frontend.layouts.details.sidebar')
                         </div>
                     </div>
