@@ -16,7 +16,7 @@
                         @include('Hike::frontend.layouts.details.hike-review')
                     </div>
                     <div class="col-md-12 col-lg-3">
-                        <div class="" style="position: sticky; position: -webkit-sticky; top: 10px;">
+                        <div class="" style="position: sticky; position: -webkit-sticky; top: 100px;">
                             @include('Tour::frontend.layouts.details.vendor')
                             @include('Hike::frontend.layouts.details.sidebar')
 {{--                            @include('Tour::frontend.layouts.details.guesthouse-related')--}}

@@ -16,8 +16,10 @@
                         @include('Space::frontend.layouts.details.space-review')
                     </div>
                     <div class="col-md-12 col-lg-3">
-                        @include('Tour::frontend.layouts.details.vendor')
-                        @include('Space::frontend.layouts.details.space-form-book')
+                        <div class="" style="position: sticky; position: -webkit-sticky; top: 100px;">
+                            @include('Tour::frontend.layouts.details.vendor')
+                            @include('Space::frontend.layouts.details.space-form-book')
+                        </div>
                     </div>
                 </div>
                 <div class="row end_tour_sticky">
