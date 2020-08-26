@@ -1,5 +1,5 @@
 @if(!empty($model_tag))
-<div class="sidebar-widget widget_tag_cloud">
+<div class="sidebar-widget widget_tag_cloud"  style="position: sticky; position: -webkit-sticky; top: 100px; background-color: white;">
     <div class="sidebar-title"><h4>{{ $item->title }}</h4></div>
     <div class="tagcloud">
         @php
