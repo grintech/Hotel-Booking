@@ -199,6 +199,9 @@
                 }
             });
         }
+
+        //z-index fix for map overlapping the header
+        $('#map_content').css('z-index', '-5');
     </script>
 </body>
 </html>
