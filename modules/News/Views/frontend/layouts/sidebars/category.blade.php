@@ -2,7 +2,7 @@
     $list_category = $model_category->with('translations')->get()->toTree();
 @endphp
 @if(!empty($list_category))
-<div class="sidebar-widget widget_category"  style="position: sticky; position: -webkit-sticky; top: 100px; background-color: white;">
+<div class="sidebar-widget widget_category">
     <div class="sidebar-title">
         <h4>{{ $item->title }}</h4>
     </div>

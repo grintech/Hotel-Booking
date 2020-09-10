@@ -1,4 +1,4 @@
-<div class="sidebar-widget widget_bloglist"  style="position: sticky; position: -webkit-sticky; top: 100px; background-color: white;">
+<div class="sidebar-widget widget_bloglist">
     <div class="sidebar-title">
         <h4>{{ $item->title }}</h4>
     </div>
