@@ -22,7 +22,7 @@ $vendor = $row->author;
                 @endif
             </h4>
             {{--<p>{{ __("Member Since :time",["time"=> date("M Y",strtotime($vendor->created_at))]) }}</p>--}}
-            <p>{{ $vendor->role_name }}</p>
+            <p class="badge badge-primary text-light">{{ $vendor->role_name }}</p>
             @if((!Auth::id() or Auth::id() != $row->create_user ) and setting_item('inbox_enable'))
                 <span class="bc_start_chat btn" data-id="{{$row->id}}" data-type="{{$row->type}}"><i class="icon ion-ios-chatboxes"></i> {{__('Message host')}}</span>
             @endif
