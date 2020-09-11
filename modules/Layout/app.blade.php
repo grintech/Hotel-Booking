@@ -185,6 +185,34 @@
             }
         @endif
 
+        .bravo-forms-search-bg{
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -10;
+            background-size: cover;
+            /*transition: all 5s ease-in-out;*/
+            background-position: center;
+            animation: formSearchAnimation 5s ease-in 0s 1 normal forwards;
+        }
+
+        /*.bravo-form-search-all:hover .bravo-forms-search-bg{*/
+        /*    -webkit-transform: scale(1.15);*/
+        /*    -ms-transform: scale(1.15);*/
+        /*    transform: scale(1.15);*/
+        /*}*/
+
+
+        @keyframes formSearchAnimation{
+            100%{
+                -webkit-transform: scale(1.15);
+                -ms-transform: scale(1.15);
+                transform: scale(1.15);
+            }
+        }
+
     </style>
     <!-- Styles -->
     @yield('head')

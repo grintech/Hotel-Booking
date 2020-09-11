@@ -62,7 +62,7 @@ class AppServiceProvider extends ServiceProvider
                 app()->setLocale(setting_item('site_locale'));
             }
 
-            $currency = geoip($request->ip())->getAttribute('currency');
+            $currency = strtolower(geoip($request->ip())->getAttribute('currency'));
             $all = Currency::getActiveCurrency();
             if(!empty($all)){
                 foreach ($all as $item){
