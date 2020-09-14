@@ -244,7 +244,7 @@
     <script>
         if ($(window).width() > 992) {
             $(window).scroll(function(){
-                if ($(this).scrollTop() > 800) {
+                if ($(this).scrollTop() > 400) {
                     $('.bravo-header-sticky').addClass("fixed-top");
                     $('#app-logo').addClass('fixed-logo');
                     // add padding top to show content behind navbar

@@ -1,7 +1,7 @@
 <div class="bravo_header bravo-header-sticky">
     <div class="{{$container_class ?? 'container-fluid'}}">
         <div class="content">
-            <div class="header-left">
+            <div class="header-left" style="z-index: 10;">
                 <a href="{{url(app_get_locale(false,'/'))}}" class="bravo-logo">
                     @if($logo_id = setting_item("logo_id"))
                         <?php $logo = get_file_url($logo_id,'full') ?>
