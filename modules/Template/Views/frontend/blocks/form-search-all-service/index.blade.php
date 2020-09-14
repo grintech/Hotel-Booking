@@ -1,8 +1,6 @@
 <div class="bravo-form-search-all">
 
-    <div class="bravo-forms-search-bg" style="background-image: linear-gradient(0deg,rgba(0, 0, 0, 0.2),rgba(0, 0, 0, 0.2)),url('{{$bg_image_url}}') !important">
-
-    </div>
+    <div class="bravo-forms-search-bg" style="background-image: linear-gradient(0deg,rgba(0, 0, 0, 0.2),rgba(0, 0, 0, 0.2)),url('{{$bg_image_url}}') !important"></div>
 
     <div class="container">
         <div class="row">

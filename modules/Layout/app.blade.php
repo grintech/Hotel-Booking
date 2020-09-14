@@ -97,10 +97,16 @@
             font-family: 'Quicksand', sans-serif;
         }
 
+        .bravo-header-sticky{
+            transition: all 1s ease;
+        }
+
         @if(Request::is('/'))
 
             .bravo-form-search-all{
-                min-height: 100vh;
+                position: relative;
+                overflow: hidden;
+                height: 100vh;
                 margin-top: -94px;
             }
 
@@ -189,23 +195,16 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            bottom: 0;
+            right: 0;
             z-index: -10;
             background-size: cover;
-            /*transition: all 5s ease-in-out;*/
+            overflow: hidden;
             background-position: center;
-            animation: formSearchAnimation 5s ease-in 0s 1 normal forwards;
+            animation: zoomUp 15s ease-in 0s 1 normal forwards;
         }
 
-        /*.bravo-form-search-all:hover .bravo-forms-search-bg{*/
-        /*    -webkit-transform: scale(1.15);*/
-        /*    -ms-transform: scale(1.15);*/
-        /*    transform: scale(1.15);*/
-        /*}*/
-
-
-        @keyframes formSearchAnimation{
+        @keyframes zoomUp{
             100%{
                 -webkit-transform: scale(1.15);
                 -ms-transform: scale(1.15);
@@ -245,7 +244,7 @@
     <script>
         if ($(window).width() > 992) {
             $(window).scroll(function(){
-                if ($(this).scrollTop() > 300) {
+                if ($(this).scrollTop() > 800) {
                     $('.bravo-header-sticky').addClass("fixed-top");
                     $('#app-logo').addClass('fixed-logo');
                     // add padding top to show content behind navbar
