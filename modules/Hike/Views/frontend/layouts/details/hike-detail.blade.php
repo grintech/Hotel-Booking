@@ -168,7 +168,7 @@
 @if($translation->content)
     <div class="g-overview">
         <h3>{{__("Overview")}}</h3>
-        <div class="description">
+        <div class="description" style="font-size: 12pt; font-family: verdana, serif;">
             <?php echo $translation->content ?>
         </div>
     </div>
