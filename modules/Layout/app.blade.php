@@ -101,7 +101,7 @@
             transition: all 1s ease;
         }
 
-        @if(Request::is('/'))
+        @if(isTransparentMenu())
 
             .bravo-form-search-all{
                 position: relative;
