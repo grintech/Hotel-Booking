@@ -106,6 +106,14 @@ class ModuleProvider extends ModuleServiceProvider
                     ],
                 ]
             ];
+
+            $res['guesthouse_new'] = [
+                'url'   => route('guesthouse.vendor.index'),
+                'title'      => __("My Guesthouse"),
+                'icon'       => Guesthouse::getServiceIconFeatured(),
+                'position'   => 31,
+                'permission' => 'guesthouse_view',
+            ];
         }
         return $res;
     }
