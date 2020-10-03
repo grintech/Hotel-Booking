@@ -199,10 +199,13 @@ class UserController extends FrontendController
                         'redirect' => false
                     ], 200);
                 }
+
+                $vendor_redirect = Auth::user()->hasPermissionTo('dashboard_vendor_access') ? route('vendor.dashboard') : null;
+
                 return response()->json([
                     'error'    => false,
                     'messages' => false,
-                    'redirect' => $request->input('redirect') ?? $request->headers->get('referer') ?? url(app_get_locale(false, '/'))
+                    'redirect' => $vendor_redirect ?? $request->input('redirect') ?? $request->headers->get('referer') ?? url(app_get_locale(false, '/'))
                 ], 200);
             } else {
                 $errors = new MessageBag(['message_error' => __('Username or password incorrect')]);
