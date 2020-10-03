@@ -10,6 +10,7 @@
         @endif
         <div class="list-item">
             <div class="row">
+                @php $rows = $rows->shuffle(); @endphp
                 @foreach($rows as $key=>$row)
                     <?php
                     $size_col = 4;
