@@ -438,6 +438,12 @@ class Booking extends BaseModel
         $total_booking = parent::whereNotIn('status',static::$notAcceptedStatus)->where("vendor_id", $user_id)->count('id');
         $total_service = 0;
         $services = get_bookable_services();
+
+        $dark = '#1a2b48';
+        $light = '#ffffff';
+        $yellow = '#fafcc2';
+        $green = '#28df99';
+
         if(!empty($services))
         {
             foreach ($services as $service){
@@ -448,21 +454,29 @@ class Booking extends BaseModel
             'title'  => __("Pending"),
             'amount' => format_money_main($total_money->total_price - $total_money->total_earning),
             'desc'   => __("Total pending"),
+            'text'   => $dark,
+            'background' => $yellow
         ];
         $res[] = [
             'title'  => __("Earnings"),
             'amount' => format_money_main($total_money->total_earning ?? 0),
             'desc'   => __("Total earnings"),
+            'text'   => $light,
+            'background' => $green
         ];
         $res[] = [
             'title'  => __("Bookings"),
             'amount' => $total_booking,
             'desc'   => __("Total bookings"),
+            'text'   => $dark,
+            'background' => $light
         ];
         $res[] = [
             'title'  => __("Services"),
             'amount' => $total_service,
             'desc'   => __("Total bookable services"),
+            'text'   => $dark,
+            'background' => $light
         ];
         return $res;
     }

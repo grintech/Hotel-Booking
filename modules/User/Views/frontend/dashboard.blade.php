@@ -2,33 +2,56 @@
 @section('head')
 @endsection
 @section('content')
-    <h2 class="title-bar no-border-bottom">
-        {{__("Dashboard")}}
-    </h2>
-    @include('admin.message')
-    <div class="bravo-user-dashboard">
-        <div class="row dashboard-price-info row-eq-height">
-            @if(!empty($cards_report))
-                @foreach($cards_report as $item)
-                    <div class="col-lg-3 col-md-3">
-                        <div class="dashboard-item">
-                            <div class="wrap-box">
-                                <div class="title">
-                                    {{$item['title']}}
+
+    <div class="row align-items-center">
+        <div class="col-md-3 col-sm-12">
+            <h2 class="title-bar no-border-bottom">
+                {{__("Dashboard")}}
+            </h2>
+        </div>
+        <div class="col-md-9 col-sm-12">
+            <div class="row d-flex" style="justify-content: space-between; align-items: center;">
+                @if(!empty($cards_report))
+                    @foreach($cards_report as $item)
+                        <div class="col-md-3 col-sm-6">
+                            <div style="background-color: {{ $item['background'] }}; color: {{ $item['text'] }}; padding: 8px; border-radius: 8px; text-align: center;box-shadow: 3px 3px 12px rgba(0,0,0,.1)">
+                                <h5 class="m-0">{{ $item['amount'] }}</h5>
+                                <div class="">
+                                    <small>{{$item['title']}}</small>
                                 </div>
-                                <div class="details">
-                                    <div class="number">
-                                        {{ $item['amount'] }}
-                                    </div>
-                                </div>
-                                <div class="desc"> {{ $item['desc'] }}</div>
+
                             </div>
                         </div>
-                    </div>
-                @endforeach
-            @endif
+                    @endforeach
+                @endif
+            </div>
         </div>
     </div>
+
+    @include('admin.message')
+{{--    <div class="bravo-user-dashboard">--}}
+{{--        <div class="row dashboard-price-info row-eq-height">--}}
+{{--            @if(!empty($cards_report))--}}
+{{--                @foreach($cards_report as $item)--}}
+{{--                    <div class="col-lg-3 col-md-3">--}}
+{{--                        <div class="dashboard-item">--}}
+{{--                            <div class="wrap-box">--}}
+{{--                                <div class="title">--}}
+{{--                                    {{$item['title']}}--}}
+{{--                                </div>--}}
+{{--                                <div class="details">--}}
+{{--                                    <div class="number">--}}
+{{--                                        {{ $item['amount'] }}--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
+{{--                                <div class="desc"> {{ $item['desc'] }}</div>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                @endforeach--}}
+{{--            @endif--}}
+{{--        </div>--}}
+{{--    </div>--}}
     <div class="bravo-user-chart">
         <div class="chart-title">
             {{__("Earning statistics")}}
