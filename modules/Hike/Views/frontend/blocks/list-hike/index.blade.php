@@ -37,5 +37,8 @@
                 </div>
             @endif
         </div>
+        <div class="text-right">
+            <a href="{{ route('hike.search') }}" title="All Hikes" class="btn btn-link p-0">More</a>
+        </div>
     </div>
 </div>

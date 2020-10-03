@@ -37,5 +37,8 @@
                 </div>
             @endif
         </div>
+        <div class="text-right">
+            <a href="{{ route('tour.search') }}" title="All Guided Tours" class="btn btn-link p-0">More</a>
+        </div>
     </div>
 </div>

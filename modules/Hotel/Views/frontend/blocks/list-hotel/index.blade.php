@@ -28,5 +28,8 @@
                 </div>
             @endif
         </div>
+        <div class="text-right">
+            <a href="{{ route('hotel.search') }}" title="All Guesthouses" class="btn btn-link p-0">More</a>
+        </div>
     </div>
 </div>
