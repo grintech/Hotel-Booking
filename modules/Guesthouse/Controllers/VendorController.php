@@ -45,9 +45,9 @@ class VendorController extends FrontendController
     {
         $this->checkPermission('guesthouse_view');
         $user_id = Auth::id();
-        $list_guesthouse = $this->guesthouseClass::where("create_user", $user_id)->orderBy('id', 'desc');
+        $list_guesthouse = $this->guesthouseClass::where("create_user", $user_id)->orderBy('id', 'asc');
         $data = [
-            'rows' => $list_guesthouse->paginate(5),
+            'rows' => $list_guesthouse->paginate(1),
             'breadcrumbs'        => [
                 [
                     'name' => __('Manage Guesthouses'),

@@ -83,6 +83,8 @@ class ModuleProvider extends ModuleServiceProvider
     {
         $res = [];
         if(Guesthouse::isEnable()){
+            /*
+             * Replaced with primary guesthouse context
             $res['guesthouse'] = [
                 'url'   => route('guesthouse.vendor.index'),
                 'title'      => __("Manage Guesthouse"),
@@ -106,11 +108,28 @@ class ModuleProvider extends ModuleServiceProvider
                     ],
                 ]
             ];
+            */
 
-            $res['guesthouse_new'] = [
+            $res['my_guesthouse'] = [
                 'url'   => route('guesthouse.vendor.index'),
                 'title'      => __("My Guesthouse"),
-                'icon'       => Guesthouse::getServiceIconFeatured(),
+                'icon'       => 'fa fa-hotel',
+                'position'   => 29,
+                'permission' => 'guesthouse_view',
+            ];
+
+            $res['manage_rooms'] = [
+                'url'   => route('guesthouse.vendor.room.index', ['primary']),
+                'title'      => __("Manage Rooms"),
+                'icon'       => 'fa fa-bars',
+                'position'   => 30,
+                'permission' => 'guesthouse_view',
+            ];
+
+            $res['manage_room_availability'] = [
+                'url'   => route('guesthouse.vendor.room.availability.index', ['primary']),
+                'title'      => __("Room Availability"),
+                'icon'       => 'fa fa-check-circle',
                 'position'   => 31,
                 'permission' => 'guesthouse_view',
             ];

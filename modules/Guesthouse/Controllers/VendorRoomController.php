@@ -51,10 +51,16 @@ class VendorRoomController extends FrontendController
     {
         $this->checkPermission('guesthouse_view');
 
-        if(!$this->hasGuesthousePermission($guesthouse_id))
-        {
+        if($guesthouse_id == 'primary'){
+            $user_id = Auth::id();
+            $primary = $this->guesthouseClass::where("create_user", $user_id)->orderBy('id', 'asc')->first();
+            $guesthouse_id = $primary->id;
+        }
+
+        if(!$this->hasGuesthousePermission($guesthouse_id)) {
             abort(403);
         }
+
         $query = $this->roomClass::query() ;
         $query->orderBy('id', 'desc');
         if (!empty($guesthouse_name = $request->input('s'))) {
