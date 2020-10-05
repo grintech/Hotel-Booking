@@ -13,7 +13,7 @@
             <div class="row d-flex" style="justify-content: space-between; align-items: center;">
                 @if(!empty($cards_report))
                     @foreach($cards_report as $item)
-                        <div class="col-md-3 col-sm-6">
+                        <div class="col-md-3 col-sm-6 my-1 my-md-0">
                             <div style="background-color: {{ $item['background'] }}; color: {{ $item['text'] }}; padding: 8px; border-radius: 8px; text-align: center;box-shadow: 3px 3px 12px rgba(0,0,0,.1)">
                                 <h5 class="m-0">{{ $item['amount'] }}</h5>
                                 <div class="">
