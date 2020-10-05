@@ -110,29 +110,51 @@ class ModuleProvider extends ModuleServiceProvider
             ];
             */
 
-            $res['my_guesthouse'] = [
+            $res['guesthouse'] = [
                 'url'   => route('guesthouse.vendor.index'),
-                'title'      => __("My Guesthouse"),
-                'icon'       => 'fa fa-hotel',
-                'position'   => 29,
-                'permission' => 'guesthouse_view',
-            ];
-
-            $res['manage_rooms'] = [
-                'url'   => route('guesthouse.vendor.room.index', ['primary']),
-                'title'      => __("Manage Rooms"),
-                'icon'       => 'fa fa-bars',
+                'title'      => __("Manage Guesthouse"),
+                'icon'       => Guesthouse::getServiceIconFeatured(),
                 'position'   => 30,
                 'permission' => 'guesthouse_view',
+                'children' => [
+                    [
+                        'url'   => route('guesthouse.vendor.index'),
+                        'title'      => __("My Guesthouse"),
+                    ],
+                    [
+                        'url'   => route('guesthouse.vendor.room.index', ['primary']),
+                        'title'      => __("Manage Rooms"),
+                    ],
+                    [
+                        'url'   => route('guesthouse.vendor.room.availability.index', ['primary']),
+                        'title'      => __("Room Availability"),
+                    ],
+                ]
             ];
 
-            $res['manage_room_availability'] = [
-                'url'   => route('guesthouse.vendor.room.availability.index', ['primary']),
-                'title'      => __("Room Availability"),
-                'icon'       => 'fa fa-check-circle',
-                'position'   => 31,
-                'permission' => 'guesthouse_view',
-            ];
+//            $res['my_guesthouse'] = [
+//                'url'   => route('guesthouse.vendor.index'),
+//                'title'      => __("My Guesthouse"),
+//                'icon'       => 'fa fa-hotel',
+//                'position'   => 29,
+//                'permission' => 'guesthouse_view',
+//            ];
+//
+//            $res['manage_rooms'] = [
+//                'url'   => route('guesthouse.vendor.room.index', ['primary']),
+//                'title'      => __("Manage Rooms"),
+//                'icon'       => 'fa fa-bars',
+//                'position'   => 30,
+//                'permission' => 'guesthouse_view',
+//            ];
+//
+//            $res['manage_room_availability'] = [
+//                'url'   => route('guesthouse.vendor.room.availability.index', ['primary']),
+//                'title'      => __("Room Availability"),
+//                'icon'       => 'fa fa-check-circle',
+//                'position'   => 31,
+//                'permission' => 'guesthouse_view',
+//            ];
         }
         return $res;
     }
