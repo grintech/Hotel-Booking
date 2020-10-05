@@ -21,6 +21,8 @@ use Modules\Booking\Models\Booking;
 use App\Helpers\ReCaptchaEngine;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Modules\Booking\Models\Enquiry;
+use Modules\Guesthouse\Models\Guesthouse;
+use Modules\Guesthouse\Models\GuesthouseRoom;
 
 class UserController extends FrontendController
 {
@@ -50,6 +52,19 @@ class UserController extends FrontendController
                 ]
             ]
         ];
+
+        $this->checkPermission('guesthouse_create');
+
+        $data['guesthouse'] = Guesthouse::where("create_user", $user_id)->orderBy('id', 'asc')->first();
+
+        if($data['guesthouse'] && $this->hasPermission('guesthouse_update') and $data['guesthouse']->create_user == Auth::id()){
+            $q = GuesthouseRoom::query();
+            $q->orderBy('id','desc');
+            $q->where('parent_id',$data['guesthouse']->id);
+            $data['rows'] = $q->paginate(15);
+            $data['current_month'] = strtotime(date('Y-m-01',time()));
+        }
+
         return view('User::frontend.dashboard', $data);
     }
 
