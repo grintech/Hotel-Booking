@@ -64,6 +64,15 @@
                         </div>
                         @if(is_default_lang())
                             <div class="panel">
+                                <div class="panel-title"><strong>{{__('Menu')}}</strong></div>
+                                <div class="panel-body">
+                                    <select name="transparent_menu" class="form-control">
+                                        <option @if($row->transparent_menu == 1) selected @endif value="1">{{__('Transparent Menu')}}</option>
+                                        <option @if($row->transparent_menu == 0) selected @endif value="0">{{__('Normal Menu')}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="panel">
                                 <div class="panel-title"><strong>{{__('Template Setting')}}</strong></div>
                                 <div class="panel-body">
                                     <select name="template_id" class="form-control">

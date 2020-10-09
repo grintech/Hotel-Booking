@@ -20,6 +20,7 @@ class Page extends BaseModel
         'short_desc',
         'image_id',
         'slug',
+        'transparent_menu',
         'template_id'
     ];
     protected $slugField     = 'slug';
