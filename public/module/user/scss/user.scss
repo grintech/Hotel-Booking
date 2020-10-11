@@ -1647,25 +1647,25 @@
         .fc-title{
             padding: 1px 5px;
             border-radius: 2px;
-            background: #2991ff;
+            background: #28df99;
             color: white;
             display: inline-block;
         }
         &.blocked-event{
             .fc-title{
-                background: #717171;
+                background: #1b262c;
                 color: white;
             }
         }
         &.active-event{
             .fc-title{
-                background: #2c67b1;
+                background: #3282b8;
                 color: white;
             }
         }
         &.full-book-event{
             .fc-title{
-                background: #e67e22;
+                background: #cd0a0a;
                 color: white;
             }
         }
