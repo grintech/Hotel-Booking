@@ -20,7 +20,9 @@
             </div>
         </div>
         <div class="text-right">
-            <a href="{{ route('news.index') }}" title="All Hikes" class="btn btn-link p-0">View More</a>
+            <a href="{{ route('news.index') }}" title="All Articles" class="anim btn btn-primary m-0">
+                Show More <span class="fa fa-arrow-right"></span>
+            </a>
         </div>
     </div>
 </div>

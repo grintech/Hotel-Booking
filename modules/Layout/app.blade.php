@@ -212,6 +212,13 @@
             }
         }
 
+        a.anim > span {
+            transition: all .5s ease;
+        }
+
+        a.anim:hover > span {
+            transform: translateX(8px) rotate(90deg);
+        }
     </style>
     <!-- Styles -->
     @yield('head')
