@@ -118,5 +118,15 @@
         @include('Layout::parts.footer',['is_user_page'=>1])
     </div>
     {!! setting_item('footer_scripts') !!}
+
+    <script>
+        $('.main-menu > li.has-children > a').each(function(key, el){
+            if($(el).attr('href') === '#'){
+                $(el).click(function(e){
+                    $(el).closest('li').toggleClass('active_child')
+                });
+            }
+        });
+    </script>
 </body>
 </html>

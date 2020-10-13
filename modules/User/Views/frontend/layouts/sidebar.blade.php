@@ -16,7 +16,7 @@ $menus = [
 //    ],
     'profile'=>[
         "position"=> 40,
-        'url'      => route("user.profile.index"),
+        'url'      => '#',
         'title'    => __("My Profile"),
         'icon'     => 'fa fa-cogs',
         'children'   => [
@@ -48,11 +48,19 @@ $menus = [
     ],
     'booking-history' => [
         'url'      => route("user.booking_history"),
-        'title'    => __("Booking History"),
+        'title'    => __("Booking Report"),
         'icon'     => 'fa fa-clock-o',
         'position' => 41
     ],
 ];
+
+if(!empty($dataUser->verification_fields)) {
+    $menus['profile']['children']['verification'] = [
+        'url'        => route('user.verification.index'),
+        'title'      => __("Verifications"),
+        'icon'       => 'fa fa-handshake-o'
+    ];
+}
 
 // Modules
 $custom_modules = \Modules\ServiceProvider::getModules();

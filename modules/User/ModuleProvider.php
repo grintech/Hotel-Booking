@@ -71,16 +71,16 @@ class ModuleProvider extends ModuleServiceProvider
          * @var $user User
          */
         $res = [];
-        $user = Auth::user();
-        if(!empty($user->verification_fields))
-        {
-            $res['verification']= [
-                'url'        => route('user.verification.index'),
-                'title'      => __("Verifications"),
-                'icon'       => 'fa fa-handshake-o',
-                'position'   => 39,
-            ];
-        }
+//        $user = Auth::user();
+//        if(!empty($user->verification_fields))
+//        {
+//            $res['verification']= [
+//                'url'        => route('user.verification.index'),
+//                'title'      => __("Verifications"),
+//                'icon'       => 'fa fa-handshake-o',
+//                'position'   => 39,
+//            ];
+//        }
 
         $res['enquiry']= [
             'position'   => 42,

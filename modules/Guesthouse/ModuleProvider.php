@@ -111,15 +111,15 @@ class ModuleProvider extends ModuleServiceProvider
             */
 
             $res['guesthouse'] = [
-                'url'   => route('guesthouse.vendor.index'),
-                'title'      => __("Manage Guesthouse"),
+                'url'   => '#',
+                'title'      => __("My Guesthouse"),
                 'icon'       => Guesthouse::getServiceIconFeatured(),
                 'position'   => 30,
                 'permission' => 'guesthouse_view',
                 'children' => [
                     [
                         'url'   => route('guesthouse.vendor.index'),
-                        'title'      => __("My Guesthouse"),
+                        'title'      => __("Manage Guesthouse"),
                     ],
                     [
                         'url'   => route('guesthouse.vendor.room.index', ['primary']),
