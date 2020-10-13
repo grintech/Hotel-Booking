@@ -5,6 +5,11 @@
     <link rel="stylesheet" type="text/css" href="{{ asset("libs/daterange/daterangepicker.css") }}" >
     <link rel="stylesheet" type="text/css" href="{{ asset("libs/ion_rangeslider/css/ion.rangeSlider.min.css") }}" />
     <link rel="stylesheet" type="text/css" href="{{ asset("libs/fotorama/fotorama.css") }}" />
+    <style>
+        .bravo_wrap .bravo_header .content .header-left .bravo-menu ul li a{
+            color: white;
+        }
+    </style>
 @endsection
 @section('content')
 <div class="bravo-news">
@@ -27,17 +32,16 @@
     <div class="bravo_content">
         <div class="container">
             <div class="row">
-                <div class="col-md-9">
+                <div class="col-md-9 scroll-relation-provider">
                     @include('News::frontend.layouts.details.news-detail')
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-3 scroll-relation-follower">
                     @include('News::frontend.layouts.details.news-sidebar')
-                </div> 
+                </div>
             </div>
         </div>
     </div>
 </div>
 @endsection
 
- 
-  
+

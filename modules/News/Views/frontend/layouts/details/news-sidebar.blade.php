@@ -1,4 +1,4 @@
-<aside class="sidebar-right">
+<aside class="sidebar-right" style="position: -webkit-sticky; position: sticky; top: 100px">
     @php
         $list_sidebars = setting_item_with_lang("news_sidebar");
     @endphp
