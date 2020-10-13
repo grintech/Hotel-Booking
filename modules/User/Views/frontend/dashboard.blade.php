@@ -13,6 +13,13 @@
         #dates-calendar .loading{
 
         }
+        .color-legend{
+            display:inline-block;
+            height: 10px;
+            width: 10px;
+            border-radius: 50%;
+            box-shadow: 2px 2px 3px rgba(0,0,0,.1);
+        }
     </style>
 @endsection
 @section('content')
@@ -70,7 +77,23 @@
     @if($guesthouse)
         @if(count($rows))
             <div class="user-panel">
-                <div class="panel-title"><strong>{{__('Availability')}}</strong></div>
+                <div class="panel-title">
+                    <strong>{{__('Availability')}}</strong>
+                    <div class="d-inline-block ml-3">
+                        <span>
+                            <span class="color-legend ml-2" style="background-color: #cd0a0a"></span> {{ __('All Booked') }}
+                        </span>
+                        <span>
+                            <span class="color-legend ml-2" style="background-color: #28df99"></span> {{ __('Available') }}
+                        </span>
+                        <span>
+                            <span class="color-legend ml-2" style="background-color: #3282b8"></span> {{ __('No Status') }}
+                        </span>
+                        <span>
+                            <span class="color-legend ml-2" style="background-color: #1b262c"></span> {{ __('Blocked') }}
+                        </span>
+                    </div>
+                </div>
                 <div class="panel-body no-padding" style="background: #f4f6f8;padding: 0px 15px;">
                     <div class="row">
                         <div class="col-md-3" style="border-right: 1px solid #dee2e6;">
@@ -150,21 +173,21 @@
         </div>
     </div>
 
-    <div class="bravo-user-chart">
-        <div class="chart-title">
-            {{__("Earning statistics")}}
-            <div class="action-control">
-                <div id="reportrange">
-                    <i class="fa fa-calendar"></i>&nbsp;
-                    <span></span> <i class="fa fa-caret-down"></i>
-                </div>
-            </div>
-        </div>
-        <canvas class="bravo-user-render-chart"></canvas>
-        <script>
-            var earning_chart_data = {!! json_encode($earning_chart_data) !!};
-        </script>
-    </div>
+{{--    <div class="bravo-user-chart">--}}
+{{--        <div class="chart-title">--}}
+{{--            {{__("Earning statistics")}}--}}
+{{--            <div class="action-control">--}}
+{{--                <div id="reportrange">--}}
+{{--                    <i class="fa fa-calendar"></i>&nbsp;--}}
+{{--                    <span></span> <i class="fa fa-caret-down"></i>--}}
+{{--                </div>--}}
+{{--            </div>--}}
+{{--        </div>--}}
+{{--        <canvas class="bravo-user-render-chart"></canvas>--}}
+{{--        <script>--}}
+{{--            var earning_chart_data = {!! json_encode($earning_chart_data) !!};--}}
+{{--        </script>--}}
+{{--    </div>--}}
 @endsection
 @section('footer')
     @if($guesthouse)
