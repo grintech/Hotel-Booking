@@ -8,37 +8,50 @@ $menus = [
         'permission' => 'dashboard_vendor_access',
         'position'   => 10
     ],
-    'booking-history' => [
-        'url'      => route("user.booking_history"),
-        'title'    => __("Booking History"),
-        'icon'     => 'fa fa-clock-o',
-        'position' => 20
-    ],
 //    "wishlist"=>[
 //        'url'   => route("user.wishList.index"),
 //        'title' => __("Wishlist"),
 //        'icon'  => 'fa fa-heart-o',
 //        'position' => 21
 //    ],
-    'profile'         => [
+    'profile'=>[
+        "position"=> 40,
         'url'      => route("user.profile.index"),
         'title'    => __("My Profile"),
         'icon'     => 'fa fa-cogs',
-        'position' => 40
+        'children'   => [
+            'admin'           => [
+                'url'        => 'admin',
+                'title'      => __("Admin Dashboard"),
+                'icon'       => 'icon ion-ios-ribbon',
+                'permission' => 'dashboard_access',
+                'position'   => 60
+            ],
+            'personal'=>[
+                'url'      => route("user.profile.index"),
+                'title' => __('Personal'),
+                'icon'  => 'fa fa-user',
+            ],
+            'payout'=>[
+                'url'        => route('vendor.payout.index'),
+                'title'      => __("Payouts"),
+                'icon'       => 'icon ion-md-card',
+                'position'   => 38,
+                'permission' => 'dashboard_vendor_access',
+            ],
+            'change_password'=>[
+                'url'      => route("user.change_password"),
+                'title'    => __("Change password"),
+                'icon'     => 'fa fa-lock',
+            ],
+        ]
     ],
-    'password'        => [
-        'url'      => route("user.change_password"),
-        'title'    => __("Change password"),
-        'icon'     => 'fa fa-lock',
-        'position' => 50
+    'booking-history' => [
+        'url'      => route("user.booking_history"),
+        'title'    => __("Booking History"),
+        'icon'     => 'fa fa-clock-o',
+        'position' => 41
     ],
-    'admin'           => [
-        'url'        => 'admin',
-        'title'      => __("Admin Dashboard"),
-        'icon'       => 'icon ion-ios-ribbon',
-        'permission' => 'dashboard_access',
-        'position'   => 60
-    ]
 ];
 
 // Modules

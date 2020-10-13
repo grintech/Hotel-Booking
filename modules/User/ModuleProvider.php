@@ -83,7 +83,7 @@ class ModuleProvider extends ModuleServiceProvider
         }
 
         $res['enquiry']= [
-            'position'   => 37,
+            'position'   => 42,
             'icon'       => 'icofont-ebook',
             'url'        => route('vendor.enquiry_report'),
             'title'      => __("Enquiry Report"),

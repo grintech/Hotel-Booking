@@ -44,16 +44,17 @@ class ModuleProvider extends ModuleServiceProvider
     public static function getUserMenu()
     {
         $res = [];
-        if(!setting_item('disable_payout'))
-        {
-            $res['payout']= [
-                'url'        => route('vendor.payout.index'),
-                'title'      => __("Payouts"),
-                'icon'       => 'icon ion-md-card',
-                'position'   => 38,
-                'permission' => 'dashboard_vendor_access',
-            ];
-        }
+// If required to control payout from admin, this menu item can't be positioned in dropdown
+//        if(!setting_item('disable_payout'))
+//        {
+//            $res['payout']= [
+//                'url'        => route('vendor.payout.index'),
+//                'title'      => __("Payouts"),
+//                'icon'       => 'icon ion-md-card',
+//                'position'   => 38,
+//                'permission' => 'dashboard_vendor_access',
+//            ];
+//        }
 
         return $res;
     }
