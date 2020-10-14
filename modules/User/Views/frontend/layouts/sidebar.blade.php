@@ -8,6 +8,12 @@ $menus = [
         'permission' => 'dashboard_vendor_access',
         'position'   => 10
     ],
+    'booking-history' => [
+        'url'      => route('guesthouse.vendor.booking_report'),
+        'title'    => __("Booking Report"),
+        'icon'     => 'fa fa-clock-o',
+        'position' => 11
+    ],
 //    "wishlist"=>[
 //        'url'   => route("user.wishList.index"),
 //        'title' => __("Wishlist"),
@@ -45,12 +51,6 @@ $menus = [
                 'icon'     => 'fa fa-lock',
             ],
         ]
-    ],
-    'booking-history' => [
-        'url'      => route("user.booking_history"),
-        'title'    => __("Booking Report"),
-        'icon'     => 'fa fa-clock-o',
-        'position' => 41
     ],
 ];
 
