@@ -123,6 +123,7 @@
         $('.main-menu > li.has-children > a').each(function(key, el){
             if($(el).attr('href') === '#'){
                 $(el).click(function(e){
+                    e.preventDefault();
                     $(el).closest('li').toggleClass('active_child')
                 });
             }
