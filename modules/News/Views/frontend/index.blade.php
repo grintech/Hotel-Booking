@@ -9,6 +9,9 @@
     <style>
         .bravo_wrap .bravo_header .content .header-left .bravo-menu ul li a{
             color: white;
+            transition: all .2s ease-out;
+            text-transform: none;
+            font-weight: bold;
         }
     </style>
 @endsection
