@@ -32,5 +32,5 @@ Route::group(['prefix'=>'user/'.config('hike.hike_route_prefix')],function(){
 // Hike
 Route::group(['prefix' => config('hike.hike_route_prefix')],function(){
     Route::get('/','\Modules\Hike\Controllers\HikeController@index')->name('hike.search'); // Search
-    Route::get('/{slug}','\Modules\Hike\Controllers\HikeController@detail');// Detail
+    Route::get('/{slug}','\Modules\Hike\Controllers\HikeController@detail')->name('hike.detail');// Detail
 });

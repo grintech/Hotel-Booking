@@ -15,6 +15,7 @@ Route::get('/home', 'HomeController@index')->name('home');
 Route::post('/install/check-db', 'HomeController@checkConnectDatabase');
 Route::get('/update', 'HomeController@updateMigrate');
 Route::get('/test_functions', 'HomeController@test');
+Route::get('/sitemap.xml', 'SiteMapController@sitemap');
 
 //Login
 Auth::routes();

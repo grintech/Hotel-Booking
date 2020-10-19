@@ -2,6 +2,7 @@
 namespace Modules\Guesthouse;
 use Modules\ModuleServiceProvider;
 use Modules\Guesthouse\Models\Guesthouse;
+use Modules\Sitemap;
 
 class ModuleProvider extends ModuleServiceProvider
 {

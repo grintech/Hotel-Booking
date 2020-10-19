@@ -17,6 +17,7 @@ use Modules\Media\Helpers\FileHelper;
 use Modules\Review\Models\Review;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Guesthouse\Models\GuesthouseTranslation;
+use Modules\Sitemap;
 use Modules\User\Models\UserWishList;
 
 class Guesthouse extends Bookable
@@ -923,7 +924,7 @@ class Guesthouse extends Bookable
         if (!empty($price_range = $request->query('price_range'))) {
             $pri_from = explode(";", $price_range)[0];
             $pri_to = explode(";", $price_range)[1];
-            $raw_sql_min_max = "(  bravo_guesthouses.price >= ? ) 
+            $raw_sql_min_max = "(  bravo_guesthouses.price >= ? )
                             AND (  bravo_guesthouses.price <= ? )";
             $model_guesthouse->WhereRaw($raw_sql_min_max,[$pri_from,$pri_to]);
         }
