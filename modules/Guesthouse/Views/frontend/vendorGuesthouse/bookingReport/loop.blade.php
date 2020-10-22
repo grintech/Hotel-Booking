@@ -1,10 +1,4 @@
 <tr>
-    <td class="booking-history-type">
-        @if($service = $booking->service)
-            <i class="{{$service->getServiceIconFeatured()}}"></i>
-        @endif
-        <small>{{$booking->object_model}}</small>
-    </td>
     <td>
         @if($service = $booking->service)
             <a target="_blank" href="{{$service->getDetailUrl()}}">

@@ -25,16 +25,20 @@
 @section('content')
 
     <div class="row align-items-center">
-        <div class="col-md-3 col-sm-12">
+        <div class="col-md-6 col-sm-12">
             <h2 class="title-bar no-border-bottom">
-                {{__("Dashboard")}}
+                @if($guesthouse)
+                    {{ $guesthouse->title }}
+                @else
+                    {{__("Dashboard")}}
+                @endif
             </h2>
         </div>
-        <div class="col-md-9 col-sm-12">
+        <div class="col-md-6 col-sm-12">
             <div class="row d-flex" style="justify-content: space-between; align-items: center;">
                 @if(!empty($cards_report))
                     @foreach($cards_report as $item)
-                        <div class="col-md-3 col-sm-6 my-1 my-md-0">
+                        <div class="col-md-4 col-sm-6 my-1 my-md-0">
                             <div style="background-color: {{ $item['background'] }}; color: {{ $item['text'] }}; padding: 8px; border-radius: 8px; text-align: center;box-shadow: 3px 3px 12px rgba(0,0,0,.1)">
                                 <h5 class="m-0">{{ $item['amount'] }}</h5>
                                 <div class="">
@@ -100,7 +104,7 @@
                             <ul class="nav nav-tabs  flex-column vertical-nav" id="items_tab"  role="tablist">
                                 @foreach($rows as $k=>$item)
                                     <li class="nav-item event-name ">
-                                        <a class="nav-link" data-id="{{$item->id}}" data-toggle="tab" href="#calendar-{{$item->id}}" title="{{$item->title}}" >#{{$item->id}} - {{$item->title}}</a>
+                                        <a class="nav-link" data-id="{{$item->id}}" data-toggle="tab" href="#calendar-{{$item->id}}" title="{{$item->title}}" >{{$item->title}}</a>
                                     </li>
                                 @endforeach
                             </ul>

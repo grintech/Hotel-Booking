@@ -23,7 +23,6 @@
                     <table class="table table-bordered table-striped table-booking-history">
                         <thead>
                         <tr>
-                            <th width="2%">{{__("Type")}}</th>
                             <th>{{__("Title")}}</th>
                             <th class="a-hidden">{{__("Order Date")}}</th>
                             <th class="a-hidden">{{__("Execution Time")}}</th>

@@ -15,7 +15,6 @@
                         <table class="table table-bordered table-striped table-booking-history">
                             <thead>
                             <tr>
-                                <th width="2%">{{__("Type")}}</th>
                                 <th>{{__('Service Info')}}</th>
                                 <th>{{__('Customer Info')}}</th>
                                 <th width="80px">{{__('Status')}}</th>

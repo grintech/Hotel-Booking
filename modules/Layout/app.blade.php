@@ -234,7 +234,7 @@
 
     @php event(new \Modules\Layout\Events\LayoutEndHead()); @endphp
 </head>
-<body onmousedown="return false" onselectstart="return false" class="frontend-page {{$body_class ?? ''}} @if(setting_item_with_lang('enable_rtl')) is-rtl @endif">
+<body class="frontend-page {{$body_class ?? ''}} @if(setting_item_with_lang('enable_rtl')) is-rtl @endif">
     @php event(new \Modules\Layout\Events\LayoutBeginBody()); @endphp
 
     {!! setting_item('body_scripts') !!}
@@ -268,7 +268,7 @@
         //z-index fix for map overlapping the header
         $('#map_content').css('z-index', '-5');
 
-        $(document).bind("contextmenu",function(e){
+        $('img').bind('contextmenu', function(e) {
             return false;
         });
     </script>

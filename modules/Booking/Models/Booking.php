@@ -471,13 +471,13 @@ class Booking extends BaseModel
             'text'   => $dark,
             'background' => $light
         ];
-        $res[] = [
-            'title'  => __("Services"),
-            'amount' => $total_service,
-            'desc'   => __("Total bookable services"),
-            'text'   => $dark,
-            'background' => $light
-        ];
+//        $res[] = [
+//            'title'  => __("Services"),
+//            'amount' => $total_service,
+//            'desc'   => __("Total bookable services"),
+//            'text'   => $dark,
+//            'background' => $light
+//        ];
         return $res;
     }
 
