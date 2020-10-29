@@ -185,7 +185,8 @@ class AvailabilityController extends FrontendController{
 
                 if(!$row->active)
                 {
-                    $row->title = $row->event = __('Blocked');
+                    $row->title = $row->event = format_money_main($price);
+                    //$row->title = $row->event = __('Blocked');
                     $row->backgroundColor = '#fe2727';
                     $row->classNames = ['blocked-event'];
                     $row->textColor = '#fe2727';

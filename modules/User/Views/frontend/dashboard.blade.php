@@ -91,10 +91,7 @@
                             <span class="color-legend ml-2" style="background-color: #28df99"></span> {{ __('Available') }}
                         </span>
                         <span>
-                            <span class="color-legend ml-2" style="background-color: #686d76"></span> {{ __('No Status') }}
-                        </span>
-                        <span>
-                            <span class="color-legend ml-2" style="background-color: #1b262c"></span> {{ __('Blocked') }}
+                            <span class="color-legend ml-2" style="background-color: #808080"></span> {{ __('Unavailable') }}
                         </span>
                     </div>
                 </div>
