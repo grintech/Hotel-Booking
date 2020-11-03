@@ -31,7 +31,7 @@
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
-    <link rel='stylesheet' id='google-font-css-css' href='https://fonts.googleapis.com/css?family=Poppins%3A300%2C400%2C500%2C600' type='text/css' media='all' />
+    <link rel='stylesheet' id='google-font-css-css' href='https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap' type='text/css' media='all' />
     {!! \App\Helpers\Assets::css() !!}
     {!! \App\Helpers\Assets::js() !!}
     <script>
@@ -92,15 +92,12 @@
         };
     </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
         body{
             font-family: 'Quicksand', sans-serif;
         }
-
         .bravo-header-sticky{
             transition: all 1s ease;
         }
-
         @if($row->transparent_menu ?? false)
 
             .bravo-form-search-all{
