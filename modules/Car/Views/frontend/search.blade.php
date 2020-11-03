@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('head')
-    <link href="{{ asset('dist/frontend/module/car/css/car.css?_ver='.config('app.version')) }}" rel="stylesheet">
+    <link href="{{ asset('dist/frontend/module/car/css/car.css?_ver='.config('asset.car.css')) }}" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ asset("libs/ion_rangeslider/css/ion.rangeSlider.min.css") }}"/>
 @endsection
 @section('content')
@@ -29,5 +29,5 @@
 
 @section('footer')
     <script type="text/javascript" src="{{ asset("libs/ion_rangeslider/js/ion.rangeSlider.min.js") }}"></script>
-    <script type="text/javascript" src="{{ asset('module/car/js/car.js?_ver='.config('app.version')) }}"></script>
+    <script type="text/javascript" src="{{ asset('module/car/js/car.js?_ver='.config('asset.car.js')) }}"></script>
 @endsection

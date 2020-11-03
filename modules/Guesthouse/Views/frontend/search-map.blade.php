@@ -1,6 +1,6 @@
 @extends('layouts.app',['container_class'=>'container-fluid','header_right_menu'=>true])
 @section('head')
-    <link href="{{ asset('module/hotel/css/hotel.css?v='.config('app.version')) }}" rel="stylesheet">
+    <link href="{{ asset('module/hotel/css/hotel.css?v='.config('asset.guesthouse.css')) }}" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ asset("libs/ion_rangeslider/css/ion.rangeSlider.min.css") }}"/>
     <style type="text/css">
         .bravo_topbar, .bravo_footer {
@@ -38,5 +38,5 @@
         };
     </script>
     <script type="text/javascript" src="{{ asset("libs/ion_rangeslider/js/ion.rangeSlider.min.js") }}"></script>
-    <script type="text/javascript" src="{{ asset('module/guesthouse/js/hotel-map.js?_ver='.config('app.version')) }}"></script>
+    <script type="text/javascript" src="{{ asset('module/guesthouse/js/hotel-map.js?_ver='.config('asset.guesthouse.js')) }}"></script>
 @endsection

@@ -26,12 +26,12 @@
     <link href="{{ asset('libs/ionicons/css/ionicons.min.css') }}" rel="stylesheet">
     <link href="{{ asset('libs/icofont/icofont.min.css') }}" rel="stylesheet">
     <link href="{{ asset('libs/select2/css/select2.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('dist/frontend/css/app.css?_ver='.config('app.version')) }}" rel="stylesheet">
+    <link href="{{ asset('dist/frontend/css/app.css?_ver='.config('asset.layout.css')) }}" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ asset("libs/daterange/daterangepicker.css") }}" >
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
-    <link rel='stylesheet' id='google-font-css-css'  href='https://fonts.googleapis.com/css?family=Poppins%3A300%2C400%2C500%2C600' type='text/css' media='all' />
+    <link rel='stylesheet' id='google-font-css-css' href='https://fonts.googleapis.com/css?family=Poppins%3A300%2C400%2C500%2C600' type='text/css' media='all' />
     {!! \App\Helpers\Assets::css() !!}
     {!! \App\Helpers\Assets::js() !!}
     <script>

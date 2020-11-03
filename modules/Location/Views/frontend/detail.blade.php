@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('head')
-    <link href="{{ asset('dist/frontend/module/location/css/location.css?_ver='.config('app.version')) }}" rel="stylesheet">
+    <link href="{{ asset('dist/frontend/module/location/css/location.css?_ver='.config('asset.location.css')) }}" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ asset("libs/ion_rangeslider/css/ion.rangeSlider.min.css") }}"/>
     <link rel="stylesheet" type="text/css" href="{{ asset("libs/fotorama/fotorama.css") }}"/>
 @endsection
