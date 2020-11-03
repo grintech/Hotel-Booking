@@ -101,7 +101,7 @@
             transition: all 1s ease;
         }
 
-        @if($row->transparent_menu ?? true)
+        @if($row->transparent_menu ?? false)
 
             .bravo-form-search-all{
                 position: relative;

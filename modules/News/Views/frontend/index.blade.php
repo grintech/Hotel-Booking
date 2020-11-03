@@ -6,14 +6,14 @@
     <link rel="stylesheet" type="text/css" href="{{ asset("libs/ion_rangeslider/css/ion.rangeSlider.min.css") }}"/>
     <link rel="stylesheet" type="text/css" href="{{ asset("libs/fotorama/fotorama.css") }}"/>
 
-    <style>
-        .bravo_wrap .bravo_header .content .header-left .bravo-menu ul li a{
-            color: white;
-            transition: all .2s ease-out;
-            text-transform: none;
-            font-weight: bold;
-        }
-    </style>
+{{--    <style>--}}
+{{--        .bravo_wrap .bravo_header .content .header-left .bravo-menu ul li a{--}}
+{{--            color: white;--}}
+{{--            transition: all .2s ease-out;--}}
+{{--            text-transform: none;--}}
+{{--            font-weight: bold;--}}
+{{--        }--}}
+{{--    </style>--}}
 @endsection
 @section('content')
     <div class="bravo-news">
