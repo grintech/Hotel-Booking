@@ -30,7 +30,8 @@
         </div>
         <h3 class="item-title"><a style="overflow: hidden;text-overflow: ellipsis;display: -webkit-box;-webkit-line-clamp: 2;-webkit-box-orient: vertical;" href="{{$row->getDetailUrl()}}"> {{$translation->title}} </a></h3>
         <div class="item-desc">
-            {!! get_exceprt($translation->content,70,"...") !!}
+{{--            {!! get_exceprt($translation->content,70,"...") !!}--}}
+            {{ $row->getSeoMeta()['seo_desc'] }}
         </div>
         <div class="item-more">
             <a class="btn-readmore" href="{{$row->getDetailUrl()}}">{{ __('Read More')}}</a>
