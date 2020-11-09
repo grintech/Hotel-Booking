@@ -28,10 +28,5 @@
                 </div>
             @endif
         </div>
-        <div class="text-right">
-            <a href="{{ route('hotel.search') }}" title="All Guesthouses" class="anim btn btn-primary m-0">
-                More <span class="fa fa-arrow-right"></span>
-            </a>
-        </div>
     </div>
 </div>

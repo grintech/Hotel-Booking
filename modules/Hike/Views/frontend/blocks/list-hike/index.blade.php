@@ -37,10 +37,5 @@
                 </div>
             @endif
         </div>
-        <div class="text-right">
-            <a href="{{ route('hike.search') }}" title="All Hikes" class="anim btn btn-primary m-0">
-                More <span class="fa fa-arrow-right"></span>
-            </a>
-        </div>
     </div>
 </div>
