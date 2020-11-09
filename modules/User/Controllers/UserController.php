@@ -52,18 +52,19 @@ class UserController extends FrontendController
                 ]
             ]
         ];
+        
+        if($this->hasPermission('guesthouse_create')){
+            $data['guesthouse'] = Guesthouse::where("create_user", $user_id)->orderBy('id', 'asc')->first();
 
-        $this->checkPermission('guesthouse_create');
-
-        $data['guesthouse'] = Guesthouse::where("create_user", $user_id)->orderBy('id', 'asc')->first();
-
-        if($data['guesthouse'] && $this->hasPermission('guesthouse_update') and $data['guesthouse']->create_user == Auth::id()){
-            $q = GuesthouseRoom::query();
-            $q->orderBy('id','desc');
-            $q->where('parent_id',$data['guesthouse']->id);
-            $data['rows'] = $q->paginate(15);
-            $data['current_month'] = strtotime(date('Y-m-01',time()));
+            if($data['guesthouse'] && $this->hasPermission('guesthouse_update') and $data['guesthouse']->create_user == Auth::id()){
+                $q = GuesthouseRoom::query();
+                $q->orderBy('id','desc');
+                $q->where('parent_id',$data['guesthouse']->id);
+                $data['rows'] = $q->paginate(15);
+                $data['current_month'] = strtotime(date('Y-m-01',time()));
+            }
         }
+
         return view('User::frontend.dashboard', $data);
     }
 

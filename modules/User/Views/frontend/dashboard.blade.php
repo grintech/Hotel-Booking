@@ -27,7 +27,7 @@
     <div class="row align-items-center">
         <div class="col-md-6 col-sm-12">
             <h2 class="title-bar no-border-bottom">
-                @if($guesthouse)
+                @if(isset($guesthouse))
                     {{ $guesthouse->title }}
                 @else
                     {{__("Dashboard")}}
@@ -78,7 +78,7 @@
 {{--        </div>--}}
 {{--    </div>--}}
 
-    @if($guesthouse)
+    @if(isset($guesthouse))
         @if(count($rows))
             <div class="user-panel">
                 <div class="panel-title">
@@ -191,7 +191,7 @@
 {{--    </div>--}}
 @endsection
 @section('footer')
-    @if($guesthouse)
+    @if(isset($guesthouse))
     <script src="{{asset('libs/daterange/moment.min.js')}}"></script>
     <script src="{{asset('libs/daterange/daterangepicker.min.js?_ver='.config('app.version'))}}"></script>
     <script src="{{asset('libs/fullcalendar-4.2.0/core/main.js')}}"></script>
