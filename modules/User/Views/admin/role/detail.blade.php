@@ -18,6 +18,17 @@
                                 <label>{{ __('Name')}}</label>
                                 <input type="text" value="{{$row->name}}" placeholder="{{ __('Role Name')}}" name="name" class="form-control">
                             </div>
+                            <div class="form-group">
+                                <label>{{ __('Default service for vendor dashboard')}}</label>
+                                <select name="service" value="{{ $row->service }}" class="form-control">
+                                    @php
+                                        $services = get_bookable_services();
+                                    @endphp
+                                    @foreach($services as $service_name => $className)
+                                        <option value="{{ $service_name }}">{{ $service_name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
                     </div>
                     <hr>

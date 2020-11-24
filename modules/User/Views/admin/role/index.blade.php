@@ -18,6 +18,7 @@
                     <tr>
                         <th width="60px"><input type="checkbox" class="check-all"></th>
                         <th>{{ __('Name')}}</th>
+                        <th>{{ __('Default Service')}}</th>
                         <th>{{ __('Date')}}</th>
                     </tr>
                     </thead>
@@ -28,6 +29,7 @@
                             <td class="title">
                                 <a href="{{url('admin/module/user/role/edit/'.$row->id)}}">{{ucfirst($row->name)}}</a>
                             </td>
+                            <td>{{ ucfirst($row->service ? $row->service : __('None'))   }}</td>
                             <td>{{ display_date($row->updated_at)}}</td>
                         </tr>
                     @endforeach
