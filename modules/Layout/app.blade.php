@@ -98,7 +98,7 @@
         .bravo-header-sticky{
             transition: all 1s ease;
         }
-        @if($row->transparent_menu ?? false)
+        @if($row->transparent_menu ?? true)
 
             .bravo-form-search-all{
                 position: relative;
