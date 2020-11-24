@@ -1,6 +1,6 @@
 <?php
 
-namespace  Modules\Api;
+namespace  Modules\Rest;
 
 use Modules\Core\Abstracts\BaseSettingsClass;
 use Modules\Core\Models\Settings;
