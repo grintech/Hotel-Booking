@@ -1,5 +1,5 @@
 <?php
-namespace Modules\Api\Controllers;
+namespace Modules\Rest\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Modules\Booking\Models\Booking;

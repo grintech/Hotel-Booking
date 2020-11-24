@@ -1,5 +1,5 @@
 <?php
-namespace Modules\Api\Controllers;
+namespace Modules\Rest\Controllers;
 
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;

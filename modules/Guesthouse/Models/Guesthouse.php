@@ -1,6 +1,7 @@
 <?php
 namespace Modules\Guesthouse\Models;
 
+use App\Currency;
 use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
@@ -971,5 +972,39 @@ class Guesthouse extends Bookable
         $limit = min(20,$request->query('limit',9));
         $list = $model_guesthouse->with(['location','hasWishList','translations','termsByAttributeInListingPage'])->paginate($limit);
         return $list;
+    }
+
+    static public function getFiltersSearch()
+    {
+        $min_max_price = self::getMinMaxPrice();
+        return [
+            [
+                "title"    => __("Filter Price"),
+                "field"    => "price_range",
+                "position" => "1",
+                "min_price" => floor ( Currency::convertPrice($min_max_price[0]) ),
+                "max_price" => ceil (Currency::convertPrice($min_max_price[1]) ),
+            ],
+            [
+                "title"    => __("Hotel Star"),
+                "field"    => "star_rate",
+                "position" => "2",
+                "min" => "1",
+                "max" => "5",
+            ],
+            [
+                "title"    => __("Review Score"),
+                "field"    => "review_score",
+                "position" => "3",
+                "min" => "1",
+                "max" => "5",
+            ],
+            [
+                "title"    => __("Attributes"),
+                "field"    => "terms",
+                "position" => "4",
+                "data" => Attributes::getAllAttributesForApi("hotel")
+            ]
+        ];
     }
 }

@@ -59,4 +59,12 @@ class Terms extends BaseModel
         return $query;
     }
 
+    public function dataForApi(){
+        $translation = $this->translateOrOrigin(app()->getLocale());
+        return [
+            'id'=>$this->id,
+            'name'=>$translation->name,
+            'slug'=>$this->slug,
+        ];
+    }
 }
