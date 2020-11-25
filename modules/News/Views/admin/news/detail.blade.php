@@ -111,6 +111,17 @@
                             </div>
                         @endif
 
+                        @if(is_default_lang())
+                            <div class="panel">
+                                <div class="panel-body">
+                                    <h3 class="panel-body-title"> {{ __('Thumbnail Image')}}</h3>
+                                    <div class="form-group">
+                                        {!! \Modules\Media\Helpers\FileHelper::fieldUpload('thumbnail_id',$row->thumbnail_id) !!}
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
                     </div>
                 </div>
             </div>
