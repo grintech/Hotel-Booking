@@ -39,5 +39,20 @@
                 }
             });
         })
+
+        const KEY = 'CHECKOUT_INPUTS';
+        let data = localStorage.getItem(KEY);
+        data = data ? JSON.parse(data) : {};
+
+        for (let prop in data) {
+            if (data.hasOwnProperty(prop)) {
+                $(`input[preserve="true"][name="${prop}"]`).val(data[prop]);
+            }
+        }
+
+        $('input[preserve="true"]').on('change', function(e){
+            data[e.target.name] = e.target.value;
+            localStorage.setItem(KEY, JSON.stringify(data));
+        })
     </script>
 @endsection
