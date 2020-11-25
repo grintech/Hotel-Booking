@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Modules\Guesthouse\Models\Guesthouse;
 use Modules\Hike\Models\Hike;
+use Modules\Review\Models\Review;
 use Modules\Tour\Models\Tour;
 
 class FeaturedController extends Controller{
@@ -62,6 +63,36 @@ class FeaturedController extends Controller{
             });
         }
 
+        return response()->json($data);
+    }
+
+    public function detail(Request $request, $service, $slug){
+        $row = $this->guesthouse::where('slug', $slug)->with(['location','translations','hasWishList'])->first();
+        if ( empty($row) or !$row->hasPermissionDetailView()) {
+            return $this->sendError(__("No Detailed view permiited"));
+        }
+        $translation = $row->translateOrOrigin(app()->getLocale());
+        $guesthouse_related = [];
+        $tour_related = false;
+        $hike_related = false;
+        $location_id = $row->location_id;
+        if (!empty($location_id)) {
+            $guesthouse_related = $this->guesthouse::where('location_id', $location_id)->where("status", "publish")->take(4)->whereNotIn('id', [$row->id])->with(['location','translations','hasWishList'])->get();
+            $hike_related = Hike::where('location_id', $location_id)->where("status", "publish")->take(4)->with(['translations']);
+            $tour_related = Tour::where('location_id', $location_id)->where("status", "publish")->take(4)->with(['translations']);
+        }
+        $review_list = Review::where('object_id', $row->id)->where('object_model', 'guesthouse')->where("status", "approved")->orderBy("id", "desc")->with('author')->paginate(setting_item('guesthouse_review_number_per_page', 5));
+        $data = [
+            'row'          => $row,
+            'translation'  => $translation,
+            'guesthouse_related' => $guesthouse_related,
+            'tour_related' => $tour_related,
+            'hike_related' => $hike_related,
+            'booking_data' => $row->getBookingData(),
+            'review_list'  => $review_list,
+            'seo_meta'  => $row->getSeoMetaWithTranslation(app()->getLocale(),$translation),
+            'body_class'=>'is_single'
+        ];
         return response()->json($data);
     }
 }

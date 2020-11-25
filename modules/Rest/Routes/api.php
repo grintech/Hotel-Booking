@@ -16,6 +16,7 @@ use \Illuminate\Support\Facades\Route;
 Route::group([], function(){
     Route::get('{service}/featured', ['uses' => 'FeaturedController@index', 'as' => 'featured']);
     Route::get('{service}/related/{location_id}', ['uses' => 'FeaturedController@related', 'as' => 'related']);
+    Route::get('{service}/detail/{slug}', ['uses' => 'FeaturedController@detail', 'as' => 'detail']);
     Route::get('{type}/search', ['uses' => 'SearchController@search', 'as' => 'search']);
     Route::get('{type}/filters', ['uses' => 'SearchController@getFilters', 'as' => 'filters']);
 });
