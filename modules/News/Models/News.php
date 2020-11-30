@@ -105,5 +105,4 @@ class News extends BaseModel
         $lang = $this->lang ?? setting_item("site_locale");
         return route('news.admin.edit',['id'=>$this->id , "lang"=> $lang]);
     }
-
 }

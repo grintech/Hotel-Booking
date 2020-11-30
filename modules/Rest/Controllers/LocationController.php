@@ -1,10 +1,15 @@
 <?php
 namespace Modules\Rest\Controllers;
 use App\Http\Controllers\Controller;
+use http\Env\Request;
 use Modules\Location\Models\Location;
 
 class LocationController extends Controller
 {
+    public function list(){
+        $rows = Location::where(['status' => 'publish'])->get();
+        return response()->json($rows);
+    }
 
     public function search(){
         $rows = Location::search(request());
@@ -34,5 +39,16 @@ class LocationController extends Controller
             'data'=>$row->dataForApi(true)
         ]);
 
+    }
+
+    public function gpx($filePath){
+        try{
+            $data = file_get_contents(public_path("uploads/tour_gpx_files/{$filePath}"));
+            return response($data, 200, [
+                'Content-Type' => 'application/xml'
+            ]);
+        }catch(\Exception $e){
+            $this->sendError(__("Error reading gpx data"));
+        }
     }
 }

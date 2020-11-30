@@ -14,9 +14,18 @@ use \Illuminate\Support\Facades\Route;
 */
 
 Route::group([], function(){
-    Route::get('{service}/featured', ['uses' => 'FeaturedController@index', 'as' => 'featured']);
-    Route::get('{service}/related/{location_id}', ['uses' => 'FeaturedController@related', 'as' => 'related']);
-    Route::get('{service}/detail/{slug}', ['uses' => 'FeaturedController@detail', 'as' => 'detail']);
-    Route::get('{type}/search', ['uses' => 'SearchController@search', 'as' => 'search']);
-    Route::get('{type}/filters', ['uses' => 'SearchController@getFilters', 'as' => 'filters']);
+
+    Route::group(['prefix' => '{service}'] , function(){
+        Route::get('featured', ['uses' => 'ContentController@featured', 'as' => 'featured']);
+        Route::get('related/{location_id}', ['uses' => 'ContentController@related', 'as' => 'related']);
+        Route::get('detail/{id}', ['uses' => 'ContentController@detail', 'as' => 'detail']);
+        Route::get('search', ['uses' => 'SearchController@search', 'as' => 'search']);
+        Route::get('filters', ['uses' => 'SearchController@getFilters', 'as' => 'filters']);
+    });
+
+    Route::get('gpx/{file}', ['uses' => 'LocationController@gpx', 'as' => 'gpx']);
+
+    Route::group(['prefix' => 'location', 'as' => 'location.'], function(){
+        Route::get('list', ['uses' => 'LocationController@list', 'as' => 'list']);
+    });
 });

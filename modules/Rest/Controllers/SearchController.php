@@ -6,14 +6,14 @@ use Illuminate\Http\Request;
 class SearchController extends Controller
 {
 
-    public function search($type = ''){
-        $type = $type ? $type : request()->get('type');
-        if(empty($type))
+    public function search($service = ''){
+        $service = $service ? $service : request()->get('service');
+        if(empty($service))
         {
             return $this->sendError(__("Type is required"));
         }
 
-        $class = get_bookable_service_by_id($type);
+        $class = get_bookable_service_by_id($service);
         if(empty($class) or !class_exists($class)){
             return $this->sendError(__("Type does not exists"));
         }
