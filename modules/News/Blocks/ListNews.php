@@ -73,6 +73,17 @@ class ListNews extends BaseBlock
                             'name' => __("DESC")
                         ],
                     ]
+                ],
+                [
+                    'type'=> "checkbox",
+                    'label'=>__("Show view more item?"),
+                    'id'=> "show_more",
+                    'default'=> true
+                ],
+                [
+                    'id'    => 'background_image',
+                    'type'  => 'uploader',
+                    'label' => __('Background Image for view more card')
                 ]
             ]
         ]);
@@ -114,6 +125,8 @@ class ListNews extends BaseBlock
             'rows'       => $list,
             'title'      => $model['title'] ?? "",
             'desc'      => $model['desc'] ?? "",
+            'show_more'  => $model['show_more'] ?? false,
+            'background_image' => $model['background_image'] ?? false,
         ];
         return view('News::frontend.blocks.list-news.index', $data);
     }

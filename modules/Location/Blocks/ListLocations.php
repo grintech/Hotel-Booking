@@ -115,7 +115,24 @@ class ListLocations extends BaseBlock
                     'label'=>__("Link to location detail page?"),
                     'id'=> "to_location_detail",
                     'default'=>false
-                ]
+                ],
+                [
+                    'type'=> "checkbox",
+                    'label'=>__("Show view more item?"),
+                    'id'=> "show_more",
+                    'default'=> true
+                ],
+                [
+                    'id'    => 'background_image',
+                    'type'  => 'uploader',
+                    'label' => __('Background Image for view more card')
+                ],
+                [
+                    'id'        => 'view_more_desc',
+                    'type'      => 'input',
+                    'inputType' => 'text',
+                    'label'     => __('View more desc')
+                ],
             ]
         ]);
     }
@@ -145,7 +162,10 @@ class ListLocations extends BaseBlock
             'desc'         => $model['desc'] ?? "",
             'service_type' => $model['service_type'],
             'layout'       => !empty($model['layout']) ? $model['layout'] : "style_1",
-            'to_location_detail'=>$model['to_location_detail'] ?? ''
+            'to_location_detail'=>$model['to_location_detail'] ?? '',
+            'show_more'  => $model['show_more'] ?? false,
+            'background_image' => $model['background_image'] ?? false,
+            'view_more_desc' => $model['view_more_desc'] ?? false,
         ];
         return view('Location::frontend.blocks.list-locations.index', $data);
     }

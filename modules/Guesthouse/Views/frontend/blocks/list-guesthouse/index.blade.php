@@ -25,6 +25,10 @@
                     @foreach($rows as $row)
                         @include('Guesthouse::frontend.layouts.search.loop-grid')
                     @endforeach
+                    @include('Template::frontend.blocks.view-more', [
+                       'launcher_url' => '#',
+                       'description' => 'View more relevant guesthouses at more then hundred tourist locations'
+                   ])
                 </div>
             @endif
         </div>

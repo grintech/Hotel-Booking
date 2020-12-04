@@ -114,7 +114,24 @@ class ListTours extends BaseBlock
                     'label'=>__("Only featured items?"),
                     'id'=> "is_featured",
                     'default'=>true
-                ]
+                ],
+                [
+                    'type'=> "checkbox",
+                    'label'=>__("Show view more item?"),
+                    'id'=> "show_more",
+                    'default'=> true
+                ],
+                [
+                    'id'    => 'background_image',
+                    'type'  => 'uploader',
+                    'label' => __('Background Image for view more card')
+                ],
+                [
+                    'id'        => 'view_more_desc',
+                    'type'      => 'input',
+                    'inputType' => 'text',
+                    'label'     => __('View more desc')
+                ],
             ]
         ]);
     }
@@ -170,6 +187,9 @@ class ListTours extends BaseBlock
             'style_list' => $model['style'],
             'title'      => $model['title'] ?? "",
             'desc'      => $model['desc'] ?? "",
+            'show_more'  => $model['show_more'] ?? false,
+            'background_image' => $model['background_image'] ?? false,
+            'view_more_desc' => $model['view_more_desc'] ?? false,
         ];
         return view('Tour::frontend.blocks.list-tour.index', $data);
     }
