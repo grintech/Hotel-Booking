@@ -9,6 +9,7 @@
     use Illuminate\Support\Facades\Auth;
     use Modules\Booking\Models\Bookable;
     use Modules\Booking\Models\Booking;
+    use Modules\Core\Models\Attributes;
     use Modules\Location\Models\Location;
     use Modules\Review\Models\Review;
     use Modules\Tour\Models\TourTerm;
@@ -930,7 +931,7 @@
             if (!empty($price_range = $request->query('price_range'))) {
                 $pri_from = explode(";", $price_range)[0];
                 $pri_to = explode(";", $price_range)[1];
-                $raw_sql_min_max = "( (IFNULL(bravo_tours.sale_price,0) > 0 and bravo_tours.sale_price >= ? ) OR (IFNULL(bravo_tours.sale_price,0) <= 0 and bravo_tours.price >= ?) ) 
+                $raw_sql_min_max = "( (IFNULL(bravo_tours.sale_price,0) > 0 and bravo_tours.sale_price >= ? ) OR (IFNULL(bravo_tours.sale_price,0) <= 0 and bravo_tours.price >= ?) )
 								AND ( (IFNULL(bravo_tours.sale_price,0) > 0 and bravo_tours.sale_price <= ? ) OR (IFNULL(bravo_tours.sale_price,0) <= 0 and bravo_tours.price <= ?) )";
                 $model_Tour->WhereRaw($raw_sql_min_max,[$pri_from,$pri_from,$pri_to,$pri_to]);
             }
@@ -988,5 +989,42 @@
 
             $limit = min(20,$request->query('limit',9));
             return $model_Tour->with(['location','hasWishList','translations'])->paginate($limit);
+        }
+
+        static public function getFiltersSearch()
+        {
+
+            $min_max_price = self::getMinMaxPrice();
+            $category = TourCategory::selectRaw("id,name,slug")->where('status', 'publish')->with(['translations'])->get()->toTree();
+            return [
+                [
+                    "title"    => __("Filter Price"),
+                    "field"    => "price_range",
+                    "position" => "1",
+                    "min_price" => floor ( Currency::convertPrice($min_max_price[0]) ),
+                    "max_price" => ceil (Currency::convertPrice($min_max_price[1]) ),
+                ],
+                [
+                    "title"    => __("Review Score"),
+                    "field"    => "review_score",
+                    "position" => "2",
+                    "min" => "1",
+                    "max" => "5",
+                ],
+                [
+                    "title"    => __("Tour Type"),
+                    "field"    => "cat_id",
+                    "position" => "3",
+                    "data" => $category->map(function($category){
+                        return $category->dataForApi();
+                    })
+                ],
+                [
+                    "title"    => __("Attributes"),
+                    "field"    => "terms",
+                    "position" => "4",
+                    "data" => Attributes::getAllAttributesForApi("tour")
+                ]
+            ];
         }
     }
