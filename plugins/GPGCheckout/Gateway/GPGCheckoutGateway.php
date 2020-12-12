@@ -112,8 +112,9 @@ class GPGCheckoutGateway extends \Modules\Booking\Gateways\BaseGateway
         $gateway_options = new \stdClass();
         $data = $request->all();
 
-        $terminals = $this->getSupportedTerminals();
         $gateway_options->currency = setting_item('currency_main');
+        $gateway_options->terminal = $this->getSupportedTerminals();
+        $gateway_options->terminal = $gateway_options->terminal[strtoupper($gateway_options->currency)]['terminal'];
         $gateway_options->lang = app()->getLocale();
 
         if ($this->getOption('enable_sandbox')) {
@@ -130,7 +131,15 @@ class GPGCheckoutGateway extends \Modules\Booking\Gateways\BaseGateway
             $gateway_options->signature = sha1 ($gateway_options->site_number. $gateway_options->password . $booking->code . (float)$booking->pay_now. $gateway_options->currency);
         }
 
-        return view('GPGCheckout::frontend.gpg-checkout', compact('data', 'booking', 'terminals', 'gateway_options'));
+        $terminal_form_id = $this->getTerminalFormID();
+        $view = \View::make('GPGCheckout::frontend.gpg-checkout', compact('data', 'booking', 'gateway_options', 'terminal_form_id'));
+
+        $response = new \stdClass();
+        $response->terminal = $this->isTerminal();
+        $response->form_id = $terminal_form_id;
+        $response->form = base64_encode($view->render());
+
+        return json_encode($response);
     }
 
     public function getDisplayHtml()
@@ -153,5 +162,14 @@ class GPGCheckoutGateway extends \Modules\Booking\Gateways\BaseGateway
                 'code'      => 840
             ]
         ];
+    }
+
+    public function isTerminal(){
+        return true;
+    }
+
+    public function getTerminalFormID(){
+        $stamp = time();
+        return "gpg-checkout-form-{$stamp}";
     }
 }
