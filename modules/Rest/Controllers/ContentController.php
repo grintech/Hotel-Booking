@@ -33,17 +33,21 @@ class ContentController extends Controller{
             return $this->sendError(__("Unknown module"));
         }
 
-        $featured = $this->{$service}::where(['status' => 'publish'])
-            ->orderBy('is_featured', 'DESC')
-            ->with(['translations'])
-            ->take(10)->get();
+        if(method_exists($this, $service. 'Featured')){
+            $featured = $this->{$service . 'Featured'}();
+        }else{
+            $featured = $this->{$service}::where(['status' => 'publish'])
+                ->orderBy('is_featured', 'DESC')
+                ->with(['translations'])
+                ->take(10)->get();
 
-        $featured = $featured->map(function($item){
-            $item->thumbnail = get_file_url($item->image_id);
-            $item->banner = get_file_url($item->banner_image_id);
-            $item->gallery = $item->getGallery();
-            return $item;
-        });
+            $featured = $featured->map(function($item){
+                $item->thumbnail = get_file_url($item->image_id);
+                $item->banner = get_file_url($item->banner_image_id);
+                $item->gallery = $item->getGallery();
+                return $item;
+            });
+        }
         return response()->json($featured);
     }
 
@@ -239,5 +243,11 @@ class ContentController extends Controller{
             ],
         ];
         return view('News::frontend.detail', $data);
+    }
+
+    public function newsFeatured(){
+        return $this->news::query()->select("core_news.*")
+            ->where("core_news.status", "publish")->orderBy('core_news.id', 'desc')
+            ->take(10)->get();
     }
 }
