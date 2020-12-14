@@ -39,8 +39,8 @@ class ContentController extends Controller{
             ->take(10)->get();
 
         $featured = $featured->map(function($item){
-            $item->thumbnail = get_file_url($item->image_id);
-            $item->banner = get_file_url($item->banner_image_id);
+            $item->thumbnail = get_file_url($item->image_id, 'medium');
+            $item->banner = get_file_url($item->banner_image_id, 'medium');
             $item->gallery = $item->getGallery();
             return $item;
         });
@@ -60,8 +60,8 @@ class ContentController extends Controller{
 
         foreach($data as $service){
             $service = $service->map(function($item){
-                $item->thumbnail = get_file_url($item->image_id);
-                $item->banner = get_file_url($item->banner_image_id);
+                $item->thumbnail = get_file_url($item->image_id, 'medium');
+                $item->banner = get_file_url($item->banner_image_id, 'medium');
                 $item->gallery = $item->getGallery();
                 return $item;
             });
@@ -82,13 +82,13 @@ class ContentController extends Controller{
     public function guesthouse($id){
         $row = $this->guesthouse::where('id', $id)->with(['rooms', 'location','translations','hasWishList'])->first();
 
-        $row->thumbnail = get_file_url($row->image_id);
-        $row->banner = get_file_url($row->banner_image_id);
+        $row->thumbnail = get_file_url($row->image_id, 'medium');
+        $row->banner = get_file_url($row->banner_image_id, 'medium');
         $row->gallery = $row->getGallery();
 
         foreach($row->rooms as $room){
-            $room->thumbnail = get_file_url($room->image_id);
-            $room->banner = get_file_url($room->banner_image_id);
+            $room->thumbnail = get_file_url($room->image_id, 'medium');
+            $room->banner = get_file_url($room->banner_image_id, 'medium');
             $room->gallery = $room->getGallery();
         }
 
@@ -106,8 +106,8 @@ class ContentController extends Controller{
 
             foreach($related as $serviceName => $relatedItems){
                 $relatedItems = $relatedItems->map(function($i){
-                    $i->thumbnail = get_file_url($i->image_id);
-                    $i->banner = get_file_url($i->banner_image_id);
+                    $i->thumbnail = get_file_url($i->image_id, 'medium');
+                    $i->banner = get_file_url($i->banner_image_id, 'medium');
                     $i->gallery = $i->getGallery();
                     return $i;
                 });
@@ -132,8 +132,8 @@ class ContentController extends Controller{
             return $this->sendError(__("No Detailed view permiited"));
         }
 
-        $row->thumbnail = get_file_url($row->image_id);
-        $row->banner = get_file_url($row->banner_image_id);
+        $row->thumbnail = get_file_url($row->image_id, 'medium');
+        $row->banner = get_file_url($row->banner_image_id, 'medium');
         $row->gallery = $row->getGallery();
 
         $translation = $row->translateOrOrigin(app()->getLocale());
@@ -147,8 +147,8 @@ class ContentController extends Controller{
 
             foreach($related as $serviceName => $relatedItems){
                 $relatedItems = $relatedItems->map(function($i){
-                    $i->thumbnail = get_file_url($i->image_id);
-                    $i->banner = get_file_url($i->banner_image_id);
+                    $i->thumbnail = get_file_url($i->image_id, 'medium');
+                    $i->banner = get_file_url($i->banner_image_id, 'medium');
                     $i->gallery = $i->getGallery();
                     return $i;
                 });
@@ -169,8 +169,8 @@ class ContentController extends Controller{
     public function tour($id){
         $row = $this->tour::where('id', $id)->with(['location','translations','hasWishList'])->first();
 
-        $row->thumbnail = get_file_url($row->image_id);
-        $row->banner = get_file_url($row->banner_image_id);
+        $row->thumbnail = get_file_url($row->image_id, 'medium');
+        $row->banner = get_file_url($row->banner_image_id, 'medium');
         $row->gallery = $row->getGallery();
 
         $translation = $row->translateOrOrigin(app()->getLocale());
@@ -184,8 +184,8 @@ class ContentController extends Controller{
 
             foreach($related as $serviceName => $relatedItems){
                 $relatedItems = $relatedItems->map(function($i){
-                    $i->thumbnail = get_file_url($i->image_id);
-                    $i->banner = get_file_url($i->banner_image_id);
+                    $i->thumbnail = get_file_url($i->image_id, 'medium');
+                    $i->banner = get_file_url($i->banner_image_id, 'medium');
                     $i->gallery = $i->getGallery();
                     return $i;
                 });
