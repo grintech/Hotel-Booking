@@ -1,7 +1,7 @@
 <div class="bravo-list-tour mt-4 {{$style_list}}">
     <div class="container">
         @if($title)
-            <div class="title">
+            <div class="title" style="font-weight: 500;">
                 {{$title}}
                 @if(!empty($desc))
                     <div class="sub-title">
