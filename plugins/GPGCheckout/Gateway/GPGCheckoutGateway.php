@@ -120,13 +120,13 @@ class GPGCheckoutGateway extends \Modules\Booking\Gateways\BaseGateway
         if ($this->getOption('enable_sandbox')) {
             $gateway_options->url = $this->getOption('sandbox_url');
             $gateway_options->site_number = $this->getOption('sandbox_site_number');
-            $gateway_options->password = $this->getOption('sandbox_password');
+            $gateway_options->password = md5($this->getOption('sandbox_password'));
             $gateway_options->vad = $this->getOption('sandbox_vad');
             $gateway_options->signature = sha1 ($gateway_options->site_number. $gateway_options->password . $booking->code . (float)$booking->pay_now. $gateway_options->currency);
         } else {
             $gateway_options->url = $this->getOption('production_url');
             $gateway_options->site_number = $this->getOption('production_site_number');
-            $gateway_options->password = $this->getOption('production_password');
+            $gateway_options->password = md5($this->getOption('production_password'));
             $gateway_options->vad = $this->getOption('production_vad');
             $gateway_options->signature = sha1 ($gateway_options->site_number. $gateway_options->password . $booking->code . (float)$booking->pay_now. $gateway_options->currency);
         }

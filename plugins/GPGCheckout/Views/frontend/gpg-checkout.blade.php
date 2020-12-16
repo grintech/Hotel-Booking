@@ -5,7 +5,7 @@
     action="{{ $gateway_options->url }}">
 
     <input type="hidden" name="SiteNum" value="{{ $gateway_options->site_number }}">
-    <input type="hidden" name="Password" value="{{ md5($gateway_options->password) }}">
+    <input type="hidden" name="Password" value="{{ $gateway_options->password }}">
     <input type="hidden" name="orderID" value="{{ $booking->code }}">
     <input type="hidden" name="Amount" value="{{ (float)$booking->pay_now }}">
     <input type="hidden" name="Currency" value= "{{ $gateway_options->currency }}">
@@ -27,7 +27,7 @@
     <input type="hidden" name="Terminal" value="{{ $gateway_options->terminal  }}">
     <input type="hidden" name="ConversionRate" value="">
     <input type="hidden" name="BatchNumber" value="">
-    <input type = "hidden" name = "MerchantReference" value="">
+    <input type = "hidden" name="MerchantReference" value="">
     <input type="hidden" name="Reccu_Num" value="">
     <input type = "hidden" name="Reccu_ExpiryDate" value="">
     <input type = "hidden" name="Reccu_Frecuency" value="">
