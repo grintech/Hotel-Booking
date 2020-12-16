@@ -160,15 +160,18 @@ class Guesthouse extends Bookable
         if ($featuredIncluded and $this->image_id) {
             $list_item[] = [
                 'large' => FileHelper::url($this->image_id, 'full'),
+                'medium' => FileHelper::url($this->image_id, 'medium'),
                 'thumb' => FileHelper::url($this->image_id, 'thumb')
             ];
         }
         $items = explode(",", $this->gallery);
         foreach ($items as $k => $item) {
             $large = FileHelper::url($item, 'full');
+            $medium = FileHelper::url($item, 'medium');
             $thumb = FileHelper::url($item, 'thumb');
             $list_item[] = [
                 'large' => $large,
+                'medium'=> $medium,
                 'thumb' => $thumb
             ];
         }

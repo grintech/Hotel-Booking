@@ -158,15 +158,18 @@ class Hotel extends Bookable
         if ($featuredIncluded and $this->image_id) {
             $list_item[] = [
                 'large' => FileHelper::url($this->image_id, 'full'),
+                'medium' => FileHelper::url($this->image_id, 'medium'),
                 'thumb' => FileHelper::url($this->image_id, 'thumb')
             ];
         }
         $items = explode(",", $this->gallery);
         foreach ($items as $k => $item) {
             $large = FileHelper::url($item, 'full');
+            $medium = FileHelper::url($item, 'medium');
             $thumb = FileHelper::url($item, 'thumb');
             $list_item[] = [
                 'large' => $large,
+                'medium' => $medium,
                 'thumb' => $thumb
             ];
         }
@@ -922,7 +925,7 @@ class Hotel extends Bookable
         if (!empty($price_range = $request->query('price_range'))) {
             $pri_from = explode(";", $price_range)[0];
             $pri_to = explode(";", $price_range)[1];
-            $raw_sql_min_max = "(  bravo_hotels.price >= ? ) 
+            $raw_sql_min_max = "(  bravo_hotels.price >= ? )
                             AND (  bravo_hotels.price <= ? )";
             $model_hotel->WhereRaw($raw_sql_min_max,[$pri_from,$pri_to]);
         }
