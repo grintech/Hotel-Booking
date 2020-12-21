@@ -16,6 +16,8 @@ use \Illuminate\Support\Facades\Route;
 Route::group([], function(){
 
     Route::group(['prefix' => '{service}'] , function(){
+
+        Route::get('category', ['uses' => 'ContentController@category', 'as' => 'category']);
         Route::get('featured', ['uses' => 'ContentController@featured', 'as' => 'featured']);
         Route::get('related/{location_id}', ['uses' => 'ContentController@related', 'as' => 'related']);
         Route::get('detail/{id}', ['uses' => 'ContentController@detail', 'as' => 'detail']);

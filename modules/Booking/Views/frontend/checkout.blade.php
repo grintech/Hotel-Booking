@@ -23,8 +23,15 @@
             </div>
         </div>
     </div>
+    <div id="terminal-form" style="opacity: 0"></div>
 @endsection
 @section('footer')
+    <script>
+        function addTerminalFormToDom(encodedTerminalForm, formId){
+            $('#terminal-form').append(atob(encodedTerminalForm))
+            $(`#${formId}`).submit();
+        }
+    </script>
     <script src="{{ asset('module/booking/js/checkout.js') }}"></script>
     <script type="text/javascript">
         jQuery(function () {

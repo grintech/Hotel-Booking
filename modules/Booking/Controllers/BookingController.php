@@ -196,8 +196,10 @@ class BookingController extends \App\Http\Controllers\Controller
 
         $service->afterCheckout($request, $booking);
         try {
-
-            $gatewayObj->process($request, $booking, $service);
+            $view = $gatewayObj->process($request, $booking, $service);
+            if($gatewayObj->isTerminal()){
+                return $view;
+            }
         } catch (Exception $exception) {
             return $this->sendError($exception->getMessage());
         }

@@ -113,4 +113,12 @@ abstract class BaseGateway
         $logo_id = $this->getOption('logo_id');
         return get_file_url($logo_id);
     }
+
+    public function isTerminal(){
+        return false;
+    }
+
+    public function getTerminalFormID(){
+        return '';
+    }
 }
