@@ -4,7 +4,7 @@
     method="POST"
     action="{{ $gateway_options->url }}">
 
-    <input type="hidden" name="SiteNum" value="{{ $gateway_options->site_number }}">
+    <input type="hidden" name="NumSite" value="{{ $gateway_options->site_number }}">
     <input type="hidden" name="Password" value="{{ $gateway_options->password }}">
     <input type="hidden" name="orderID" value="{{ $booking->code }}">
     <input type="hidden" name="Amount" value="{{ (float)$booking->pay_now }}">

@@ -112,7 +112,7 @@ class GPGCheckoutGateway extends \Modules\Booking\Gateways\BaseGateway
         $gateway_options = new \stdClass();
         $data = $request->all();
 
-        $gateway_options->currency = setting_item('currency_main');
+        $gateway_options->currency = strtoupper(setting_item('currency_main'));
         $gateway_options->terminal = $this->getSupportedTerminals();
         $gateway_options->terminal = $gateway_options->terminal[strtoupper($gateway_options->currency)]['terminal'];
         $gateway_options->lang = app()->getLocale();
@@ -122,13 +122,13 @@ class GPGCheckoutGateway extends \Modules\Booking\Gateways\BaseGateway
             $gateway_options->site_number = $this->getOption('sandbox_site_number');
             $gateway_options->password = md5($this->getOption('sandbox_password'));
             $gateway_options->vad = $this->getOption('sandbox_vad');
-            $gateway_options->signature = sha1 ($gateway_options->site_number. $gateway_options->password . $booking->code . (float)$booking->pay_now. $gateway_options->currency);
+            $gateway_options->signature = sha1($gateway_options->site_number. $this->getOption('sandbox_password') . $booking->code . (float)$booking->pay_now. $gateway_options->currency);
         } else {
             $gateway_options->url = $this->getOption('production_url');
             $gateway_options->site_number = $this->getOption('production_site_number');
             $gateway_options->password = md5($this->getOption('production_password'));
             $gateway_options->vad = $this->getOption('production_vad');
-            $gateway_options->signature = sha1 ($gateway_options->site_number. $gateway_options->password . $booking->code . (float)$booking->pay_now. $gateway_options->currency);
+            $gateway_options->signature = sha1 ($gateway_options->site_number. $this->getOption('production_password') . $booking->code . (float)$booking->pay_now. $gateway_options->currency);
         }
 
         $terminal_form_id = $this->getTerminalFormID();
@@ -148,17 +148,23 @@ class GPGCheckoutGateway extends \Modules\Booking\Gateways\BaseGateway
     }
 
     public function getSupportedTerminals(){
+        /*
+         * The terminal code needs to be kept in string format,
+         * numeric format removes the prefix zeroes, not supported
+         * by the GPGCheckout
+         *
+         * */
         return [
             'TND' => [
-                'terminal'  => 001,
+                'terminal'  => '001',
                 'code'      => 788
             ],
             'EUR' => [
-                'terminal'  => 003,
+                'terminal'  => '003',
                 'code'      => 978
             ],
             'USD' => [
-                'terminal'  => 004,
+                'terminal'  => '004',
                 'code'      => 840
             ]
         ];
