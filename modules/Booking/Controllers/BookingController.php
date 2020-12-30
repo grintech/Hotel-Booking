@@ -3,6 +3,8 @@ namespace Modules\Booking\Controllers;
 
 use DebugBar\DebugBar;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Mockery\Exception;
 //use Modules\Booking\Events\VendorLogPayment;
@@ -163,11 +165,14 @@ class BookingController extends \App\Http\Controllers\Controller
         $booking->address2 = $request->input('address_line_2');
         $booking->city = $request->input('city');
         $booking->state = $request->input('state');
+        $booking->currency = Session::get('bc_current_currency');
         $booking->zip_code = $request->input('zip_code');
         $booking->country = $request->input('country');
         $booking->customer_notes = $request->input('customer_notes');
         $booking->gateway = $payment_gateway;
         $booking->pay_now = $booking->deposit;
+
+        Log::info(json_encode($booking));
 
         if($how_to_pay != 'deposit'){
             $booking->deposit = 0;

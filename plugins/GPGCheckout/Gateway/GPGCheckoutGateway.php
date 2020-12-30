@@ -1,7 +1,9 @@
 <?php
 namespace Plugins\GPGCheckout\Gateway;
 
+use App\Currency;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Mockery\Exception;
 use Modules\Booking\Models\Payment;
 use Validator;
@@ -10,6 +12,7 @@ class GPGCheckoutGateway extends \Modules\Booking\Gateways\BaseGateway
 {
     protected $id   = 'gpg_checkout_gateway';
     public    $name = 'GPG Checkout';
+    public    $primary_currency = 'tnd';
     protected $gateway;
 
     public function getOptionsConfigs()
@@ -88,6 +91,7 @@ class GPGCheckoutGateway extends \Modules\Booking\Gateways\BaseGateway
 
     public function process(Request $request, $booking, $service)
     {
+
         if (in_array($booking->status, [
             $booking::PAID,
             $booking::COMPLETED,
@@ -112,9 +116,19 @@ class GPGCheckoutGateway extends \Modules\Booking\Gateways\BaseGateway
         $gateway_options = new \stdClass();
         $data = $request->all();
 
-        $gateway_options->currency = strtoupper(setting_item('currency_main'));
+        $conversion = $this->getInPrimaryCurrency($booking->currency, (float)$booking->pay_now);
+
+        Log::info(json_encode([
+            'booking currency' => $booking->currency,
+            'booking amount' => $booking->pay_now
+        ]));
+
+        $gateway_options->currency = strtoupper($booking->currency);
+        $gateway_options->amount = $conversion['amount'];
+        $gateway_options->amountInWord = $conversion['word'];
+        $gateway_options->conversion_rate = $conversion['rate'];
         $gateway_options->terminal = $this->getSupportedTerminals();
-        $gateway_options->terminal = $gateway_options->terminal[strtoupper($gateway_options->currency)]['terminal'];
+        $gateway_options->terminal = $gateway_options->terminal[$gateway_options->currency]['terminal'];
         $gateway_options->lang = app()->getLocale();
 
         if ($this->getOption('enable_sandbox')) {
@@ -122,13 +136,13 @@ class GPGCheckoutGateway extends \Modules\Booking\Gateways\BaseGateway
             $gateway_options->site_number = $this->getOption('sandbox_site_number');
             $gateway_options->password = md5($this->getOption('sandbox_password'));
             $gateway_options->vad = $this->getOption('sandbox_vad');
-            $gateway_options->signature = sha1($gateway_options->site_number. $this->getOption('sandbox_password') . $booking->code . (float)$booking->pay_now. $gateway_options->currency);
+            $gateway_options->signature = sha1($gateway_options->site_number. $this->getOption('sandbox_password') . $booking->code . $gateway_options->amount. $gateway_options->currency);
         } else {
             $gateway_options->url = $this->getOption('production_url');
             $gateway_options->site_number = $this->getOption('production_site_number');
             $gateway_options->password = md5($this->getOption('production_password'));
             $gateway_options->vad = $this->getOption('production_vad');
-            $gateway_options->signature = sha1 ($gateway_options->site_number. $this->getOption('production_password') . $booking->code . (float)$booking->pay_now. $gateway_options->currency);
+            $gateway_options->signature = sha1 ($gateway_options->site_number. $this->getOption('production_password') . $booking->code . $gateway_options->amount. $gateway_options->currency);
         }
 
         $terminal_form_id = $this->getTerminalFormID();
@@ -167,6 +181,53 @@ class GPGCheckoutGateway extends \Modules\Booking\Gateways\BaseGateway
                 'terminal'  => '004',
                 'code'      => 840
             ]
+        ];
+    }
+
+    public function getInPrimaryCurrency($transactionCurrency, $amount){
+        $currencies = Currency::getActiveCurrency();
+
+        $transaction_currency_setting = $app_primary_currency_setting = $gateway_primary_currency_setting = null;
+
+        $app_primary_currency = setting_item('currency_main');
+
+        foreach($currencies as $c) {
+            if ($c['currency_main'] == $transactionCurrency) {
+                $transaction_currency_setting = $c;
+            }
+
+            if($c['currency_main'] == $this->primary_currency){
+                $gateway_primary_currency_setting = $c;
+            }
+
+            if($c['currency_main'] == $app_primary_currency){
+                $app_primary_currency_setting = $c;
+            }
+        }
+
+        if($transaction_currency_setting['currency_main'] == $this->primary_currency){
+            //the transaction currency is same as gateway primary currency
+            $gatewayAmount = $amount * $transaction_currency_setting['multiplier'];
+            $gatewayAmountParse = $gatewayAmount;
+            $gatewayConversionRate = 1;
+        }else{
+            $amountInPrimaryCurrency = $amount * $transaction_currency_setting['rate'];
+            $amountInTND = $amountInPrimaryCurrency * $gateway_primary_currency_setting['rate'];
+            $gatewayAmount = $amountInTND * $gateway_primary_currency_setting['multiplier'];
+            $gatewayAmountParse = ($amount * $transaction_currency_setting['multiplier']);
+            $gatewayConversionRate = $transaction_currency_setting['rate'];
+        }
+
+        Log::info(json_encode([
+            'amount' => $gatewayAmount,
+            'word' => $gatewayAmountParse,
+            'rate' => $gatewayConversionRate
+        ]));
+
+        return [
+            'amount' => $gatewayAmount,
+            'word' => $gatewayAmountParse,
+            'rate' => $gatewayConversionRate
         ];
     }
 

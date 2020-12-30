@@ -7,7 +7,8 @@
     <input type="hidden" name="NumSite" value="{{ $gateway_options->site_number }}">
     <input type="hidden" name="Password" value="{{ $gateway_options->password }}">
     <input type="hidden" name="orderID" value="{{ $booking->code }}">
-    <input type="hidden" name="Amount" value="{{ (float)$booking->pay_now }}">
+    <input type="hidden" name="Amount" value="{{ $gateway_options->amount }}">
+    <input type="hidden" name="AmountSecond" value="{{ $gateway_options->amountInWord }}">
     <input type="hidden" name="Currency" value= "{{ $gateway_options->currency }}">
     <input type="hidden" name="Language" value="{{ $gateway_options->lang }}">
     <input type="hidden" name="EMAIL" value="{{ $data['email'] }}">
@@ -22,10 +23,9 @@
     <input type="hidden" name="MerchandSession" value="">
     <input type="hidden" name="orderProducts" value="Wildyness Booking Charges">
     <input type="hidden" name="signature" value="{{ $gateway_options->signature }}">
-    <input type="hidden" name="AmountSecond" value="">
     <input type="hidden" name="vad" value="{{ $gateway_options->vad }}">
     <input type="hidden" name="Terminal" value="{{ $gateway_options->terminal  }}">
-    <input type="hidden" name="ConversionRate" value="">
+    <input type="hidden" name="ConversionRate" value="{{ $gateway_options->conversion_rate }}">
     <input type="hidden" name="BatchNumber" value="">
     <input type = "hidden" name="MerchantReference" value="">
     <input type="hidden" name="Reccu_Num" value="">

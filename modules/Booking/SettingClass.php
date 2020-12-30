@@ -13,6 +13,7 @@ class SettingClass extends BaseSettingsClass
             'currency_decimal',
             'currency_thousand',
             'currency_no_decimal',
+            'currency_multiplier',
             'extra_currency'
         ];
         $all = get_payment_gateways();

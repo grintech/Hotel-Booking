@@ -29,6 +29,7 @@ class Currency
                 'currency_thousand'=>setting_item('currency_thousand'),
                 'currency_no_decimal'=>setting_item('currency_no_decimal'),
                 'currency_decimal'=>setting_item('currency_decimal'),
+                'multiplier' => setting_item('currency_multiplier'),
                 'is_main'=>1,
                 'rate'=>1
             ]

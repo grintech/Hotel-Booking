@@ -3,6 +3,7 @@ namespace Plugins\GPGCheckout\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class GPGCheckoutController extends Controller
 {
@@ -13,5 +14,9 @@ class GPGCheckoutController extends Controller
             return redirect($request->input('x_receipt_link_url') . "&" . $twoco_args);
         }
         return redirect("/");
+    }
+
+    public function handleCallback(Request $request){
+        return response()->json($request->input());
     }
 }

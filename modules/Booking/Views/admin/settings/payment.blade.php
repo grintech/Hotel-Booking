@@ -52,6 +52,15 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label >{{__("Currency Multiplier")}}</label>
+                            <div>
+                                <input step=any type="number" name="currency_multiplier" min=1 class="form-control" value="{{$settings['currency_multiplier'] ?? 0}}">
+                                <p><i>{{__('Example: 1 TND = 1000 Millimes, So multiplier would be 1000')}}</i></p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -91,7 +100,7 @@
                                                                     ['id'=>'right','name'=>__('Right (100$)')],
                                                                     ['id'=>'right_space','name'=>__('Right with space (100 $)')],
                                                                     ['id'=>'left','name'=>__('Left ($100)')],
-                                                                    ['id'=>'left_space','name'=>__('Left with space ($ 100)')],
+                                                                    ['id'=>'left_space','name'=>__('Left with space ($ 100)')]
                                                                 ],$item['currency_format'] ?? '') !!}
                                                             </div>
                                                         </div>
@@ -128,6 +137,13 @@
                                                         <p><i>{{__('Example: Main currency is VND, and the extra currency is USD, so the exchange rate must be 23400 (1 USD ~ 23400 VND)')}}</i></p>
                                                     </div>
                                                 </div>
+                                                <div class="form-group">
+                                                    <label >{{__("Currency Multiplier")}}</label>
+                                                    <div>
+                                                        <input step=any type="number" name="extra_currency[{{$key}}][multiplier]" min=1 class="form-control" value="{{$item['multiplier'] ?? 0}}">
+                                                        <p><i>{{__('Example: 1 TND = 1000 Millimes, So multiplier would be 1000')}}</i></p>
+                                                    </div>
+                                                </div>
                                             </div>
                                             <div class="col-md-1">
                                                 <span class="btn btn-danger btn-sm btn-remove-item"><i class="fa fa-trash"></i></span>
@@ -158,7 +174,7 @@
                                                                 ['id'=>'right','name'=>__('Right (100$)')],
                                                                 ['id'=>'right_space','name'=>__('Right with space (100 $)')],
                                                                 ['id'=>'left','name'=>__('Left ($100)')],
-                                                                ['id'=>'left_space','name'=>__('Left with space ($ 100)')],
+                                                                ['id'=>'left_space','name'=>__('Left with space ($ 100)')]
                                                             ],'right','',true) !!}
                                                         </div>
                                                     </div>
@@ -194,6 +210,13 @@
                                                 <div>
                                                     <input step=any type="text" __name__="extra_currency[__number__][rate]" min=0 class="form-control" value="">
                                                     <p><i>{{__('Example: Main currency is VND, and the extra currency is USD, so the exchange rate must be 23400 (1 USD ~ 23400 VND)')}}</i></p>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label >{{__("Currency Multiplier")}}</label>
+                                                <div>
+                                                    <input step=any type="number" __name__="extra_currency[__number__][multiplier]" min=1 class="form-control" value="">
+                                                    <p><i>{{__('Example: 1 TND = 1000 Millimes, So multiplier would be 1000')}}</i></p>
                                                 </div>
                                             </div>
                                         </div>
