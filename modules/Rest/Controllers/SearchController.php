@@ -124,11 +124,16 @@ class SearchController extends Controller
         }
         $rows = $model_News->with("getAuthor")->with('translations')->with("getCategory")->paginate(10);
         $total = $rows->total();
+
         return $this->sendSuccess(
             [
                 'total'=>$total,
                 'total_pages'=>$rows->lastPage(),
-                'data'=>$rows
+                'data'=> $rows->map(function($item){
+                    $item->thumbnail = get_file_url($item->image_id, 'medium');
+                    $item->banner = get_file_url($item->banner_image_id, 'medium');
+                    return $item;
+                })
             ]
         );
     }

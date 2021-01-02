@@ -137,7 +137,7 @@ class ContentController extends Controller{
     }
 
     public function hike($id){
-        $row = Hike::where('id', $id)->with(['location','translations','hasWishList'])->first();
+        $row = Hike::where('id', $id)->with(['location','translations','hasWishList', 'author'])->first();
 
         if (empty($row) or !$row->hasPermissionDetailView()) {
             return $this->sendError(__("No Detailed view permiited"));
@@ -183,6 +183,11 @@ class ContentController extends Controller{
         $row->thumbnail = get_file_url($row->image_id, 'medium');
         $row->banner = get_file_url($row->banner_image_id, 'medium');
         $row->gallery = $row->getGallery();
+
+        $row->itinerary = $row->itinerary ? array_map(function ($i){
+            $i['thumbnail'] = get_file_url($i['image_id'], 'medium');
+            return $i;
+        }, $row->itinerary): null;
 
         $translation = $row->translateOrOrigin(app()->getLocale());
         $location_id = $row->location_id;
