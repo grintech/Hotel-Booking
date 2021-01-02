@@ -25,13 +25,14 @@
                     @foreach($rows as $row)
                         @include('Hike::frontend.layouts.search.loop-gird')
                     @endforeach
-                        @include('Template::frontend.blocks.view-more', [
-                            'background_image' => 'https://pix10.agoda.net/hotelImages/522/522433/522433_16080414390045216028.jpg?s=1024x768',
-                            'launcher_url' => '#',
-                            'description' => 'View more relevant guesthouses at more then hundred tourist locations'
-                        ])
-                </div>
 
+                    @if(count($rows) > 0 && $show_more)
+                        @include('Hike::frontend.layouts.search.loop-gird', [
+                            'row' => $rows[0],
+                            'is_more_item' => true
+                        ])
+                    @endif
+                </div>
             @endif
             @if($style_list === "box_shadow")
                 <div class="row row-eq-height">

@@ -18,6 +18,15 @@
                             @include('Tour::frontend.layouts.search.loop-gird')
                         </div>
                     @endforeach
+
+                    @if(count($rows) > 0 && $show_more)
+                        <div class="col-lg-{{$col ?? 3}} col-md-6">
+                            @include('Tour::frontend.layouts.search.loop-gird', [
+                                'row' => $rows[0],
+                                'is_more_item' => true
+                            ])
+                        </div>
+                    @endif
                 </div>
             @endif
             @if($style_list === "carousel")
@@ -25,6 +34,13 @@
                     @foreach($rows as $row)
                         @include('Tour::frontend.layouts.search.loop-gird')
                     @endforeach
+
+                    @if(count($rows) > 0 && $show_more)
+                        @include('Tour::frontend.layouts.search.loop-gird', [
+                            'row' => $rows[0],
+                            'is_more_item' => true
+                        ])
+                    @endif
                 </div>
             @endif
             @if($style_list === "box_shadow")
@@ -34,6 +50,15 @@
                             @include('Tour::frontend.blocks.list-tour.loop-box-shadow')
                         </div>
                     @endforeach
+
+                    @if(count($rows) > 0 && $show_more)
+                        <div class="col-lg-{{$col ?? 4}} col-md-6 col-item">
+                            @include('Tour::frontend.blocks.list-tour.loop-box-shadow', [
+                                'row' => $rows[0],
+                                'is_more_item' => true
+                            ])
+                        </div>
+                    @endif
                 </div>
             @endif
         </div>

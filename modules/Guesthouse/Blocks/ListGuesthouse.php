@@ -106,11 +106,6 @@ class ListGuesthouse extends BaseBlock
                     'default'=> true
                 ],
                 [
-                    'id'    => 'background_image',
-                    'type'  => 'uploader',
-                    'label' => __('Background Image for view more card')
-                ],
-                [
                     'id'        => 'view_more_desc',
                     'type'      => 'input',
                     'inputType' => 'text',
@@ -158,7 +153,6 @@ class ListGuesthouse extends BaseBlock
             'title'      => $model['title'],
             'desc'       => $model['desc'],
             'show_more'  => $model['show_more'] ?? false,
-            'background_image' => $model['background_image'] ?? false,
             'view_more_desc' => $model['view_more_desc'] ?? false,
         ];
         return view('Guesthouse::frontend.blocks.list-guesthouse.index', $data);

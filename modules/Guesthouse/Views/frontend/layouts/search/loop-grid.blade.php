@@ -2,6 +2,12 @@
     $translation = $row->translateOrOrigin(app()->getLocale());
 @endphp
 <div class="item-loop {{$wrap_class ?? ''}}">
+    @if($is_more_item ?? false)
+        <div style="z-index: 20;position: absolute;top: 0;left: 0;right: 0;bottom: 0;background: rgba(255, 255, 255, 0.2);backdrop-filter: blur(6px);display: flex;flex-direction: column;justify-content: center;align-items: center;text-align: center;padding: 16px;">
+            <p class="text-light">{{ $view_more_desc }}</p>
+            <a href="{{ route('guesthouse.search') }}" class="shadow btn btn-primary">{{ __('Browse More') }}</a>
+        </div>
+    @endif
     @if($row->is_featured == "1")
         <div class="featured">
             {{__("Featured")}}

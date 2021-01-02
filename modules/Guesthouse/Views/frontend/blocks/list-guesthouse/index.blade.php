@@ -25,10 +25,12 @@
                     @foreach($rows as $row)
                         @include('Guesthouse::frontend.layouts.search.loop-grid')
                     @endforeach
-                    @include('Template::frontend.blocks.view-more', [
-                       'launcher_url' => '#',
-                       'description' => 'View more relevant guesthouses at more then hundred tourist locations'
-                   ])
+                    @if(count($rows) > 0 && $show_more)
+                        @include('Guesthouse::frontend.layouts.search.loop-grid', [
+                            'row' => $rows[0],
+                            'is_more_item' => true
+                        ])
+                    @endif
                 </div>
             @endif
         </div>
