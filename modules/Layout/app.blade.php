@@ -98,7 +98,12 @@
         .bravo-header-sticky{
             transition: all 1s ease;
         }
-        @if($row->transparent_menu ?? true)
+        @php
+            //avoid rendering the transparent menu on detail pages of each module as the detail page doesn't
+            //have any visible backgrounds on header.
+            $render_transparent_menu = ($row->transparent_menu ?? true) && !strpos(\Request::route()->getName(), 'detail');
+        @endphp
+        @if($render_transparent_menu)
 
             .bravo-form-search-all{
                 position: relative;
