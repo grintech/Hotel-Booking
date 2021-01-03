@@ -215,7 +215,8 @@ class UserController extends FrontendController
                     ], 200);
                 }
 
-                $vendor_redirect = Auth::user()->hasPermissionTo('dashboard_vendor_access') ? route('vendor.dashboard') : null;
+                $vendor_redirect = Auth::user()->hasPermissionTo('dashboard_vendor_access')
+                    ? route('vendor.dashboard') : false;
 
                 return response()->json([
                     'error'    => false,
