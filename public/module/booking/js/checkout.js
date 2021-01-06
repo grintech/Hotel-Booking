@@ -19,14 +19,12 @@
 
                 this.onSubmit = true;
 
-                console.log('checkout requested')
-
                 $.ajax({
                     url:bookingCore.url+'/booking/doCheckout',
                     data:$('.booking-form').find('input,textarea,select').serialize(),
                     method:"post",
                     success:function (res) {
-                        res = JSON.parse(res)
+                        
                         if(res.terminal){
                             addTerminalFormToDom(res.form, res.form_id)
                         }
@@ -49,8 +47,7 @@
                         }
 
                         if(res.url){
-                            console.log('Want to redirect ' + res.url)
-                            //window.location.href = res.url
+                            window.location.href = res.url
                         }
 
                         if(res.errors && typeof res.errors == 'object')
