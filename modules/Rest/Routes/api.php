@@ -15,6 +15,14 @@ use \Illuminate\Support\Facades\Route;
 
 Route::group([], function(){
 
+    Route::group(['prefix' => 'location', 'as' => 'location.'], function(){
+        Route::get('list', ['uses' => 'LocationController@list', 'as' => 'list']);
+        Route::get('locations',['uses' => 'LocationController@search', 'as' => 'search']);
+        Route::get('location/{id}', ['uses' => 'LocationController@detail', 'as' => 'detail']);
+    });
+
+    Route::get('gpx/{file}', ['uses' => 'LocationController@gpx', 'as' => 'gpx']);
+
     Route::group(['prefix' => '{service}'] , function(){
 
         Route::get('category', ['uses' => 'ContentController@category', 'as' => 'category']);
@@ -24,10 +32,14 @@ Route::group([], function(){
         Route::get('search', ['uses' => 'SearchController@search', 'as' => 'search']);
         Route::get('filters', ['uses' => 'SearchController@getFilters', 'as' => 'filters']);
     });
+});
 
-    Route::get('gpx/{file}', ['uses' => 'LocationController@gpx', 'as' => 'gpx']);
-
-    Route::group(['prefix' => 'location', 'as' => 'location.'], function(){
-        Route::get('list', ['uses' => 'LocationController@list', 'as' => 'list']);
-    });
+Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
+    Route::post('login', 'AuthController@login');
+    Route::post('register', 'AuthController@register');
+    Route::post('logout', 'AuthController@logout');
+    Route::post('refresh', 'AuthController@refresh');
+    Route::get('me', 'AuthController@me');
+    Route::post('me', 'AuthController@updateUser');
+    Route::post('change-password', 'AuthController@changePassword');
 });

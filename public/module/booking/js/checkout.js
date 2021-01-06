@@ -24,7 +24,7 @@
                     data:$('.booking-form').find('input,textarea,select').serialize(),
                     method:"post",
                     success:function (res) {
-                        
+
                         if(res.terminal){
                             addTerminalFormToDom(res.form, res.form_id)
                         }
