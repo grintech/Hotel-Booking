@@ -25,9 +25,16 @@
                     method:"post",
                     success:function (res) {
 
-                        if(res.terminal){
-                            addTerminalFormToDom(res.form, res.form_id)
-                        }
+                        try{
+                            const gatewayForm = JSON.parse(res);
+                            if(gatewayForm.hasOwnProperty('terminal') && gatewayForm.terminal){
+                                addTerminalFormToDom(gatewayForm.form, gatewayForm.form_id)
+                                return;
+                            }
+                        }catch(e){
+                            console.log('non terminal checkout')
+                        };
+
 
                         if(!res.status && !res.url){
                             me.onSubmit = false;
