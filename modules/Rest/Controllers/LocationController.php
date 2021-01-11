@@ -8,6 +8,11 @@ class LocationController extends Controller
 {
     public function list(){
         $rows = Location::where(['status' => 'publish'])->get();
+        $rows = $rows->map(function($item){
+            $item->thumbnail = get_file_url($item->image_id);
+            $item->medium = get_file_url($item->image_id, 'medium');
+            return $item;
+        });
         return response()->json($rows);
     }
 

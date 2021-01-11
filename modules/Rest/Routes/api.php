@@ -18,7 +18,7 @@ Route::group([], function(){
     Route::group(['prefix' => 'location', 'as' => 'location.'], function(){
         Route::get('list', ['uses' => 'LocationController@list', 'as' => 'list']);
         Route::get('locations',['uses' => 'LocationController@search', 'as' => 'search']);
-        Route::get('location/{id}', ['uses' => 'LocationController@detail', 'as' => 'detail']);
+        Route::get('detail/{id}', ['uses' => 'LocationController@detail', 'as' => 'detail']);
     });
 
     Route::get('gpx/{file}', ['uses' => 'LocationController@gpx', 'as' => 'gpx']);
