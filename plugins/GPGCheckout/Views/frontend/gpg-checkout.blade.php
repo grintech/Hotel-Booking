@@ -20,8 +20,8 @@
     <input type="hidden" name="CustCountry" value="{{ $data['country'] }}">
     <input type="hidden" name="CustTel" value="{{ $data['phone'] }}">
     <input type="hidden" name="PayementType" value="1">
-    <input type="hidden" name="MerchandSession" value="">
-    <input type="hidden" name="orderProducts" value="Wildyness Booking Charges">
+    <input type="hidden" name="MerchandSession" value="{{ $booking->code }}">
+    <input type="hidden" name="orderProducts" value="Wildyness Booking">
     <input type="hidden" name="signature" value="{{ $gateway_options->signature }}">
     <input type="hidden" name="vad" value="{{ $gateway_options->vad }}">
     <input type="hidden" name="Terminal" value="{{ $gateway_options->terminal  }}">

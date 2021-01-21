@@ -4,6 +4,7 @@ namespace Plugins\GPGCheckout\Gateway;
 use App\Currency;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
 use Mockery\Exception;
 use Modules\Booking\Models\Payment;
 use Validator;
@@ -112,6 +113,8 @@ class GPGCheckoutGateway extends \Modules\Booking\Gateways\BaseGateway
         $booking->status = $booking::UNPAID;
         $booking->payment_id = $payment->id;
         $booking->save();
+
+        \session()->put('gpg_checkout_booking_code', $booking->code);
 
         $gateway_options = new \stdClass();
         $data = $request->all();
