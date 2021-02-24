@@ -48,4 +48,13 @@ class NewsCategory extends BaseModel
         return route('news.category.index',['slug'=>$this->slug]);
     }
 
+    public function dataForApi(){
+        $translation = $this->translateOrOrigin(app()->getLocale());
+        return [
+            'name'=>$translation->name,
+            'id'=>$this->id,
+            'url'=>$this->getDetailUrl()
+        ];
+    }
+
 }

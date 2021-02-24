@@ -21,7 +21,7 @@ class MediaController extends Controller
     public function privateFileStore(Request $request)
     {
         if(!$user_id = Auth::id()){
-            return $this->sendError(__("Please logged in"));
+            return $this->sendError(__("Please log in"));
         }
 
         $fileName = 'file';

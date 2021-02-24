@@ -17,6 +17,7 @@ class SetLanguageForApi
      */
     public function handle($request, Closure $next, $guard = null)
     {
+        \Debugbar::disable();
         if($locale = $request->get('lang'))
         {
             $languages = \Modules\Language\Models\Language::getActive();

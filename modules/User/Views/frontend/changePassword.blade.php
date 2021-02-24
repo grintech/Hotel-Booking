@@ -6,7 +6,7 @@
         {{__("Change Password")}}
     </h2>
     @include('admin.message')
-    <form action="{{ route("user.change_password") }}" method="post">
+    <form action="{{ route("user.change_password.update") }}" method="post">
         @csrf
         <div class="row">
             <div class="col-md-6">

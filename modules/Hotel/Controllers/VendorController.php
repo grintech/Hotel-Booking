@@ -1,7 +1,12 @@
 <?php
 namespace Modules\Hotel\Controllers;
 
+use App\Notifications\AdminChannelServices;
+use Illuminate\Notifications\Notifiable;
+use Modules\Booking\Events\BookingUpdatedEvent;
 use Modules\Booking\Models\Enquiry;
+use Modules\Core\Events\CreatedServicesEvent;
+use Modules\Core\Events\UpdatedServiceEvent;
 use Modules\FrontendController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,6 +16,7 @@ use Modules\Core\Models\Attributes;
 use Modules\Booking\Models\Booking;
 use Modules\Hotel\Models\HotelTerm;
 use Modules\Hotel\Models\HotelTranslation;
+use Modules\Location\Models\LocationCategory;
 
 class VendorController extends FrontendController
 {
@@ -20,6 +26,7 @@ class VendorController extends FrontendController
     protected $attributesClass;
     protected $locationClass;
     protected $bookingClass;
+    private $locationCategoryClass;
 
     public function __construct()
     {
@@ -29,6 +36,7 @@ class VendorController extends FrontendController
         $this->hotelTermClass = HotelTerm::class;
         $this->attributesClass = Attributes::class;
         $this->locationClass = Location::class;
+        $this->locationCategoryClass = LocationCategory::class;
         $this->bookingClass = Booking::class;
     }
 
@@ -63,6 +71,29 @@ class VendorController extends FrontendController
         return view('Hotel::frontend.vendorHotel.index', $data);
     }
 
+    public function recovery(Request $request)
+    {
+        $this->checkPermission('hotel_view');
+        $user_id = Auth::id();
+        $list_hotel = $this->hotelClass::onlyTrashed()->where("create_user", $user_id)->orderBy('id', 'desc');
+        $data = [
+            'rows' => $list_hotel->paginate(5),
+            'recovery'           => 1,
+            'breadcrumbs'        => [
+                [
+                    'name' => __('Manage Hotels'),
+                    'url'  => route('hotel.vendor.index')
+                ],
+                [
+                    'name'  => __('Recovery'),
+                    'class' => 'active'
+                ],
+            ],
+            'page_title'         => __("Recovery Hotels"),
+        ];
+        return view('Hotel::frontend.vendorHotel.index', $data);
+    }
+
     public function create(Request $request)
     {
         $this->checkPermission('hotel_create');
@@ -71,6 +102,7 @@ class VendorController extends FrontendController
             'row'           => $row,
             'translation' => new $this->hotelTranslationClass(),
             'hotel_location' => $this->locationClass::where("status","publish")->get()->toTree(),
+            'location_category' => $this->locationCategoryClass::where('status', 'publish')->get(),
             'attributes'    => $this->attributesClass::where('service', 'hotel')->get(),
             'breadcrumbs'        => [
                 [
@@ -132,13 +164,17 @@ class VendorController extends FrontendController
             'allow_full_day',
             'enable_extra_price',
             'extra_price',
+            'min_day_before_booking',
+            'min_day_stays',
+            'enable_service_fee',
+            'service_fee',
+            'surrounding',
         ];
         if($this->hasPermission('hotel_manage_others')){
             $dataKeys[] = 'create_user';
         }
 
         $row->fillByAttr($dataKeys,$request->input());
-	    $row->ical_import_url  = $request->ical_import_url;
 
         $res = $row->saveOriginOrTranslation($request->input('lang'),true);
 
@@ -148,8 +184,10 @@ class VendorController extends FrontendController
             }
 
             if($id > 0 ){
+                event(new UpdatedServiceEvent($row));
                 return back()->with('success',  __('Hotel updated') );
             }else{
+                event(new CreatedServicesEvent($row));
                 return redirect(route('hotel.vendor.edit',['id'=>$row->id]))->with('success', __('Hotel created') );
             }
         }
@@ -185,6 +223,7 @@ class VendorController extends FrontendController
             'translation'    => $translation,
             'row'           => $row,
             'hotel_location' => $this->locationClass::where("status","publish")->get()->toTree(),
+            'location_category' => $this->locationCategoryClass::where('status', 'publish')->get(),
             'attributes'    => $this->attributesClass::where('service', 'hotel')->get(),
             "selected_terms" => $row->terms->pluck('term_id'),
             'breadcrumbs'        => [
@@ -209,8 +248,22 @@ class VendorController extends FrontendController
         $query = $this->hotelClass::where("create_user", $user_id)->where("id", $id)->first();
         if(!empty($query)){
             $query->delete();
+            event(new UpdatedServiceEvent($query));
         }
         return redirect(route('hotel.vendor.index'))->with('success', __('Delete hotel success!'));
+    }
+
+    public function restore($id)
+    {
+        $this->checkPermission('hotel_delete');
+        $user_id = Auth::id();
+        $query = $this->hotelClass::onlyTrashed()->where("create_user", $user_id)->where("id", $id)->first();
+        if(!empty($query)){
+            $query->restore();
+            event(new UpdatedServiceEvent($query));
+
+        }
+        return redirect(route('hotel.vendor.recovery'))->with('success', __('Restore hotel success!'));
     }
 
     public function bulkEditHotel($id , Request $request){
@@ -236,27 +289,8 @@ class VendorController extends FrontendController
                 break;
         }
         $query->save();
+        event(new UpdatedServiceEvent($query));
         return redirect()->back()->with('success', __('Update success!'));
-    }
-
-    public function bookingReport(Request $request)
-    {
-        $data = [
-            'bookings' => $this->bookingClass::getBookingHistory($request->input('status'), false , Auth::id() , 'hotel'),
-            'statues'  => config('booking.statuses'),
-            'breadcrumbs'        => [
-                [
-                    'name' => __('Manage Hotel'),
-                    'url'  => route('hotel.vendor.index')
-                ],
-                [
-                    'name' => __('Booking Report'),
-                    'class'  => 'active'
-                ]
-            ],
-            'page_title'         => __("Booking Report"),
-        ];
-        return view('Hotel::frontend.vendorHotel.bookingReport', $data);
     }
 
     public function bookingReportBulkEdit($booking_id , Request $request){
@@ -268,7 +302,9 @@ class VendorController extends FrontendController
             if(!empty($item)){
                 $item->status = $status;
                 $item->save();
-                $item->sendStatusUpdatedEmails();
+                if($status == Booking::CANCELLED) $item->tryRefundToWallet();
+
+                event(new BookingUpdatedEvent($item));
                 return redirect()->back()->with('success', __('Update success'));
             }
             return redirect()->back()->with('error', __('Booking not found!'));

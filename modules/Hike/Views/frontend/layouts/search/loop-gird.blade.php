@@ -40,7 +40,7 @@
     </div>
     <div class="item-title">
         <a @if(!empty($blank)) target="_blank" @endif href="{{$row->getDetailUrl($include_param ?? true)}}">
-            {{$translation->title}}
+            {!! clean($translation->title) !!}
         </a>
     </div>
     @if(setting_item('hike_enable_review'))

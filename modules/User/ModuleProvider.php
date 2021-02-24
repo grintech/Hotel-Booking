@@ -3,6 +3,8 @@ namespace Modules\User;
 use App\User;
 use Illuminate\Support\Facades\Auth;
 use Modules\ModuleServiceProvider;
+use Modules\Vendor\Models\VendorRequest;
+
 
 class ModuleProvider extends ModuleServiceProvider
 {
@@ -26,43 +28,50 @@ class ModuleProvider extends ModuleServiceProvider
     public static function getAdminMenu()
     {
         $noti_verify = User::countVerifyRequest();
+        $noti_upgrade = VendorRequest::where('status', 'pending')->count();
         $noti = $noti_verify;
-        return [
-            'users'=>[
-                "position"=>100,
-                'url'        => 'admin/module/user',
-                'title'      => __('Users :count',['count'=>$noti ? sprintf('<span class="badge badge-warning">%d</span>',$noti) : '']),
-                'icon'       => 'icon ion-ios-contacts',
+        $options = [
+            "position"=>100,
+            'url'        => 'admin/module/user',
+            'title'      => __('Users :count',['count'=>$noti ? sprintf('<span class="badge badge-warning">%d</span>',$noti) : '']),
+            'icon'       => 'icon ion-ios-contacts',
+            'permission' => 'user_view',
+            'children'   => [
+                'user'=>[
+                    'url'   => 'admin/module/user',
+                    'title' => __('All Users'),
+                    'icon'  => 'fa fa-user',
+                ],
+                'role'=>[
+                    'url'        => 'admin/module/user/role',
+                    'title'      => __('Role Manager'),
+                    'permission' => 'role_view',
+                    'icon'       => 'fa fa-lock',
+                ],
+                'subscriber'=>[
+                    'url'        => 'admin/module/user/subscriber',
+                    'title'      => __('Subscribers'),
+                    'permission' => 'newsletter_manage',
+                ],
+                'userUpgradeRequest'=>[
+                    'url'        => 'admin/module/user/userUpgradeRequest',
+                    'title'      => __('Upgrade Request :count',['count'=>$noti_upgrade ? sprintf('<span class="badge badge-warning">%d</span>',$noti_upgrade) : '']),
+                    'permission' => 'user_view',
+                ],
+            ]
+        ];
+
+        $is_disable_verification_feature = setting_item('user_disable_verification_feature');
+        if(empty($is_disable_verification_feature)){
+            $options['children']['user_verification'] = [
+                'url'        => 'admin/module/user/verification',
+                'title'      => __('Verification Request :count',['count'=>$noti_verify ? sprintf('<span class="badge badge-warning">%d</span>',$noti_verify) : '']),
                 'permission' => 'user_view',
-                'children'   => [
-                    'user'=>[
-                        'url'   => 'admin/module/user',
-                        'title' => __('All Users'),
-                        'icon'  => 'fa fa-user',
-                    ],
-                    'role'=>[
-                        'url'        => 'admin/module/user/role',
-                        'title'      => __('Role Manager'),
-                        'permission' => 'role_view',
-                        'icon'       => 'fa fa-lock',
-                    ],
-                    'subscriber'=>[
-                        'url'        => 'admin/module/user/subscriber',
-                        'title'      => __('Subscribers'),
-                        'permission' => 'newsletter_manage',
-                    ],
-                    'userUpgradeRequest'=>[
-                        'url'        => 'admin/module/user/userUpgradeRequest',
-                        'title'      => __('Upgrade Request'),
-                        'permission' => 'user_view',
-                    ],
-                    'user_verification'=>[
-                        'url'        => 'admin/module/user/verification',
-                        'title'      => __('Verification Request :count',['count'=>$noti_verify ? sprintf('<span class="badge badge-warning">%d</span>',$noti_verify) : '']),
-                        'permission' => 'user_view',
-                    ],
-                ]
-            ],
+            ];
+        }
+
+        return [
+            'users'=> $options
         ];
     }
     public static function getUserMenu()
@@ -72,7 +81,19 @@ class ModuleProvider extends ModuleServiceProvider
          */
         $res = [];
 //        $user = Auth::user();
-//        if(!empty($user->verification_fields))
+        $is_wallet_module_disable = setting_item('wallet_module_disable');
+        if(empty($is_wallet_module_disable))
+        {
+            $res['wallet']= [
+                'position'   => 27,
+                'icon'       => 'fa fa-money',
+                'url'        => route('user.wallet'),
+                'title'      => __("My Wallet"),
+            ];
+        }
+
+        $is_disable_verification_feature = setting_item('user_disable_verification_feature');
+        if(!empty($user->verification_fields) and empty($is_disable_verification_feature))
 //        {
 //            $res['verification']= [
 //                'url'        => route('user.verification.index'),
@@ -89,6 +110,14 @@ class ModuleProvider extends ModuleServiceProvider
             'title'      => __("Enquiry Report"),
             'permission' => 'enquiry_view',
         ];
+        if(setting_item('inbox_enable')) {
+            $res['chat'] = [
+                'position' => 20,
+                'icon' => 'fa fa-comments',
+                'url' => route('user.chat'),
+                'title' => __("Messages"),
+            ];
+        }
 
         return $res;
     }

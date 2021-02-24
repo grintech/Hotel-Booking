@@ -51,7 +51,7 @@ class HikeController extends Controller {
         if (!empty($price_range = $request->query('price_range'))) {
             $pri_from = explode(";", $price_range)[0];
             $pri_to = explode(";", $price_range)[1];
-            $raw_sql_min_max = "( (IFNULL(bravo_hikes.sale_price,0) > 0 and bravo_hikes.sale_price >= ? ) OR (IFNULL(bravo_hikes.sale_price,0) <= 0 and bravo_hikes.price >= ?) ) 
+            $raw_sql_min_max = "( (IFNULL(bravo_hikes.sale_price,0) > 0 and bravo_hikes.sale_price >= ? ) OR (IFNULL(bravo_hikes.sale_price,0) <= 0 and bravo_hikes.price >= ?) )
 								AND ( (IFNULL(bravo_hikes.sale_price,0) > 0 and bravo_hikes.sale_price <= ? ) OR (IFNULL(bravo_hikes.sale_price,0) <= 0 and bravo_hikes.price <= ?) )";
             $model_Hike->WhereRaw($raw_sql_min_max,[$pri_from,$pri_from,$pri_to,$pri_to]);
         }
@@ -141,12 +141,7 @@ class HikeController extends Controller {
             $guesthouse_related = Guesthouse::where('location_id', $location_id)->where("status", "publish")->take(4)->with(['translations']);
             $tour_related = Tour::where('location_id', $location_id)->where("status", "publish")->take(4)->with(['translations']);
         }
-        $review_list = Review::where('object_id', $row->id)
-            ->where('object_model', 'hike')
-            ->where("status", "approved")
-            ->orderBy("id", "desc")
-            ->with('author')
-            ->paginate(setting_item('hike_review_number_per_page', 5));
+        $review_list = $row->getReviewList();
         $data = [
             'row' => $row,
             'translation' => $translation,

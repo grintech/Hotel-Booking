@@ -15,8 +15,13 @@ class Post extends BaseModel
         'content',
     ];
 
+    protected $attributes = [
+        'privacy'=>'public',
+        'status'=>'public'
+    ];
+
     public function user(){
-        return $this->belongsTo(User::class,'id','user_id')->withDefault();
+        return $this->belongsTo(User::class,'user_id','id')->withDefault();
     }
 
     public static function search($filters = []){

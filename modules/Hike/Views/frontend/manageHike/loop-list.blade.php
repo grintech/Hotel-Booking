@@ -12,7 +12,7 @@
             <div class="thumb-image">
                 <a href="{{$row->getDetailUrl()}}" target="_blank">
                     @if($row->image_url)
-                        <img src="{{$row->image_url}}" class="img-responsive" alt="">
+                        <img src="{{$row->image_url}}" class="img-responsive" alt="{{$row->title}}">
                     @endif
                 </a>
                 <div class="service-wishlist {{$row->isWishList()}}" data-id="{{$row->id}}" data-type="{{$row->type}}">
@@ -47,6 +47,9 @@
             <div class="control-action">
                 <a href="{{route('hike.vendor.clone',[$row->id])}}" target="_blank" class="btn btn-primary">{{__("Clone")}}</a>
                 <a href="{{$row->getDetailUrl()}}" target="_blank" class="btn btn-info">{{__("View")}}</a>
+                @if(!empty($recovery))
+                    <a href="{{ route("hike.vendor.restore",[$row->id]) }}" class="btn btn-recovery btn-primary" data-confirm="{{__('"Do you want to recovery?"')}}">{{__("Recovery")}}</a>
+                @endif
                 @if(Auth::user()->hasPermissionTo('hike_update'))
                     <a href="{{ route("hike.vendor.edit",[$row->id]) }}" class="btn btn-warning">{{__("Edit")}}</a>
                 @endif

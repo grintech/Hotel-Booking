@@ -1,5 +1,5 @@
 <?php
-$service = $row->getService;
+$service = $row->service;
 ?>
 @if(!empty($service))
     <div class="item-list">
@@ -28,10 +28,8 @@ $service = $row->getService;
                     </a>
                 </div>
                 <div class="location">
-                    @if(!empty($service->location->name))
-                        <i class="icofont-license"></i>
-                        {{__("Service Type")}}: <span class="badge badge-info">{{$service->getModelName() ?? ''}}</span>
-                    @endif
+                    <i class="icofont-license"></i>
+                    {{__("Service Type")}}: <span class="badge badge-info">{{$service->getModelName() ?? ''}}</span>
                 </div>
                 <div class="location">
                     @if(!empty($service->location->name))

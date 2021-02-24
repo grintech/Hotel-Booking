@@ -22,6 +22,7 @@ class SettingClass extends BaseSettingsClass
                     'guesthouse_layout_item_search',
                     'guesthouse_attribute_show_in_listing_page',
                     'guesthouse_location_search_style',
+                    'guesthouse_page_limit_item',
 
                     'guesthouse_enable_review',
                     'guesthouse_review_approved',
@@ -37,6 +38,7 @@ class SettingClass extends BaseSettingsClass
                     'guesthouse_booking_buyer_fees',
                     'guesthouse_vendor_create_service_must_approved_by_admin',
                     'guesthouse_allow_vendor_can_change_their_booking_status',
+                    'guesthouse_allow_vendor_can_change_paid_amount',
                     'guesthouse_search_fields',
                     'guesthouse_map_search_fields',
 
@@ -46,6 +48,7 @@ class SettingClass extends BaseSettingsClass
                     'guesthouse_deposit_amount',
                     'guesthouse_deposit_fomular',
                     'guesthouse_sidebar',
+                    'guesthouse_layout_map_option',
                 ],
                 'html_keys'=>[
 

@@ -97,7 +97,7 @@
                         top: 2px;
                         position: absolute;
                     }
-                    h4 {
+                    h4, h3 {
                         font-size: 14px;
                         color: #1A2B48;
                         line-height: 23px;
@@ -328,7 +328,7 @@
                   -webkit-box-pack: justify;
                   -ms-flex-pack: justify;
                   justify-content: space-between;
-                  h2 {
+                  h2, h1 {
                       margin-top: 0;
                       color: #1A2B48;
                       font-weight: 500;
@@ -1012,4 +1012,12 @@
     }
 }
 @import "search-map";
+
+.has-search-map{
+    .bravo_search_map{
+        .results_map{
+            @import "loop";
+        }
+    }
+}
 

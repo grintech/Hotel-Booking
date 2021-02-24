@@ -37,6 +37,10 @@ class ListEvent extends BaseBlock
                         [
                             'value'   => 'normal',
                             'name' => __("Normal")
+                        ],
+                        [
+                            'value'   => 'carousel',
+                            'name' => __("Slider Carousel")
                         ]
                     ]
                 ],
@@ -102,6 +106,25 @@ class ListEvent extends BaseBlock
 
     public function content($model = [])
     {
+        $list = $this->query($model);
+        $data = [
+            'rows'       => $list,
+            'style_list' => $model['style'],
+            'title'      => $model['title'],
+            'desc'       => $model['desc'],
+        ];
+        return view('Event::frontend.blocks.list-event.index', $data);
+    }
+
+    public function contentAPI($model = []){
+        $rows = $this->query($model);
+        $model['data']= $rows->map(function($row){
+            return $row->dataForApi();
+        });
+        return $model;
+    }
+
+    public function query($model){
         $model_event = Event::select("bravo_events.*")->with(['location','translations','hasWishList']);
         if(empty($model['order'])) $model['order'] = "id";
         if(empty($model['order_by'])) $model['order_by'] = "desc";
@@ -126,13 +149,6 @@ class ListEvent extends BaseBlock
         $model_event->where("bravo_events.status", "publish");
         $model_event->with('location');
         $model_event->groupBy("bravo_events.id");
-        $list = $model_event->limit($model['number'])->get();
-        $data = [
-            'rows'       => $list,
-            'style_list' => $model['style'],
-            'title'      => $model['title'],
-            'desc'       => $model['desc'],
-        ];
-        return view('Event::frontend.blocks.list-event.index', $data);
+        return $model_event->limit($model['number'])->get();
     }
 }

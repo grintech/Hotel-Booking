@@ -1,9 +1,13 @@
 <?php
 namespace Modules\Tour\Controllers;
 
+use App\Notifications\AdminChannelServices;
+use Modules\Booking\Events\BookingUpdatedEvent;
+use Modules\Core\Events\CreatedServicesEvent;
 use Modules\FrontendController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Modules\Location\Models\LocationCategory;
 use Modules\Tour\Models\Tour;
 use Modules\Tour\Models\TourCategory;
 use Modules\Tour\Models\TourTranslation;
@@ -21,6 +25,7 @@ class ManageTourController extends FrontendController
     protected $attributesClass;
     protected $locationClass;
     protected $bookingClass;
+    private $locationCategoryClass;
 
     public function __construct()
     {
@@ -30,6 +35,7 @@ class ManageTourController extends FrontendController
         $this->tourTermClass = TourTerm::class;
         $this->attributesClass = Attributes::class;
         $this->locationClass = Location::class;
+        $this->locationCategoryClass = LocationCategory::class;
         $this->bookingClass = Booking::class;
         parent::__construct();
     }
@@ -64,6 +70,40 @@ class ManageTourController extends FrontendController
         return view('Tour::frontend.manageTour.index', $data);
     }
 
+    public function recovery(Request $request)
+    {
+        $this->checkPermission('tour_view');
+        $user_id = Auth::id();
+        $list_tour = $this->tourClass::onlyTrashed()->where("create_user", $user_id)->orderBy('id', 'desc');
+        $data = [
+            'rows'        => $list_tour->paginate(5),
+            'recovery'           => 1,
+            'breadcrumbs' => [
+                [
+                    'name' => __('Manage Tours'),
+                    'url'  => route('tour.vendor.index'),
+                ],
+                [
+                    'name'  => __('Recovery'),
+                    'class' => 'active'
+                ],
+            ],
+            'page_title'  => __("Recovery Tours"),
+        ];
+        return view('Tour::frontend.manageTour.index', $data);
+    }
+
+    public function restore($id)
+    {
+        $this->checkPermission('tour_delete');
+        $user_id = Auth::id();
+        $query = $this->tourClass::onlyTrashed()->where("create_user", $user_id)->where("id", $id)->first();
+        if(!empty($query)){
+            $query->restore();
+        }
+        return redirect(route('tour.vendor.recovery'))->with('success', __('Restore tour success!'));
+    }
+
     public function createTour(Request $request)
     {
         $this->checkPermission('tour_create');
@@ -73,6 +113,7 @@ class ManageTourController extends FrontendController
             'translation'   => new $this->tourTranslationClass(),
             'tour_category' => $this->tourCategoryClass::get()->toTree(),
             'tour_location' => $this->locationClass::where("status", "publish")->get()->toTree(),
+            'location_category'=>$this->locationCategoryClass::where("status", "publish")->get(),
             'attributes'    => $this->attributesClass::where('service', 'tour')->get(),
             'breadcrumbs'   => [
                 [
@@ -104,6 +145,7 @@ class ManageTourController extends FrontendController
             'row'            => $row,
             'tour_category'  => $this->tourCategoryClass::where("status", "publish")->get()->toTree(),
             'tour_location'  => $this->locationClass::where("status", "publish")->get()->toTree(),
+            'location_category'=>$this->locationCategoryClass::where("status", "publish")->get(),
             'attributes'     => $this->attributesClass::where('service', 'tour')->get(),
             "selected_terms" => $row->tour_term->pluck('term_id'),
             'breadcrumbs'    => [
@@ -164,6 +206,9 @@ class ManageTourController extends FrontendController
             'include',
             'exclude',
             'itinerary',
+            'enable_service_fee',
+            'service_fee',
+            'surrounding',
         ], $request->input());
         $row->ical_import_url = $request->ical_import_url;
         $res = $row->saveOriginOrTranslation($request->input('lang'), true);
@@ -173,6 +218,7 @@ class ManageTourController extends FrontendController
                 $row->saveMeta($request);
             }
             if ($id > 0) {
+                event(new CreatedServicesEvent($row));
                 return back()->with('success', __('Guided Tour updated'));
             } else {
                 return redirect(route('tour.vendor.edit', ['id' => $row->id]))->with('success', __('Guided Tour created'));
@@ -234,26 +280,6 @@ class ManageTourController extends FrontendController
         return redirect()->back()->with('success', __('Update success!'));
     }
 
-    public function bookingReport(Request $request)
-    {
-        $data = [
-            'bookings'    => $this->bookingClass::getBookingHistory($request->input('status'), false, Auth::id(), 'tour'),
-            'statues'     => config('booking.statuses'),
-            'breadcrumbs' => [
-                [
-                    'name' => __('Manage Guided Tours'),
-                    'url'  => route('tour.vendor.index'),
-                ],
-                [
-                    'name'  => __('Booking Report'),
-                    'class' => 'active'
-                ],
-            ],
-            'page_title'  => __("Booking Report"),
-        ];
-        return view('Tour::frontend.manageTour.bookingReport', $data);
-    }
-
     public function bookingReportBulkEdit($booking_id, Request $request)
     {
         $status = $request->input('status');
@@ -264,7 +290,9 @@ class ManageTourController extends FrontendController
             if (!empty($item)) {
                 $item->status = $status;
                 $item->save();
-                $item->sendStatusUpdatedEmails();
+                if($status == Booking::CANCELLED) $item->tryRefundToWallet();
+
+                event(new BookingUpdatedEvent($item));
                 return redirect()->back()->with('success', __('Update success'));
             }
             return redirect()->back()->with('error', __('Booking not found!'));

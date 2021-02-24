@@ -18,7 +18,7 @@
                     <div class="modal-content p-0">
                         <div class="modal-body">
                             <div class="embed-responsive embed-responsive-16by9">
-                                <iframe class="embed-responsive-item bravo_embed_video" src="{{ str_ireplace("watch?v=","embed/",$youtube) }}" allowscriptaccess="always" allow="autoplay"></iframe>
+                                <iframe class="embed-responsive-item bravo_embed_video" src="{{ handleVideoUrl($youtube) }}" allowscriptaccess="always" allow="autoplay"></iframe>
                             </div>
                         </div>
                     </div>

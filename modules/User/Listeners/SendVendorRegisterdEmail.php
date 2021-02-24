@@ -24,6 +24,7 @@
             'email'         => '[email]',
             'created_at'     => '[created_at]',
             'link_approved' => '[link_approved]',
+            'button_verify' => '[button_verify]',
         ];
 
         public function __construct(User $user)
@@ -68,11 +69,29 @@
                 foreach (self::CODE as $item => $value) {
                     if($item == "link_approved"){
                         $content = str_replace($value, "<a href='".url('admin/module/user/userUpgradeRequest')."'>".url('admin/module/user/userUpgradeRequest')."</a>", $content);
+                    }elseif ( $item == "button_verify") {
+                        $content = str_replace($value, $this->buttonVerify($event), $content);
                     }else{
                         $content = str_replace($value, @$event->user->$item, $content);
                     }
                 }
             }
             return $content;
+        }
+        public function buttonVerify($event)
+        {
+            if(!$event->user->hasVerifiedEmail()){
+                $text = __('Verify Email Address');
+                $button = '<a style="border-radius: 3px;
+                color: #fff;
+                display: inline-block;
+                text-decoration: none;
+                background-color: #3490dc;
+                border-top: 10px solid #3490dc;
+                border-right: 18px solid #3490dc;
+                border-bottom: 10px solid #3490dc;
+                border-left: 18px solid #3490dc;" href="' . $event->user->verificationUrl() . '">' . $text . '</a>';
+                return $button;
+            }
         }
     }

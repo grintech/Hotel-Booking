@@ -3,7 +3,7 @@
     <div class="panel-body">
         <div class="form-group">
             <label>{{__("Title")}}</label>
-            <input type="text" value="{{$translation->title}}" placeholder="{{__("Name of the space")}}" name="title" class="form-control">
+            <input type="text" value="{!! clean($translation->title) !!}" placeholder="{{__("Name of the space")}}" name="title" class="form-control">
         </div>
         <div class="form-group">
             <label class="control-label">{{__("Content")}}</label>
@@ -103,6 +103,24 @@
                 </div>
             </div>
         </div>
+        @if(is_default_lang())
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <label class="control-label">{{__("Min day before booking")}}</label>
+                        <input type="number" name="min_day_before_booking" class="form-control" value="{{$row->min_day_before_booking}}" placeholder="{{__("Ex: 3")}}">
+                        <i>{{ __("Leave blank if you dont need to use the min day option") }}</i>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="form-group">
+                        <label class="control-label">{{__("Min day stays")}}</label>
+                        <input type="number" name="min_day_stays" class="form-control" value="{{$row->min_day_stays}}" placeholder="{{__("Ex: 2")}}">
+                        <i>{{ __("Leave blank if you dont need to use the min day stays option") }}</i>
+                    </div>
+                </div>
+            </div>
+        @endif
     </div>
 </div>
 @endif

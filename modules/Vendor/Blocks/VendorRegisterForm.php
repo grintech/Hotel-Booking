@@ -1,6 +1,7 @@
 <?php
 namespace Modules\Vendor\Blocks;
 
+use Modules\Media\Helpers\FileHelper;
 use Modules\Template\Blocks\BaseBlock;
 
 class VendorRegisterForm extends BaseBlock
@@ -44,5 +45,12 @@ class VendorRegisterForm extends BaseBlock
     public function content($model = [])
     {
         return view('Vendor::frontend.blocks.form-register.index', $model);
+    }
+
+    public function contentAPI($model = []){
+        if (!empty($model['bg_image'])) {
+            $model['bg_image_url'] = FileHelper::url($model['bg_image'], 'full');
+        }
+        return $model;
     }
 }

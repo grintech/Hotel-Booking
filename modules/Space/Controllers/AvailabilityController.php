@@ -85,11 +85,16 @@ class AvailabilityController extends FrontendController{
 
     public function loadDates(Request $request){
 
-        $request->validate([
+        $rules = [
             'id'=>'required',
             'start'=>'required',
             'end'=>'required',
-        ]);
+        ];
+
+        $validator = \Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
+            return $this->sendError($validator->errors());
+        }
 
         $space = $this->spaceClass::find($request->query('id'));
         if(empty($space)){
@@ -105,8 +110,11 @@ class AvailabilityController extends FrontendController{
         $rows =  $query->take(40)->get();
         $allDates = [];
 
-        for($i = strtotime($request->query('start')); $i <= strtotime($request->query('end')); $i+= DAY_IN_SECONDS)
-        {
+        // for($i = strtotime($request->query('start')); $i <= strtotime($request->query('end')); $i+= DAY_IN_SECONDS)
+        // {
+        $period = periodDate($request->input('start'),$request->input('end'));
+        foreach ($period as $dt){
+            $i = $dt->getTimestamp();
             $date = [
                 'id'=>rand(0,999),
                 'active'=>0,
@@ -116,9 +124,9 @@ class AvailabilityController extends FrontendController{
                 'textColor'=>'#2791fe'
             ];
             if(!$is_single){
-	            $date['price_html'] = format_money_main($date['price']);
+                $date['price_html'] = format_money_main($date['price']);
             }else{
-	            $date['price_html'] = format_money($date['price']);
+                $date['price_html'] = format_money($date['price']);
 
             }
             $date['title'] = $date['event']  = $date['price_html'];
@@ -178,7 +186,10 @@ class AvailabilityController extends FrontendController{
         if(!empty($bookings))
         {
             foreach ($bookings as $booking){
-                for($i = strtotime($booking->start_date); $i <= strtotime($booking->end_date); $i+= DAY_IN_SECONDS){
+                $period = periodDate($booking->start_date,$booking->end_date);
+                foreach ($period as $dt){
+                    $i = $dt->getTimestamp();
+                    //for($i = strtotime($booking->start_date); $i <= strtotime($booking->end_date); $i+= DAY_IN_SECONDS){
                     if(isset($allDates[date('Y-m-d',$i)])){
                         $allDates[date('Y-m-d',$i)]['active'] = 0;
                         $allDates[date('Y-m-d',$i)]['event'] = __('Full Book');
@@ -248,23 +259,25 @@ class AvailabilityController extends FrontendController{
         }
 
         $postData = $request->input();
-        for($i = strtotime($request->input('start_date')); $i <= strtotime($request->input('end_date')); $i+= DAY_IN_SECONDS)
-        {
-            $date = $this->spaceDateClass::where('start_date',date('Y-m-d',$i))->where('target_id',$target_id)->first();
+        //  for($i = strtotime($request->input('start_date')); $i <= strtotime($request->input('end_date')); $i+= DAY_IN_SECONDS)
+        //  {
+        $period = periodDate($request->input('start_date'),$request->input('end_date'));
+        foreach ($period as $dt){
+            $date = $this->spaceDateClass::where('start_date',$dt->format('Y-m-d'))->where('target_id',$target_id)->first();
 
             if(empty($date)){
                 $date = new $this->spaceDateClass();
                 $date->target_id = $target_id;
             }
-            $postData['start_date'] = date('Y-m-d H:i:s',$i);
-            $postData['end_date'] = date('Y-m-d H:i:s',$i);
+            $postData['start_date'] = $dt->format('Y-m-d H:i:s');
+            $postData['end_date'] = $dt->format('Y-m-d H:i:s');
 
 
             $date->fillByAttr([
                 'start_date','end_date','price',
-//                'max_guests','min_guests',
+                // 'max_guests','min_guests',
                 'is_instant','active',
-//                'enable_person','person_types'
+                //  'enable_person','person_types'
             ],$postData);
 
             $date->save();

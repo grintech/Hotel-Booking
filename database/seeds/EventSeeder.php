@@ -63,7 +63,7 @@ class EventSeeder extends Seeder
                 'status' => "publish",
                 'create_user' => $create_user,
                 'created_at' =>  date("Y-m-d H:i:s"),
-                
+
                 'enable_extra_price' => '1',
                 'extra_price' => '[{"name":"Event service","price":"100","type":"one_time"}]',
             ]);
@@ -92,7 +92,7 @@ class EventSeeder extends Seeder
                 'status' => "publish",
                 'create_user' => $create_user,
                 'created_at' =>  date("Y-m-d H:i:s"),
-                
+
                 'enable_extra_price' => '1',
                 'extra_price' => '[{"name":"Event service","price":"100","type":"one_time"}]',
             ]);
@@ -121,7 +121,7 @@ class EventSeeder extends Seeder
                 'status' => "publish",
                 'create_user' => $create_user,
                 'created_at' =>  date("Y-m-d H:i:s"),
-                
+
                 'enable_extra_price' => '1',
                 'extra_price' => '[{"name":"Event service","price":"100","type":"one_time"}]',
             ]);
@@ -150,7 +150,7 @@ class EventSeeder extends Seeder
                 'status' => "publish",
                 'create_user' => $create_user,
                 'created_at' =>  date("Y-m-d H:i:s"),
-                
+
                 'enable_extra_price' => '1',
                 'extra_price' => '[{"name":"Event service","price":"100","type":"one_time"}]',
 
@@ -180,7 +180,7 @@ class EventSeeder extends Seeder
                 'status' => "publish",
                 'create_user' => $create_user,
                 'created_at' =>  date("Y-m-d H:i:s"),
-                
+
                 'enable_extra_price' => '1',
                 'extra_price' => '[{"name":"Event service","price":"100","type":"one_time"}]',
             ]);
@@ -209,7 +209,7 @@ class EventSeeder extends Seeder
                 'status' => "publish",
                 'create_user' => $create_user,
                 'created_at' =>  date("Y-m-d H:i:s"),
-                
+
                 'enable_extra_price' => '1',
                 'extra_price' => '[{"name":"Event service","price":"100","type":"one_time"}]',
             ]
@@ -239,7 +239,7 @@ class EventSeeder extends Seeder
                 'status' => "publish",
                 'create_user' => $create_user,
                 'created_at' =>  date("Y-m-d H:i:s"),
-                
+
                 'enable_extra_price' => '1',
                 'extra_price' => '[{"name":"Event service","price":"100","type":"one_time"}]',
             ]
@@ -269,7 +269,7 @@ class EventSeeder extends Seeder
                 'status' => "publish",
                 'create_user' => $create_user,
                 'created_at' =>  date("Y-m-d H:i:s"),
-                
+
                 'enable_extra_price' => '1',
                 'extra_price' => '[{"name":"Event service","price":"100","type":"one_time"}]',
             ]
@@ -299,7 +299,7 @@ class EventSeeder extends Seeder
                 'status' => "publish",
                 'create_user' => $create_user,
                 'created_at' =>  date("Y-m-d H:i:s"),
-                
+
                 'enable_extra_price' => '1',
                 'extra_price' => '[{"name":"Event service","price":"100","type":"one_time"}]',
             ]
@@ -329,7 +329,7 @@ class EventSeeder extends Seeder
                 'status' => "publish",
                 'create_user' => $create_user,
                 'created_at' =>  date("Y-m-d H:i:s"),
-                
+
                 'enable_extra_price' => '1',
                 'extra_price' => '[{"name":"Event service","price":"100","type":"one_time"}]',
             ]
@@ -359,7 +359,7 @@ class EventSeeder extends Seeder
                 'status' => "publish",
                 'create_user' => $create_user,
                 'created_at' =>  date("Y-m-d H:i:s"),
-                
+
                 'enable_extra_price' => '1',
                 'extra_price' => '[{"name":"Event service","price":"100","type":"one_time"}]',
             ]
@@ -454,6 +454,11 @@ class EventSeeder extends Seeder
                 [
                     'name' => 'event_page_search_title',
                     'val' => 'Search for event',
+                    'group' => "event",
+                ],
+                [
+                    'name' => 'event_page_limit_item',
+                    'val' => 9,
                     'group' => "event",
                 ],
                 [

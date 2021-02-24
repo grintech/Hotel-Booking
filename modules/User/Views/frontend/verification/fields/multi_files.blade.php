@@ -15,7 +15,7 @@
                     @foreach($old as $file)
                         <div>
                             <input type="hidden" name="verify_data_{{$field['id']}}[]" value="{{json_encode($file)}}">
-                            <a target="_blank" href="{{route('media.private.view',['path'=>$file['path'] ?? ''])}}" class="file-item">{{$file['name']}} <i class="fa fa-download"></i></a>
+                            <a target="_blank" href="{{route('media.private.view',['path'=>$file['path'] ?? '','v'=>uniqid()])}}" class="file-item">{{$file['name']}} <i class="fa fa-download"></i></a>
                         </div>
                     @endforeach
                 @endif

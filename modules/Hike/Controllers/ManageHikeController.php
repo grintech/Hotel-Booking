@@ -1,10 +1,14 @@
 <?php
 namespace Modules\Hike\Controllers;
 
+use App\Notifications\AdminChannelServices;
+use Modules\Booking\Events\BookingUpdatedEvent;
+use Modules\Core\Events\CreatedServicesEvent;
 use Illuminate\Support\Facades\Validator;
 use Modules\FrontendController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Modules\Location\Models\LocationCategory;
 use Modules\Hike\Models\Hike;
 use Modules\Hike\Models\HikeCategory;
 use Modules\Hike\Models\HikeTerm;
@@ -22,6 +26,7 @@ class ManageHikeController extends FrontendController
     protected $attributesClass;
     protected $locationClass;
     protected $bookingClass;
+    private $locationCategoryClass;
 
     public function __construct()
     {
@@ -31,6 +36,7 @@ class ManageHikeController extends FrontendController
         $this->hikeTermClass = HikeTerm::class;
         $this->attributesClass = Attributes::class;
         $this->locationClass = Location::class;
+        $this->locationCategoryClass = LocationCategory::class;
         $this->bookingClass = Booking::class;
         parent::__construct();
     }
@@ -65,6 +71,42 @@ class ManageHikeController extends FrontendController
         return view('Hike::frontend.manageHike.index', $data);
     }
 
+
+
+    public function recovery(Request $request)
+    {
+        $this->checkPermission('hike_view');
+        $user_id = Auth::id();
+        $list_hike = $this->hikeClass::onlyTrashed()->where("create_user", $user_id)->orderBy('id', 'desc');
+        $data = [
+            'rows'        => $list_hike->paginate(5),
+            'recovery'           => 1,
+            'breadcrumbs' => [
+                [
+                    'name' => __('Manage Tours'),
+                    'url'  => route('tour.vendor.index'),
+                ],
+                [
+                    'name'  => __('Recovery'),
+                    'class' => 'active'
+                ],
+            ],
+            'page_title'  => __("Recovery Tours"),
+        ];
+        return view('Tour::frontend.manageTour.index', $data);
+    }
+
+    public function restore($id)
+    {
+        $this->checkPermission('hike_delete');
+        $user_id = Auth::id();
+        $query = $this->hikeClass::onlyTrashed()->where("create_user", $user_id)->where("id", $id)->first();
+        if(!empty($query)){
+            $query->restore();
+        }
+        return redirect(route('hike.vendor.recovery'))->with('success', __('Restore hike success!'));
+    }
+
     public function createHike(Request $request)
     {
         $this->checkPermission('hike_create');
@@ -74,6 +116,7 @@ class ManageHikeController extends FrontendController
             'translation'   => new $this->hikeTranslationClass(),
             'hike_category' => $this->hikeCategoryClass::get()->toTree(),
             'hike_location' => $this->locationClass::where("status", "publish")->get()->toTree(),
+            'location_category'=>$this->locationCategoryClass::where("status", "publish")->get(),
             'attributes'    => $this->attributesClass::where('service', 'hike')->get(),
             'breadcrumbs'   => [
                 [
@@ -106,6 +149,7 @@ class ManageHikeController extends FrontendController
             'hike_category'  => $this->hikeCategoryClass::where("status", "publish")->get()->toTree(),
             'hike_location'  => $this->locationClass::where("status", "publish")->get()->toTree(),
             'attributes'     => $this->attributesClass::where('service', 'hike')->get(),
+            'location_category'=>$this->locationCategoryClass::where("status", "publish")->get(),
             "selected_terms" => $row->hike_term->pluck('term_id'),
             'breadcrumbs'    => [
                 [
@@ -180,6 +224,9 @@ class ManageHikeController extends FrontendController
             'include',
             'exclude',
             'itinerary',
+            'enable_service_fee',
+            'service_fee',
+            'surrounding',
         ], $request->input());
 
         if ($request->hasFile('gpx_file')) {
@@ -208,6 +255,7 @@ class ManageHikeController extends FrontendController
             }
             $row->saveMeta($request);
             if($id > 0 ){
+                event(new CreatedServicesEvent($row));
                 return back()->with('success',  __('Hike updated') );
             }else{
                 return redirect(route('hike.vendor.edit',['id'=>$row->id]))->with('success', __('Hike created') );
@@ -269,26 +317,6 @@ class ManageHikeController extends FrontendController
         return redirect()->back()->with('success', __('Update success!'));
     }
 
-    public function bookingReport(Request $request)
-    {
-        $data = [
-            'bookings'    => $this->bookingClass::getBookingHistory($request->input('status'), false, Auth::id(), 'hike'),
-            'statues'     => config('booking.statuses'),
-            'breadcrumbs' => [
-                [
-                    'name' => __('Manage Hikes'),
-                    'url'  => route('hike.vendor.index'),
-                ],
-                [
-                    'name'  => __('Booking Report'),
-                    'class' => 'active'
-                ],
-            ],
-            'page_title'  => __("Booking Report"),
-        ];
-        return view('Hike::frontend.manageHike.bookingReport', $data);
-    }
-
     public function bookingReportBulkEdit($booking_id, Request $request)
     {
         $status = $request->input('status');
@@ -300,6 +328,9 @@ class ManageHikeController extends FrontendController
                 $item->status = $status;
                 $item->save();
                 $item->sendStatusUpdatedEmails();
+                if($status == Booking::CANCELLED) $item->tryRefundToWallet();
+
+                event(new BookingUpdatedEvent($item));
                 return redirect()->back()->with('success', __('Update success'));
             }
             return redirect()->back()->with('error', __('Booking not found!'));

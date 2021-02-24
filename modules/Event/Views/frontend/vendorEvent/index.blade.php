@@ -4,8 +4,8 @@
 @endsection
 @section('content')
     <h2 class="title-bar">
-        {{__("Manage Events")}}
-        @if(Auth::user()->hasPermissionTo('event_create'))
+        {{!empty($recovery) ?__('Recovery Events') : __("Manage Events")}}
+        @if(Auth::user()->hasPermissionTo('event_create') && empty($recovery))
             <a href="{{ route("event.vendor.create") }}" class="btn-change-password">{{__("Add Event")}}</a>
         @endif
     </h2>

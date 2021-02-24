@@ -53,6 +53,11 @@ class ModuleProvider extends ModuleServiceProvider
                         'title'      => __('Room Attributes'),
                         'permission' => 'guesthouse_manage_attributes',
                     ],
+                    'recovery'=>[
+                        'url'        => 'admin/module/guesthouse/recovery',
+                        'title'      => __('Recovery'),
+                        'permission' => 'guesthouse_view',
+                    ],
                 ]
             ]
         ];

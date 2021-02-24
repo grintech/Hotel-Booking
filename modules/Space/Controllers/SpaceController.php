@@ -2,6 +2,7 @@
 namespace Modules\Space\Controllers;
 
 use App\Http\Controllers\Controller;
+use Modules\Location\Models\LocationCategory;
 use Modules\Space\Models\Space;
 use Illuminate\Http\Request;
 use Modules\Location\Models\Location;
@@ -13,10 +14,15 @@ class SpaceController extends Controller
 {
     protected $spaceClass;
     protected $locationClass;
+    /**
+     * @var string
+     */
+    private $locationCategoryClass;
     public function __construct()
     {
         $this->spaceClass = Space::class;
         $this->locationClass = Location::class;
+        $this->locationCategoryClass = LocationCategory::class;
     }
 
     public function callAction($method, $parameters)
@@ -91,12 +97,13 @@ class SpaceController extends Controller
         if (!empty($location_id)) {
             $space_related = $this->spaceClass::where('location_id', $location_id)->where("status", "publish")->take(4)->whereNotIn('id', [$row->id])->with(['location','translations','hasWishList'])->get();
         }
-        $review_list = Review::where('object_id', $row->id)->where('object_model', 'space')->where("status", "approved")->orderBy("id", "desc")->with('author')->paginate(setting_item('space_review_number_per_page', 5));
+        $review_list = $row->getReviewList();
         $data = [
             'row'          => $row,
             'translation'       => $translation,
             'space_related' => $space_related,
             'booking_data' => $row->getBookingData(),
+            'location_category'=>$this->locationCategoryClass::where("status", "publish")->with('translations')->get(),
             'review_list'  => $review_list,
             'seo_meta'  => $row->getSeoMetaWithTranslation(app()->getLocale(),$translation),
             'body_class'=>'is_single'

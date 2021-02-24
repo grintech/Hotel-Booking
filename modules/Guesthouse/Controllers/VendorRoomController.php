@@ -214,6 +214,7 @@ class VendorRoomController extends FrontendController
         ];
 
         $row->fillByAttr($dataKeys,$request->input());
+        $row->ical_import_url  = $request->ical_import_url;
 
         if(!empty($id) and $id == "-1"){
             $row->parent_id = $guesthouse_id;

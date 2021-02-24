@@ -26,6 +26,7 @@
     <link href="{{ asset('libs/ionicons/css/ionicons.min.css') }}" rel="stylesheet">
     <link href="{{ asset('libs/icofont/icofont.min.css') }}" rel="stylesheet">
     <link href="{{ asset('libs/select2/css/select2.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('dist/frontend/css/notification.css') }}" rel="newest stylesheet">
     <link href="{{ asset('dist/frontend/css/app.css?_ver='.config('asset.layout.css')) }}" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ asset("libs/daterange/daterangepicker.css") }}" >
 
@@ -50,9 +51,22 @@
             routes:{
                 login:'{{route('auth.login')}}',
                 register:'{{route('auth.register')}}',
+                checkout:'{{is_api() ? route('api.booking.doCheckout') : route('booking.doCheckout')}}'
             },
-            currentUser:{{(int)Auth::id()}},
-            rtl: {{ setting_item_with_lang('enable_rtl') ? "1" : "0" }}
+            module:{
+                hotel:'{{route('hotel.search')}}',
+                car:'{{route('car.search')}}',
+                tour:'{{route('tour.search')}}',
+                space:'{{route('space.search')}}',
+            },
+            currentUser: {{(int)Auth::id()}},
+            isAdmin : {{is_admin() ? 1 : 0}},
+            rtl: {{ setting_item_with_lang('enable_rtl') ? "1" : "0" }},
+            markAsRead:'{{route('core.notification.markAsRead')}}',
+            markAllAsRead:'{{route('core.notification.markAllAsRead')}}',
+            loadNotify : '{{route('core.notification.loadNotify')}}',
+            pusher_api_key : '{{setting_item("pusher_api_key")}}',
+            pusher_cluster : '{{setting_item("pusher_cluster")}}',
         };
         var i18n = {
             warning:"{{__("Warning")}}",
@@ -236,14 +250,17 @@
 
     @php event(new \Modules\Layout\Events\LayoutEndHead()); @endphp
 </head>
-<body class="frontend-page {{$body_class ?? ''}} @if(setting_item_with_lang('enable_rtl')) is-rtl @endif">
+
+<body class="frontend-page {{$body_class ?? ''}} @if(setting_item_with_lang('enable_rtl')) is-rtl @endif @if(is_api()) is_api @endif">
     @php event(new \Modules\Layout\Events\LayoutBeginBody()); @endphp
 
     {!! setting_item('body_scripts') !!}
     {!! setting_item_with_lang_raw('body_scripts') !!}
     <div class="bravo_wrap">
-        @include('Layout::parts.topbar')
-        @include('Layout::parts.header')
+        @if(!is_api())
+            @include('Layout::parts.topbar')
+            @include('Layout::parts.header')
+        @endif
         @yield('content')
         @include('Layout::parts.footer')
     </div>

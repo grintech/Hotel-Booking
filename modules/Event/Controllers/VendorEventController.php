@@ -1,6 +1,10 @@
 <?php
 namespace Modules\Event\Controllers;
 
+use App\Notifications\AdminChannelServices;
+use Modules\Booking\Events\BookingUpdatedEvent;
+use Modules\Core\Events\CreatedServicesEvent;
+use Modules\Core\Events\UpdatedServiceEvent;
 use Modules\Event\Models\Event;
 use Modules\Event\Models\EventTerm;
 use Modules\Event\Models\EventTranslation;
@@ -10,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Modules\Location\Models\Location;
 use Modules\Core\Models\Attributes;
 use Modules\Booking\Models\Booking;
+use Modules\Location\Models\LocationCategory;
 
 class VendorEventController extends FrontendController
 {
@@ -19,6 +24,11 @@ class VendorEventController extends FrontendController
     protected $attributesClass;
     protected $locationClass;
     protected $bookingClass;
+    /**
+     * @var string
+     */
+    private $locationCategoryClass;
+
     public function __construct()
     {
         parent::__construct();
@@ -27,6 +37,7 @@ class VendorEventController extends FrontendController
         $this->eventTermClass = EventTerm::class;
         $this->attributesClass = Attributes::class;
         $this->locationClass = Location::class;
+        $this->locationCategoryClass = LocationCategory::class;
         $this->bookingClass = Booking::class;
     }
 
@@ -60,6 +71,40 @@ class VendorEventController extends FrontendController
         return view('Event::frontend.vendorEvent.index', $data);
     }
 
+    public function recovery(Request $request)
+    {
+        $this->checkPermission('event_view');
+        $user_id = Auth::id();
+        $list_tour = $this->eventClass::onlyTrashed()->where("create_user", $user_id)->orderBy('id', 'desc');
+        $data = [
+            'rows' => $list_tour->paginate(5),
+            'recovery'           => 1,
+            'breadcrumbs'        => [
+                [
+                    'name' => __('Manage Events'),
+                    'url'  => route('event.vendor.index')
+                ],
+                [
+                    'name'  => __('Recovery'),
+                    'class' => 'active'
+                ],
+            ],
+            'page_title'         => __("Recovery Events"),
+        ];
+        return view('Event::frontend.vendorEvent.index', $data);
+    }
+
+    public function restore($id)
+    {
+        $this->checkPermission('event_delete');
+        $user_id = Auth::id();
+        $query = $this->eventClass::onlyTrashed()->where("create_user", $user_id)->where("id", $id)->first();
+        if(!empty($query)){
+            $query->restore();
+        }
+        return redirect(route('event.vendor.recovery'))->with('success', __('Restore event success!'));
+    }
+
     public function createEvent(Request $request)
     {
         $this->checkPermission('event_create');
@@ -68,6 +113,7 @@ class VendorEventController extends FrontendController
             'row'           => $row,
             'translation' => new $this->eventTranslationClass(),
             'event_location' => $this->locationClass::where("status","publish")->get()->toTree(),
+            'location_category' => $this->locationCategoryClass::where('status', 'publish')->get(),
             'attributes'    => $this->attributesClass::where('service', 'event')->get(),
             'breadcrumbs'        => [
                 [
@@ -129,6 +175,9 @@ class VendorEventController extends FrontendController
             'extra_price',
             'is_featured',
             'default_state',
+            'enable_service_fee',
+            'service_fee',
+            'surrounding',
         ];
         if($this->hasPermission('event_manage_others')){
             $dataKeys[] = 'create_user';
@@ -144,8 +193,11 @@ class VendorEventController extends FrontendController
             }
 
             if($id > 0 ){
+                event(new UpdatedServiceEvent($row));
+
                 return back()->with('success',  __('Event updated') );
             }else{
+                event(new CreatedServicesEvent($row));
                 return redirect(route('event.vendor.edit',['id'=>$row->id]))->with('success', __('Event created') );
             }
         }
@@ -181,6 +233,7 @@ class VendorEventController extends FrontendController
             'translation'    => $translation,
             'row'           => $row,
             'event_location' => $this->locationClass::where("status","publish")->get()->toTree(),
+            'location_category' => $this->locationCategoryClass::where('status', 'publish')->get(),
             'attributes'    => $this->attributesClass::where('service', 'event')->get(),
             "selected_terms" => $row->terms->pluck('term_id'),
             'breadcrumbs'        => [
@@ -205,6 +258,8 @@ class VendorEventController extends FrontendController
         $query = $this->eventClass::where("create_user", $user_id)->where("id", $id)->first();
         if(!empty($query)){
             $query->delete();
+            event(new UpdatedServiceEvent($query));
+
         }
         return redirect(route('event.vendor.index'))->with('success', __('Delete event success!'));
     }
@@ -232,27 +287,9 @@ class VendorEventController extends FrontendController
                 break;
         }
         $query->save();
-        return redirect()->back()->with('success', __('Update success!'));
-    }
+        event(new UpdatedServiceEvent($query));
 
-    public function bookingReport(Request $request)
-    {
-        $data = [
-            'bookings' => $this->bookingClass::getBookingHistory($request->input('status'), false , Auth::id() , 'event'),
-            'statues'  => config('booking.statuses'),
-            'breadcrumbs'        => [
-                [
-                    'name' => __('Manage Event'),
-                    'url'  => route('event.vendor.index')
-                ],
-                [
-                    'name' => __('Booking Report'),
-                    'class'  => 'active'
-                ]
-            ],
-            'page_title'         => __("Booking Report"),
-        ];
-        return view('Event::frontend.vendorEvent.bookingReport', $data);
+        return redirect()->back()->with('success', __('Update success!'));
     }
 
     public function bookingReportBulkEdit($booking_id , Request $request){
@@ -264,7 +301,10 @@ class VendorEventController extends FrontendController
             if(!empty($item)){
                 $item->status = $status;
                 $item->save();
-                $item->sendStatusUpdatedEmails();
+
+                if($status == Booking::CANCELLED) $item->tryRefundToWallet();
+
+                event(new BookingUpdatedEvent($item));
                 return redirect()->back()->with('success', __('Update success'));
             }
             return redirect()->back()->with('error', __('Booking not found!'));

@@ -19,7 +19,6 @@ class Page extends BaseModel
         'status',
         'short_desc',
         'image_id',
-        'slug',
         'transparent_menu',
         'template_id'
     ];

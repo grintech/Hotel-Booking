@@ -11,6 +11,7 @@ jQuery(function ($) {
             $.each(files, function (key, value) {
                 formData.append('file', value);
             });
+            formData.append('type', "image");
             $.ajax({
                 url: '/admin/module/media/store',
                 type: 'POST',
@@ -137,6 +138,12 @@ jQuery(function ($) {
         }
     });
 
+    $(".bravo_user_profile .bravo-list-item .control-action .btn-recovery").click(function () {
+        var c = confirm($(this).data('confirm'));
+        if(!c){
+            return false;
+        }
+    });
     function makeid(length) {
         var result           = '';
         var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';

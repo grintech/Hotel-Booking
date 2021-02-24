@@ -1,8 +1,7 @@
 <?php
 if(!$user->hasPermissionTo('guesthouse_create')) return;
-$services = \Modules\Guesthouse\Models\Guesthouse::getVendorServicesQuery($user->id)->orderBy('id','desc')->paginate(6);
 ?>
-@if($services->total())
+@if(!empty($services) and $services->total())
     <div class="bravo-profile-list-services">
         @include('Guesthouse::frontend.blocks.list-guesthouse.index', ['rows'=>$services,'style_list'=>'normal','desc'=>' ','title'=>!empty($view_all) ? __('Guesthouse by :name',['name'=>$user->first_name]) :'','col'=>4])
 
@@ -17,7 +16,7 @@ $services = \Modules\Guesthouse\Models\Guesthouse::getVendorServicesQuery($user-
                     </div>
                 </div>
             @else
-                <div class="text-center mt30"><a class="btn btn-sm btn-primary" href="{{route('user.profile.services',['id'=>$user->id,'type'=>'guesthouse'])}}">{{__('View all (:total)',['total'=>$services->total()])}}</a></div>
+                <<div class="text-center mt30"><a class="btn btn-sm btn-primary" href="{{route('user.profile.services',['id'=>$user->user_name ?? $user->id,'type'=>'guesthouse'])}}">{{__('View all (:total)',['total'=>$services->total()])}}</a></div>
             @endif
         </div>
     </div>

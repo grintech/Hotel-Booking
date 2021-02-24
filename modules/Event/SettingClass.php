@@ -21,6 +21,7 @@ class SettingClass extends BaseSettingsClass
                     'event_page_search_banner',
                     'event_layout_search',
                     'event_location_search_style',
+                    'event_page_limit_item',
 
                     'event_enable_review',
                     'event_review_approved',
@@ -36,6 +37,7 @@ class SettingClass extends BaseSettingsClass
                     'event_booking_buyer_fees',
                     'event_vendor_create_service_must_approved_by_admin',
                     'event_allow_vendor_can_change_their_booking_status',
+                    'event_allow_vendor_can_change_paid_amount',
                     'event_search_fields',
                     'event_map_search_fields',
 
@@ -44,6 +46,8 @@ class SettingClass extends BaseSettingsClass
                     'event_deposit_type',
                     'event_deposit_amount',
                     'event_deposit_fomular',
+
+                    'event_layout_map_option',
                 ],
                 'html_keys'=>[
 

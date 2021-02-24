@@ -46,11 +46,14 @@
             </div>
             <div class="control-action">
                 <a href="{{$row->getDetailUrl()}}" target="_blank" class="btn btn-info">{{__("View")}}</a>
+                @if(!empty($recovery))
+                    <a href="{{ route("hotel.vendor.restore",[$row->id]) }}" class="btn btn-recovery btn-primary" data-confirm="{{__('"Do you want to recovery?"')}}">{{__("Recovery")}}</a>
+                @endif
                 @if(Auth::user()->hasPermissionTo('hotel_update'))
                     <a href="{{ route("hotel.vendor.edit",[$row->id]) }}" class="btn btn-warning">{{__("Edit")}}</a>
                 @endif
                 @if(Auth::user()->hasPermissionTo('hotel_delete'))
-                    <a href="{{ route("hotel.vendor.delete",[$row->id]) }}" class="btn btn-danger" data-confirm="<?php echo e(__("Do you want to delete?")); ?>">{{__("Del")}}</a>
+                    <a href="{{ route("hotel.vendor.delete",[$row->id]) }}" class="btn btn-danger" data-confirm="{{__('"Do you want to delete?"')}}">{{__("Del")}}</a>
                 @endif
                 @if($row->status == 'publish')
                     <a href="{{ route("hotel.vendor.bulk_edit",[$row->id,'action' => "make-hide"]) }}" class="btn btn-secondary">{{__("Make hide")}}</a>

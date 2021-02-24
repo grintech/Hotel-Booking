@@ -3,7 +3,7 @@
         $translation = $row->translateOrOrigin(app()->getLocale()); @endphp
     <div class="post_item ">
         <div class="header">
-            @if($image_tag = get_image_tag($row->image_id,'full'))
+            @if($image_tag = get_image_tag($row->image_id,'full',['alt'=>$translation->title]))
                 <header class="post-header">
                     <a href="{{$row->getDetailUrl()}}">
                         {!! $image_tag !!}
@@ -24,9 +24,9 @@
                 </div>
             @endif
             <div class="post-inner">
-                <h4 class="post-title">
-                    <a class="text-darken" href="{{$row->getDetailUrl()}}"> {{$translation->title}}</a>
-                </h4>
+                <h3 class="post-title">
+                    <a class="text-darken" href="{{$row->getDetailUrl()}}"> {!! clean($translation->title) !!}</a>
+                </h3>
                 <div class="post-info">
                     <ul>
                         @if(!empty($row->getAuthor))

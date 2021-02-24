@@ -12,7 +12,8 @@ class GuesthouseTranslation extends Guesthouse
         'title',
         'content',
         'address',
-        'policy'
+        'policy',
+        'surrounding'
     ];
 
     protected $slugField     = false;
@@ -23,9 +24,14 @@ class GuesthouseTranslation extends Guesthouse
     ];
     protected $casts = [
         'policy'  => 'array',
+        'surrounding' => 'array',
     ];
 
     public function getSeoType(){
         return $this->seo_type;
+    }
+
+    public function getRecordRoot(){
+        return $this->belongsTo(Guesthouse::class,'origin_id');
     }
 }

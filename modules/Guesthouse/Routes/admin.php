@@ -5,6 +5,7 @@ Route::get('/create','GuesthouseController@create')->name('guesthouse.admin.crea
 Route::get('/edit/{id}','GuesthouseController@edit')->name('guesthouse.admin.edit');
 Route::post('/store/{id}','GuesthouseController@store')->name('guesthouse.admin.store');
 Route::post('/bulkEdit','GuesthouseController@bulkEdit')->name('guesthouse.admin.bulkEdit');
+Route::get('/recovery','GuesthouseController@recovery')->name('guesthouse.admin.recovery');
 
 Route::group(['prefix'=>'attribute'],function (){
     Route::get('/','AttributeController@index')->name('guesthouse.admin.attribute.index');
@@ -46,6 +47,6 @@ Route::group(['prefix'=>'room'],function (){
 Route::group(['prefix'=>'{guesthouse_id}/availability'],function(){
     Route::get('/','AvailabilityController@index')->name('guesthouse.admin.room.availability.index');
     Route::get('/loadDates','AvailabilityController@loadDates')->name('guesthouse.admin.room.availability.loadDates');
-    Route::match(['get','post'],'/store','AvailabilityController@store')->name('guesthouse.admin.room.availability.store');
+    Route::post('/store','AvailabilityController@store')->name('guesthouse.admin.room.availability.store');
 });
 

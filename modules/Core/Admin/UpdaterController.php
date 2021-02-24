@@ -134,10 +134,6 @@ class UpdaterController extends  AdminController
 
         if($check){
 
-            ob_start();
-                app()->call('\\App\\Http\\Controllers\\HomeController@updateMigrate');
-            ob_end_clean();
-
             Settings::store('updater_last_success',time());
             return $this->sendSuccess([],__("Update Success"));
 

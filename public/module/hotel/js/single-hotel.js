@@ -306,15 +306,15 @@
             },
 			checkAvailability:function () {
                 var me  = this;
-                this.onLoadAvailability = true;
                 if(!this.firstLoad){
                     if(!this.start_date || !this.start_date){
                         bookingCoreApp.showError(this.i18n.date_required);
                     }
                 }
 
+                this.onLoadAvailability = true;
                 $.ajax({
-                    url:bookingCore.url+'/hotel/checkAvailability',
+                    url:bookingCore.module.hotel+'/checkAvailability',
                     data:{
                         hotel_id:this.id,
                         start_date:this.start_date,
@@ -365,9 +365,7 @@
                         service_type:"hotel",
                         start_date:this.start_date,
                         end_date:this.end_date,
-                        // person_types:this.person_types,
                         extra_price:this.extra_price,
-                        // step:this.step,
                         adults:this.adults,
                         children:this.children,
                         rooms:_.map(this.rooms,function (item) {

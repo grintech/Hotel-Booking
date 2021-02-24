@@ -23,6 +23,7 @@ class SettingClass extends BaseSettingsClass
                     'hotel_layout_item_search',
                     'hotel_attribute_show_in_listing_page',
                     'hotel_location_search_style',
+                    'hotel_page_limit_item',
 
                     'hotel_enable_review',
                     'hotel_review_approved',
@@ -38,6 +39,7 @@ class SettingClass extends BaseSettingsClass
                     'hotel_booking_buyer_fees',
                     'hotel_vendor_create_service_must_approved_by_admin',
                     'hotel_allow_vendor_can_change_their_booking_status',
+                    'hotel_allow_vendor_can_change_paid_amount',
                     'hotel_search_fields',
                     'hotel_map_search_fields',
 
@@ -46,6 +48,7 @@ class SettingClass extends BaseSettingsClass
                     'hotel_deposit_type',
                     'hotel_deposit_amount',
                     'hotel_deposit_fomular',
+                    'hotel_layout_map_option',
                 ],
                 'html_keys'=>[
 

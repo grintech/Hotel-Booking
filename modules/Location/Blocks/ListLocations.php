@@ -144,6 +144,27 @@ class ListLocations extends BaseBlock
 
     public function content($model = [])
     {
+        $list = $this->query($model);
+        $data = [
+            'rows'         => $list,
+            'title'        => $model['title'],
+            'desc'         => $model['desc'] ?? "",
+            'service_type' => $model['service_type'],
+            'layout'       => !empty($model['layout']) ? $model['layout'] : "style_1",
+            'to_location_detail'=>$model['to_location_detail'] ?? ''
+        ];
+        return view('Location::frontend.blocks.list-locations.index', $data);
+    }
+
+    public function contentAPI($model = []){
+        $rows = $this->query($model);
+        $model['data']= $rows->map(function($row){
+            return $row->dataForApi();
+        });
+        return $model;
+    }
+
+    public function query($model){
         if(empty($model['order'])) $model['order'] = "id";
         if(empty($model['order_by'])) $model['order_by'] = "desc";
         if(empty($model['number'])) $model['number'] = 5;
@@ -155,18 +176,6 @@ class ListLocations extends BaseBlock
             $model_location->whereIn("id",$model['custom_ids']);
         }
         $model_location->orderBy($model['order'], $model['order_by']);
-        $list = $model_location->limit($model['number'])->get();
-        $data = [
-            'rows'         => $list,
-            'title'        => $model['title'],
-            'desc'         => $model['desc'] ?? "",
-            'service_type' => $model['service_type'],
-            'layout'       => !empty($model['layout']) ? $model['layout'] : "style_1",
-            'to_location_detail'=>$model['to_location_detail'] ?? '',
-            'show_more'  => $model['show_more'] ?? false,
-            'background_image' => $model['background_image'] ?? false,
-            'view_more_desc' => $model['view_more_desc'] ?? false,
-        ];
-        return view('Location::frontend.blocks.list-locations.index', $data);
+        return $model_location->limit($model['number'])->get();
     }
 }

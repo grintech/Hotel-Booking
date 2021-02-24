@@ -555,6 +555,11 @@ class HotelSeeder extends Seeder
                     'group' => "hotel",
                 ],
                 [
+                    'name' => 'hotel_page_limit_item',
+                    'val' => 9,
+                    'group' => "hotel",
+                ],
+                [
                     'name' => 'hotel_page_search_banner',
                     'val' => MediaFile::findMediaByName("banner-search-hotel")->id,
                     'group' => "hotel",

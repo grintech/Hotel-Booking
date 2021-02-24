@@ -21,6 +21,7 @@
             'last_name'  => '[last_name]',
             'name'       => '[name]',
             'email'      => '[email]',
+            'button_verify' => '[button_verify]',
         ];
 
         public function __construct(User $user)
@@ -63,9 +64,28 @@
         {
             if (!empty($content)) {
                 foreach (self::CODE as $item => $value) {
+                    if($item == "button_verify") {
+                        $content = str_replace($value, $this->buttonVerify($event), $content);
+                    }
                     $content = str_replace($value, @$event->user->$item, $content);
                 }
             }
             return $content;
+        }
+        public function buttonVerify($event)
+        {
+            if(!$event->user->hasVerifiedEmail()){
+                $text = __('Verify Email Address');
+                $button = '<a style="border-radius: 3px;
+                color: #fff;
+                display: inline-block;
+                text-decoration: none;
+                background-color: #3490dc;
+                border-top: 10px solid #3490dc;
+                border-right: 18px solid #3490dc;
+                border-bottom: 10px solid #3490dc;
+                border-left: 18px solid #3490dc;" href="' . $event->user->verificationUrl() . '">' . $text . '</a>';
+                return $button;
+            }
         }
     }

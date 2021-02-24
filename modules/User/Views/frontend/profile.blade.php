@@ -8,7 +8,7 @@
         <a href="{{route('user.change_password')}}" class="btn-change-password">{{__("Change Password")}}</a>
     </h2>
     @include('admin.message')
-    <form action="{{route('user.profile.index')}}" method="post" class="input-has-icon">
+    <form action="{{route('user.profile.update')}}" method="post" class="input-has-icon">
         @csrf
         <div class="row">
             <div class="col-md-6">
@@ -22,6 +22,11 @@
                         <i class="fa fa-user input-icon"></i>
                     </div>
                 @endif
+                <div class="form-group">
+                    <label>{{__("User name")}}</label>
+                    <input type="text" name="user_name" value="{{old('user_name',$dataUser->user_name)}}" placeholder="{{__("User name")}}" class="form-control">
+                    <i class="fa fa-user input-icon"></i>
+                </div>
                 <div class="form-group">
                     <label>{{__("E-mail")}}</label>
                     <input type="text" name="email" value="{{old('email',$dataUser->email)}}" placeholder="{{__("E-mail")}}" class="form-control">
@@ -66,10 +71,10 @@
                                     {{__("Browse")}}… <input type="file">
                                 </span>
                             </span>
-                            <input type="text" data-error="{{__("Error upload...")}}" data-loading="{{__("Loading...")}}" class="form-control text-view" readonly value="{{ $dataUser->getAvatarUrl()?? __("No Image")}}">
+                            <input type="text" data-error="{{__("Error upload...")}}" data-loading="{{__("Loading...")}}" class="form-control text-view" readonly value="{{ get_file_url( old('avatar_id',$dataUser->avatar_id) ) ?? $dataUser->getAvatarUrl()?? __("No Image")}}">
                         </div>
-                        <input type="hidden" class="form-control" name="avatar_id" value="{{ $dataUser->avatar_id?? ""}}">
-                        <img class="image-demo" src="{{ $dataUser->getAvatarUrl()?? ""}}"/>
+                        <input type="hidden" class="form-control" name="avatar_id" value="{{ old('avatar_id',$dataUser->avatar_id)?? ""}}">
+                        <img class="image-demo" src="{{ get_file_url( old('avatar_id',$dataUser->avatar_id) ) ??  $dataUser->getAvatarUrl() ?? ""}}"/>
                     </div>
                 </div>
             </div>

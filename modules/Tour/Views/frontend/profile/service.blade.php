@@ -2,7 +2,7 @@
 if(!$user->hasPermissionTo('tour_create')) return;
 $services = \Modules\Tour\Models\Tour::getVendorServicesQuery($user->id)->orderBy('id','desc')->paginate(6);
 ?>
-@if($services->total())
+@if(!empty($services) and $services->total())
     <div class="bravo-profile-list-services">
         @include('Tour::frontend.blocks.list-tour.index', ['rows'=>$services,'style_list'=> 'normal','title'=>!empty($view_all) ? __('Tour by :name',['name'=>$user->first_name]) : '','col'=>4])
 

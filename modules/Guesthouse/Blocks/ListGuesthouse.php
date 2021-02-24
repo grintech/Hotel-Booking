@@ -122,6 +122,25 @@ class ListGuesthouse extends BaseBlock
 
     public function content($model = [])
     {
+        $list = $this->query($model);
+        $data = [
+            'rows'       => $list,
+            'style_list' => $model['style'],
+            'title'      => $model['title'],
+            'desc'       => $model['desc'],
+        ];
+        return view('Guesthouse::frontend.blocks.list-guesthouse.index', $data);
+    }
+
+    public function contentAPI($model = []){
+        $rows = $this->query($model);
+        $model['data']= $rows->map(function($row){
+            return $row->dataForApi();
+        });
+        return $model;
+    }
+
+    public function query($model){
         $model_guesthouse = Guesthouse::select("bravo_guesthouses.*")->with(['location','translations','hasWishList']);
         if(empty($model['order'])) $model['order'] = "id";
         if(empty($model['order_by'])) $model['order_by'] = "desc";
@@ -146,15 +165,6 @@ class ListGuesthouse extends BaseBlock
         $model_guesthouse->where("bravo_guesthouses.status", "publish");
         $model_guesthouse->with('location');
         $model_guesthouse->groupBy("bravo_guesthouses.id");
-        $list = $model_guesthouse->limit($model['number'])->get();
-        $data = [
-            'rows'       => $list,
-            'style_list' => $model['style'],
-            'title'      => $model['title'],
-            'desc'       => $model['desc'],
-            'show_more'  => $model['show_more'] ?? false,
-            'view_more_desc' => $model['view_more_desc'] ?? false,
-        ];
-        return view('Guesthouse::frontend.blocks.list-guesthouse.index', $data);
+        return $model_guesthouse->limit($model['number'])->get();
     }
 }

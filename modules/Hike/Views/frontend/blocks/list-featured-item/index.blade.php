@@ -10,13 +10,13 @@
                                 @if(!empty($style) and $style == 'style2')
                                     <span class="number-circle">{{$k+1}}</span>
                                 @else
-                                    <img src="{{$image_url}}" class="img-fluid">
+                                    <img src="{{$image_url}}" class="img-fluid" alt="{{$item['title']}}">
                                 @endif
                             </div>
                             <div class="content">
-                                <h4 class="title">
+                                <h3 class="title">
                                     {{$item['title']}}
-                                </h4>
+                                </h3>
                                 <div class="desc">{!! clean($item['sub_title']) !!}</div>
                             </div>
                         </div>

@@ -8,7 +8,7 @@
         <div class="title-action">
             <a href="{{route('hotel.vendor.edit',['id'=>$hotel->id])}}" class="btn btn-info"><i class="fa fa-hand-o-right"></i> {{__("Back to hotel")}}</a>
             <a href="{{route('hotel.vendor.room.availability.index',['hotel_id'=>$hotel->id])}}" class="btn btn-warning"><i class="fa fa-calendar"></i> {{__("Availability Rooms")}}</a>
-            <a href="{{ route("hotel.vendor.room.create",['id'=>$hotel->id]) }}" class="btn btn-success"><i class="fa fa-plus" aria-hidden="true"></i> {{__("Add Room")}}</a>
+            <a href="{{ route("hotel.vendor.room.create",['hotel_id'=>$hotel->id]) }}" class="btn btn-success"><i class="fa fa-plus" aria-hidden="true"></i> {{__("Add Room")}}</a>
         </div>
     </h2>
     @include('admin.message')

@@ -278,7 +278,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>{{__("Footer Text Left")}}</label>
+                    <label>{{__("Footer Text Right")}}</label>
                     <div class="form-controls">
                         <textarea name="footer_text_right" class="d-none has-ckeditor" cols="30" rows="10">{{setting_item_with_lang('footer_text_right',request()->query('lang')) }}</textarea>
                     </div>

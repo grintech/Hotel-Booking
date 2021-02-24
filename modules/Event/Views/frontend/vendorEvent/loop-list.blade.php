@@ -46,6 +46,9 @@
             </div>
             <div class="control-action">
                 <a href="{{$row->getDetailUrl()}}" target="_blank" class="btn btn-info">{{__("View")}}</a>
+                @if(!empty($recovery))
+                    <a href="{{ route("event.vendor.restore",[$row->id]) }}" class="btn btn-recovery btn-primary" data-confirm="{{__('"Do you want to recovery?"')}}">{{__("Recovery")}}</a>
+                @endif
                 @if(Auth::user()->hasPermissionTo('event_update'))
                     <a href="{{ route("event.vendor.edit",[$row->id]) }}" class="btn btn-warning">{{__("Edit")}}</a>
                 @endif

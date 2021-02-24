@@ -30,6 +30,14 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
+                                        <label>{{__("User name")}}</label>
+                                        <input type="text" name="user_name" value="{{old('user_name',$row->user_name)}}" placeholder="{{__("User name")}}" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
                                         <label>{{__("First name")}}</label>
                                         <input type="text" required value="{{old('first_name',$row->first_name)}}" name="first_name" placeholder="{{__("First name")}}" class="form-control">
                                     </div>
@@ -136,15 +144,16 @@
                                 <div class="form-controls">
                                     <select name="vendor_commission_type" class="form-control">
                                         <option value="">{{__("Default")}}</option>
-                                        <option value="percent" {{($row->vendor_commission_type ?? '') == 'percent' ? 'selected' : ''  }}>{{__('Percent')}}</option>
-                                        <option value="amount" {{($row->vendor_commission_type ?? '') == 'amount' ? 'selected' : ''  }}>{{__('Amount')}}</option>
+                                        <option value="percent" {{old("vendor_commission_type",($row->vendor_commission_type ?? '')) == 'percent' ? 'selected' : ''  }}>{{__('Percent')}}</option>
+                                        <option value="amount" {{old("vendor_commission_type",($row->vendor_commission_type ?? '')) == 'amount' ? 'selected' : ''  }}>{{__('Amount')}}</option>
+                                        <option value="disable" {{old("vendor_commission_type",($row->vendor_commission_type ?? '')) == 'disable' ? 'selected' : ''  }}>{{__('Disable Commission')}}</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label>{{__('Vendor commission value')}}</label>
                                 <div class="form-controls">
-                                    <input type="text" class="form-control" name="vendor_commission_amount" value="{{!empty($row->vendor_commission_amount) ? $row->vendor_commission_amount:'' }}">
+                                    <input type="text" class="form-control" name="vendor_commission_amount" value="{{old("vendor_commission_amount",($row->vendor_commission_amount ?? '')) }}">
                                 </div>
                             </div>
                         </div>

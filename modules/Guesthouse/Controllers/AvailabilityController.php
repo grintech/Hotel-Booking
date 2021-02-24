@@ -145,8 +145,8 @@ class AvailabilityController extends FrontendController{
         $rows =  $query->take(40)->get();
         $allDates = [];
 
-        for($i = strtotime($request->query('start')); $i <= strtotime($request->query('end')); $i+= DAY_IN_SECONDS)
-        {
+        $period = periodDate($request->input('start'),$request->input('end'),false);
+        foreach ($period as $dt){
             $date = [
                 'id'=>rand(0,999),
                 'active'=>0,
@@ -161,10 +161,10 @@ class AvailabilityController extends FrontendController{
                 $date['price_html'] = format_money_main($date['price']);
             }
             $date['title'] = $date['event']  = $date['price_html'];
-            $date['start'] = $date['end'] = date('Y-m-d',$i);
+            $date['start'] = $date['end'] = $dt->format('Y-m-d');
 
             $date['active'] = 1;
-            $allDates[date('Y-m-d',$i)] = $date;
+            $allDates[$dt->format('Y-m-d')] = $date;
         }
         if(!empty($rows))
         {
@@ -207,14 +207,16 @@ class AvailabilityController extends FrontendController{
         if(!empty($bookings))
         {
             foreach ($bookings as $booking){
-                for($i = strtotime($booking->start_date); $i < strtotime($booking->end_date); $i+= DAY_IN_SECONDS){
-                    if(isset($allDates[date('Y-m-d',$i)])){
-                        $allDates[date('Y-m-d',$i)]['number'] -= $booking->number;
-                        if($allDates[date('Y-m-d',$i)]['number'] <=0 ){
-                            $allDates[date('Y-m-d',$i)]['active'] = 0;
-                            $allDates[date('Y-m-d',$i)]['event'] = __('Full Book');
-                            $allDates[date('Y-m-d',$i)]['title'] = __('Full Book');
-                            $allDates[date('Y-m-d',$i)]['classNames'] = ['full-book-event'];
+                $period = periodDate($booking->start_date,$booking->end_date,false);
+                foreach ($period as $dt){
+                    $date = $dt->format('Y-m-d');
+                    if(isset($allDates[$date])){
+                        $allDates[$date]['number'] -= $booking->number;
+                        if($allDates[$date]['number'] <=0 ){
+                            $allDates[$date]['active'] = 0;
+                            $allDates[$date]['event'] = __('Full Book');
+                            $allDates[$date]['title'] = __('Full Book');
+                            $allDates[$date]['classNames'] = ['full-book-event'];
                         }
                     }
                 }
@@ -253,16 +255,16 @@ class AvailabilityController extends FrontendController{
         }
 
         $postData = $request->input();
-        for($i = strtotime($request->input('start_date')); $i <= strtotime($request->input('end_date')); $i+= DAY_IN_SECONDS)
-        {
-            $date = $this->roomDateClass::where('start_date',date('Y-m-d',$i))->where('target_id',$target_id)->first();
+        $period = periodDate($request->input('start_date'),$request->input('end_date'),false);
+        foreach ($period as $dt){
+            $date = $this->roomDateClass::where('start_date',$dt->format('Y-m-d'))->where('target_id',$target_id)->first();
 
             if(empty($date)){
                 $date = new $this->roomDateClass();
                 $date->target_id = $target_id;
             }
-            $postData['start_date'] = date('Y-m-d H:i:s',$i);
-            $postData['end_date'] = date('Y-m-d H:i:s',$i);
+            $postData['start_date'] = $dt->format('Y-m-d H:i:s');
+            $postData['end_date'] = $dt->format('Y-m-d H:i:s');
 
 
             $date->fillByAttr([
