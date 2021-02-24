@@ -25,6 +25,8 @@ class SettingClass extends BaseSettingsClass
                     'hike_page_search_banner',
                     'hike_layout_search',
                     'hike_location_search_style',
+                    'tour_page_limit_item',
+
                     'hike_enable_review',
                     'hike_review_approved',
                     'hike_enable_review_after_booking',
@@ -38,6 +40,7 @@ class SettingClass extends BaseSettingsClass
                     'hike_vendor_create_service_must_approved_by_admin',
                     'hike_allow_vendor_can_change_their_booking_status',
                     'hike_search_fields',
+                    'tour_allow_vendor_can_change_paid_amount',
                     'hike_map_search_fields',
                     'hike_allow_review_after_making_completed_booking',
                     'hike_deposit_enable',
@@ -45,6 +48,7 @@ class SettingClass extends BaseSettingsClass
                     'hike_deposit_amount',
                     'hike_deposit_fomular',
                     'hike_sidebar',
+                    'tour_layout_map_option',
                 ],
                 'html_keys'=>[
 

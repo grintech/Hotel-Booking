@@ -19,7 +19,7 @@
     <div class="form-group">
         <input type="text" class="form-control" name="phone" autocomplete="off" placeholder="{{__('Phone')}}">
         <i class="input-icon field-icon icofont-ui-touch-phone"></i>
-        <span class="invalid-feedback error error-email"></span>
+        <span class="invalid-feedback error error-phone"></span>
     </div>
     <div class="form-group">
         <input type="email" class="form-control" name="email" autocomplete="off" placeholder="{{__('Email address')}}">

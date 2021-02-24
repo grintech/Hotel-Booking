@@ -42,10 +42,10 @@ import BookingCoreAdaterPlugin from './ckeditor/uploadAdapter'
         // CKEDITOR.replace( id );
         tinymce.init({
             selector:'#'+id,
-            plugins: 'preview searchreplace autolink code fullscreen image link media codesample table charmap hr toc advlist lists wordcount imagetools textpattern help pagebreak hr',
+            plugins: 'preview searchreplace autolink code fullscreen image link media codesample table charmap hr toc advlist lists wordcount textpattern help pagebreak hr',
             toolbar: 'formatselect | bold italic strikethrough forecolor backcolor permanentpen formatpainter | link image media | alignleft aligncenter alignright alignjustify  | numlist bullist outdent indent  | pagebreak codesample code | removeformat',
-            image_advtab: true,
-            image_caption: true,
+            image_advtab: false,
+            image_caption: false,
             toolbar_drawer: 'sliding',
             relative_urls : false,
             remove_script_host : remove_script_host,
@@ -228,7 +228,15 @@ import BookingCoreAdaterPlugin from './ckeditor/uploadAdapter'
                     }
                 }
             })
-        }else{
+        }else if(action === 'recovery') {
+            bookingCoreApp.showConfirm({
+                message: i18n.confirm_recovery,
+                callback: function(result){
+                    if(result){
+                        apply_action();
+                    }
+                }
+            })else{
             apply_action();
         }
     });

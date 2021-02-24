@@ -19,7 +19,11 @@ $reviews = \Modules\Review\Models\Review::query()->where([
         <div class="review-list">
             @if($reviews)
                 @foreach($reviews as $item)
-                    @php $userInfo = $item->author; @endphp
+                    @php $userInfo = $item->author;
+                         if(!$userInfo){
+                            continue;
+                         }
+                    @endphp
                     <div class="review-item">
                         <div class="review-item-head">
                             <div class="media">
@@ -57,6 +61,6 @@ $reviews = \Modules\Review\Models\Review::query()->where([
                 @endforeach
             @endif
         </div>
-        <div class="text-center mt30"><a class="btn btn-sm btn-primary" href="{{route('user.profile.reviews',['id'=>$user->id])}}">{{__('View all reviews (:total)',['total'=>$reviews->total()])}}</a></div>
+        <div class="text-center mt30"><a class="btn btn-sm btn-primary" href="{{route('user.profile.reviews',['id'=> $user->user_name ?? $user->id])}}">{{__('View all reviews (:total)',['total'=>$reviews->total()])}}</a></div>
     </div>
 @endif

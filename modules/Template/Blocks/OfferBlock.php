@@ -74,4 +74,12 @@ class OfferBlock extends BaseBlock
     {
         return view('Template::frontend.blocks.offer-block.index', $model);
     }
+    public function contentAPI($model = []){
+        if(!empty($model['list_item'])){
+            foreach (  $model['list_item'] as &$item ){
+                $item['background_image_url'] = FileHelper::url($item['background_image'], 'full');
+            }
+        }
+        return $model;
+    }
 }

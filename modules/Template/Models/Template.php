@@ -81,51 +81,7 @@ class Template extends BaseModel
 
     public function getBlocks()
     {
-        //getBlocks
-        $blocks = config('template.blocks');
-        // Modules
-        $custom_modules = \Modules\ServiceProvider::getModules();
-        if(!empty($custom_modules)){
-            foreach($custom_modules as $module){
-                $moduleClass = "\\Modules\\".ucfirst($module)."\\ModuleProvider";
-                if(class_exists($moduleClass))
-                {
-                    $blockConfig = call_user_func([$moduleClass,'getTemplateBlocks']);
-                    if(!empty($blockConfig)){
-                        $blocks = array_merge($blocks,$blockConfig);
-                    }
-                }
-            }
-        }
-        //Custom
-        $custom_modules = \Custom\ServiceProvider::getModules();
-        if(!empty($custom_modules)){
-            foreach($custom_modules as $module){
-                $moduleClass = "\\Custom\\".ucfirst($module)."\\ModuleProvider";
-                if(class_exists($moduleClass))
-                {
-                    $blockConfig = call_user_func([$moduleClass,'getTemplateBlocks']);
-                    if(!empty($blockConfig)){
-                        $blocks = array_merge($blocks,$blockConfig);
-                    }
-                }
-            }
-        }
-        //Plugins
-        $plugins_modules = \Plugins\ServiceProvider::getModules();
-        if(!empty($plugins_modules)){
-            foreach($plugins_modules as $module){
-                $moduleClass = "\\Plugins\\".ucfirst($module)."\\ModuleProvider";
-                if(class_exists($moduleClass))
-                {
-                    $blockConfig = call_user_func([$moduleClass,'getTemplateBlocks']);
-                    if(!empty($blockConfig)){
-                        $blocks = array_merge($blocks,$blockConfig);
-                    }
-                }
-            }
-        }
-
+        $blocks = $this->getAllBlocks();
         $res = [];
         foreach ($blocks as $block => $class) {
 
@@ -176,28 +132,13 @@ class Template extends BaseModel
         }
     }
 
-    public function getProcessedContent()
-    {
+    public function getAllBlocks(){
         $blocks = config('template.blocks');
         // Modules
         $custom_modules = \Modules\ServiceProvider::getModules();
         if(!empty($custom_modules)){
             foreach($custom_modules as $module){
                 $moduleClass = "\\Modules\\".ucfirst($module)."\\ModuleProvider";
-                if(class_exists($moduleClass))
-                {
-                    $blockConfig = call_user_func([$moduleClass,'getTemplateBlocks']);
-                    if(!empty($blockConfig)){
-                        $blocks = array_merge($blocks,$blockConfig);
-                    }
-                }
-            }
-        }
-        //Custom
-        $custom_modules = \Custom\ServiceProvider::getModules();
-        if(!empty($custom_modules)){
-            foreach($custom_modules as $module){
-                $moduleClass = "\\Custom\\".ucfirst($module)."\\ModuleProvider";
                 if(class_exists($moduleClass))
                 {
                     $blockConfig = call_user_func([$moduleClass,'getTemplateBlocks']);
@@ -221,6 +162,27 @@ class Template extends BaseModel
                 }
             }
         }
+
+        //Custom
+        $custom_modules = \Custom\ServiceProvider::getModules();
+        if(!empty($custom_modules)){
+            foreach($custom_modules as $module){
+                $moduleClass = "\\Custom\\".ucfirst($module)."\\ModuleProvider";
+                if(class_exists($moduleClass))
+                {
+                    $blockConfig = call_user_func([$moduleClass,'getTemplateBlocks']);
+                    if(!empty($blockConfig)){
+                        $blocks = array_merge($blocks,$blockConfig);
+                    }
+                }
+            }
+        }
+        return $blocks;
+    }
+
+    public function getProcessedContent()
+    {
+        $blocks = $this->getAllBlocks();
         $items = json_decode($this->content, true);
         if (empty($items))
             return '';
@@ -240,5 +202,27 @@ class Template extends BaseModel
             }
         }
         return $html;
+    }
+    public function getProcessedContentAPI(){
+        $res = [];
+        $blocks = $this->getAllBlocks();
+        $items = json_decode($this->content, true);
+        if (empty($items)) return $res;
+        foreach ($items as $item) {
+            if (empty($item['type']))
+                continue;
+            if (!array_key_exists($item['type'], $blocks) or !class_exists($blocks[$item['type']]))
+                continue;
+            $item['model'] = isset($item['model']) ? $item['model'] : [];
+            $blockModel = new $blocks[$item['type']]();
+            if (method_exists($blockModel, 'contentAPI')) {
+                $item["model"] = call_user_func([
+                    $blockModel,
+                    'contentAPI'
+                ], $item['model']);
+            }
+            $res[] = $item;
+        }
+        return $res;
     }
 }

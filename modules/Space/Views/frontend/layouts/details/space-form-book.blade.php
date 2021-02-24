@@ -32,6 +32,28 @@
                             <div class="check-in-wrapper">
                                 <label>{{__("Select Dates")}}</label>
                                 <div class="render check-in-render" v-html="start_date_html"></div>
+                                @if(!empty($row->min_day_before_booking))
+                                    <div class="render check-in-render">
+                                        <small>
+                                            @if($row->min_day_before_booking > 1)
+                                                - {{ __("Book :number days in advance",["number"=>$row->min_day_before_booking]) }}
+                                            @else
+                                                - {{ __("Book :number day in advance",["number"=>$row->min_day_before_booking]) }}
+                                            @endif
+                                        </small>
+                                    </div>
+                                @endif
+                                @if(!empty($row->min_day_stays))
+                                    <div class="render check-in-render">
+                                        <small>
+                                            @if($row->min_day_stays > 1)
+                                                - {{ __("Stay at least :number days",["number"=>$row->min_day_stays]) }}
+                                            @else
+                                                - {{ __("Stay at least :number day",["number"=>$row->min_day_stays]) }}
+                                            @endif
+                                        </small>
+                                    </div>
+                                @endif
                             </div>
                             <i class="fa fa-angle-down arrow"></i>
                         </div>

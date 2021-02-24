@@ -3,7 +3,7 @@
     <div class="panel-body">
         <div class="form-group">
             <label>{{__("Title")}}</label>
-            <input type="text" value="{{$translation->title}}" placeholder="{{__("Guided Tour title")}}" name="title" class="form-control">
+            <input type="text" value="{!! clean($translation->title) !!}" placeholder="{{__("Guided Tour title")}}" name="title" class="form-control">
         </div>
         <div class="form-group">
             <label class="control-label">{{__("Content")}}</label>
@@ -11,7 +11,7 @@
                 <textarea name="content" class="d-none has-ckeditor" cols="30" rows="10">{{$translation->content}}</textarea>
             </div>
         </div>
-        <div class="form-group">
+        <div class="form-group d-none">
             <label class="control-label">{{__("Description")}}</label>
             <div class="">
                 <textarea name="short_desc" class="form-control" cols="30" rows="4">{{$translation->short_desc}}</textarea>

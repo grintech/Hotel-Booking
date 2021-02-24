@@ -24,6 +24,35 @@ class SettingClass extends BaseSettingsClass
                     'inbox_enable',
                     'subject_email_verify_register_user',
                     'content_email_verify_register_user',
+                    'user_disable_verification_feature',
+                    'enable_verify_email_register_user',
+                ],
+                'html_keys'=>[
+
+                ]
+            ],
+            [
+                'id'   => 'wallet',
+                'title' => __("Wallet Settings"),
+                'position'=>50,
+                'view'=>"User::admin.settings.wallet",
+                "keys"=>[
+                    'wallet_module_disable',
+
+                    'wallet_credit_exchange_rate',
+                    'wallet_deposit_type',
+                    'wallet_deposit_rate',
+                    'wallet_deposit_lists',
+
+                    'wallet_new_deposit_admin_subject',
+                    'wallet_new_deposit_admin_content',
+                    'wallet_new_deposit_customer_subject',
+                    'wallet_new_deposit_customer_content',
+
+                    'wallet_update_deposit_admin_subject',
+                    'wallet_update_deposit_admin_content',
+                    'wallet_update_deposit_customer_subject',
+                    'wallet_update_deposit_customer_content',
                 ],
                 'html_keys'=>[
 

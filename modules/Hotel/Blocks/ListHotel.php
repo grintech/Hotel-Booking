@@ -127,6 +127,25 @@ class ListHotel extends BaseBlock
 
     public function content($model = [])
     {
+        $list = $this->query($model);
+        $data = [
+            'rows'       => $list,
+            'style_list' => $model['style'],
+            'title'      => $model['title'],
+            'desc'       => $model['desc'],
+        ];
+        return view('Hotel::frontend.blocks.list-hotel.index', $data);
+    }
+
+    public function contentAPI($model = []){
+        $rows = $this->query($model);
+        $model['data']= $rows->map(function($row){
+            return $row->dataForApi();
+        });
+        return $model;
+    }
+
+    public function query($model){
         $model_hotel = Hotel::select("bravo_hotels.*")->with(['location','translations','hasWishList']);
         if(empty($model['order'])) $model['order'] = "id";
         if(empty($model['order_by'])) $model['order_by'] = "desc";
@@ -151,16 +170,6 @@ class ListHotel extends BaseBlock
         $model_hotel->where("bravo_hotels.status", "publish");
         $model_hotel->with('location');
         $model_hotel->groupBy("bravo_hotels.id");
-        $list = $model_hotel->limit($model['number'])->get();
-        $data = [
-            'rows'       => $list,
-            'style_list' => $model['style'],
-            'title'      => $model['title'],
-            'desc'       => $model['desc'],
-            'show_more'  => $model['show_more'] ?? false,
-            'background_image' => $model['background_image'] ?? false,
-            'view_more_desc' => $model['view_more_desc'] ?? false,
-        ];
-        return view('Hotel::frontend.blocks.list-hotel.index', $data);
+        return $model_hotel->limit($model['number'])->get();
     }
 }

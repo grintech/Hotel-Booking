@@ -2,6 +2,7 @@
 namespace Modules\Booking\Gateways;
 
 use Illuminate\Http\Request;
+use Modules\Booking\Models\Payment;
 
 abstract class BaseGateway
 {
@@ -32,6 +33,10 @@ abstract class BaseGateway
      */
     public function process(Request $request, $booking, $service)
     {
+
+    }
+
+    public function processNormal($payment){
 
     }
 
@@ -98,14 +103,22 @@ abstract class BaseGateway
         return $html;
     }
 
-    public function getReturnUrl()
+    public function getReturnUrl($is_normal = false)
     {
-        return url(app_get_locale(false,false,"/").config('booking.booking_route_prefix') . '/confirm/' . $this->id);
+        if($is_normal){
+            return route('gateway.confirm',['gateway'=>$this->id]);
+        }
+        $is_api = request()->segment(1) == 'api';
+        return url(($is_api ? 'api/' : '').app_get_locale(false,false,"/").config('booking.booking_route_prefix') . '/confirm/' . $this->id);
     }
 
-    public function getCancelUrl()
+    public function getCancelUrl($is_normal = false)
     {
-        return url(app_get_locale(false,false,"/").config('booking.booking_route_prefix') . '/cancel/' . $this->id);
+        if($is_normal){
+            return route('gateway.cancel',['gateway'=>$this->id]);
+        }
+        $is_api = request()->segment(1) == 'api';
+        return url(($is_api ? 'api/' : '').app_get_locale(false,false,"/").config('booking.booking_route_prefix') . '/cancel/' . $this->id);
     }
 
     public function getDisplayLogo()
@@ -120,5 +133,46 @@ abstract class BaseGateway
 
     public function getTerminalFormID(){
         return '';
+    }
+
+    public function getForm(){
+
+    }
+    public function getApiOptions(){
+
+    }
+
+    public function getApiDisplayHtml(){
+        return $this->getDisplayHtml();
+    }
+
+    public function confirmNormalPayment(){
+
+    }
+
+    public function cancelNormalPayment()
+    {
+        /**
+         * @var Payment $payment
+         */
+        $request = \request();
+        $c = $request->query('pid');
+        $payment = Payment::where('code', $c)->first();
+        if ($payment) {
+            if($payment->status == 'cancel'){
+                return [false,__("Your payment has been canceled")];
+            }
+            return $payment->markAsCancel();
+        }
+
+        return [false];
+    }
+
+    public function getValidationRules(){
+        return [];
+    }
+
+    public function getValidationMessages(){
+        return [];
     }
 }

@@ -616,6 +616,11 @@ class Tour extends Seeder
                     'group' => "tour",
                 ],
                 [
+                    'name' => 'tour_page_limit_item',
+                    'val' => 9,
+                    'group' => "tour",
+                ],
+                [
                     'name' => 'tour_page_search_banner',
                     'val' => MediaFile::findMediaByName("banner-search")->id,
                     'group' => "tour",

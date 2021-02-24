@@ -61,40 +61,6 @@ $menus = [
             ],
         ]
     ],
-    'booking'=>[
-        "position"=>110,
-        'url'        => 'admin/module/report/booking',
-        'title'      => __('Reports'),
-        'icon'       => 'icon ion-ios-pie',
-        'permission' => 'report_view',
-        'children'   => [
-            'enquiry'=>[
-                'url'        => 'admin/module/report/enquiry',
-                'title'      => __('Enquiry Reports'),
-                'icon'       => 'icon ion-ios-pricetags',
-                'permission' => 'report_view',
-            ],
-            'booking'=>[
-                'url'        => 'admin/module/report/booking',
-                'title'      => __('Booking Reports'),
-                'icon'       => 'icon ion-ios-pricetags',
-                'permission' => 'report_view',
-            ],
-            'statistic'=>[
-                'url'        => 'admin/module/report/statistic',
-                'title'      => __('Booking Statistic'),
-                'icon'       => 'icon ion ion-md-podium',
-                'permission' => 'report_view',
-            ],
-            'contact'=>[
-                'url'        => 'admin/module/contact',
-                'title'      => __('Contact Submissions'),
-                'icon'       => 'icon ion ion-md-mail',
-                'permission' => 'contact_manage',
-            ],
-
-        ]
-    ],
 ];
 
 // Modules
@@ -129,21 +95,18 @@ if(!empty($custom_modules)){
     }
 }
 
-// Custom Menu
-$custom_modules = \Custom\ServiceProvider::getModules();
-if(!empty($custom_modules)){
-    foreach($custom_modules as $module){
-        $moduleClass = "\\Custom\\".ucfirst($module)."\\ModuleProvider";
+// Plugins Menu
+$plugins_modules = \Plugins\ServiceProvider::getModules();
+if(!empty($plugins_modules)){
+    foreach($plugins_modules as $module){
+        $moduleClass = "\\Plugins\\".ucfirst($module)."\\ModuleProvider";
         if(class_exists($moduleClass))
         {
             $menuConfig = call_user_func([$moduleClass,'getAdminMenu']);
-
             if(!empty($menuConfig)){
                 $menus = array_merge($menus,$menuConfig);
             }
-
             $menuSubMenu = call_user_func([$moduleClass,'getAdminSubMenu']);
-
             if(!empty($menuSubMenu)){
                 foreach($menuSubMenu as $k=>$submenu){
                     $submenu['id'] = $submenu['id'] ?? '_'.$k;
@@ -154,17 +117,15 @@ if(!empty($custom_modules)){
                         }));
                     }
                 }
-
             }
         }
-
     }
 }
-// Plugins Menu
-$plugins_modules = \Plugins\ServiceProvider::getModules();
-if(!empty($plugins_modules)){
-    foreach($plugins_modules as $module){
-        $moduleClass = "\\Plugins\\".ucfirst($module)."\\ModuleProvider";
+// Custom Menu
+$custom_modules = \Custom\ServiceProvider::getModules();
+if(!empty($custom_modules)){
+    foreach($custom_modules as $module){
+        $moduleClass = "\\Custom\\".ucfirst($module)."\\ModuleProvider";
         if(class_exists($moduleClass))
         {
             $menuConfig = call_user_func([$moduleClass,'getAdminMenu']);

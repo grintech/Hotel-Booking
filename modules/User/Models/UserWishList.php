@@ -11,7 +11,7 @@ class UserWishList extends BaseModel
         'user_id'
     ];
 
-    public function getService()
+    public function service()
     {
         $allServices = get_bookable_services();
         $module = $allServices[$this->object_model];

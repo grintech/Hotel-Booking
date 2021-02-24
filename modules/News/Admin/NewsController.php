@@ -117,6 +117,9 @@ class NewsController extends AdminController
         }
 
         $row->fill($request->input());
+        if($request->input('slug')){
+            $row->slug = $request->input('slug');
+        }
         $res = $row->saveOriginOrTranslation($request->query('lang'),true);
 
         if ($res) {

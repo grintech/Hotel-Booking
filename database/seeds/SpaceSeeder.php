@@ -425,6 +425,11 @@ class SpaceSeeder extends Seeder
                     'group' => "space",
                 ],
                 [
+                    'name' => 'space_page_limit_item',
+                    'val' => 9,
+                    'group' => "space",
+                ],
+                [
                     'name' => 'space_page_search_banner',
                     'val' => MediaFile::findMediaByName("banner-search-space-2")->id,
                     'group' => "space",

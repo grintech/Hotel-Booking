@@ -12,7 +12,7 @@ class ModuleProvider extends ModuleServiceProvider
 
     public function register()
     {
-
+        $this->app->register(RouterServiceProvider::class);
     }
 
     public static function getTemplateBlocks(){

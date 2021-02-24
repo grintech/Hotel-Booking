@@ -4,7 +4,10 @@ namespace Modules\Hike\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Modules\Core\Events\CreatedServicesEvent;
+use Modules\Core\Events\UpdatedServiceEvent;
 use Modules\AdminController;
+use Modules\Location\Models\LocationCategory;
 use Modules\Core\Models\Attributes;
 use Modules\Hike\Models\HikeCategory;
 use Modules\Hike\Models\HikeTerm;
@@ -20,6 +23,7 @@ class HikeController extends AdminController
     protected $hikeTermClass;
     protected $attributesClass;
     protected $locationClass;
+    private $locationCategoryClass;
 
     public function __construct()
     {
@@ -31,6 +35,7 @@ class HikeController extends AdminController
         $this->hikeTermClass = HikeTerm::class;
         $this->attributesClass = Attributes::class;
         $this->locationClass = Location::class;
+        $this->locationCategoryClass = LocationCategory::class;
     }
 
     public function index(Request $request)
@@ -71,6 +76,45 @@ class HikeController extends AdminController
         return view('Hike::admin.index', $data);
     }
 
+    public function recovery(Request $request)
+    {
+        $this->checkPermission('hike_view');
+        $query = $this->hikeClass::onlyTrashed();
+        $query->orderBy('id', 'desc');
+        if (!empty($hike_name = $request->input('s'))) {
+            $query->where('title', 'LIKE', '%'.$hike_name.'%');
+            $query->orderBy('title', 'asc');
+        }
+        if (!empty($cate = $request->input('cate_id'))) {
+            $query->where('category_id', $cate);
+        }
+        if ($this->hasPermission('hike_manage_others')) {
+            if (!empty($author = $request->input('vendor_id'))) {
+                $query->where('create_user', $author);
+            }
+        } else {
+            $query->where('create_user', Auth::id());
+        }
+        $data = [
+            'rows'               => $query->with(['getAuthor', 'category_hike'])->paginate(20),
+            'hike_categories'    => $this->hikeCategoryClass::where('status', 'publish')->get()->toTree(),
+            'hike_manage_others' => $this->hasPermission('hike_manage_others'),
+            'page_title'         => __("Recovery Hike Management"),
+            'recovery'           => 1,
+            'breadcrumbs'        => [
+                [
+                    'name' => __('Hikes'),
+                    'url'  => 'admin/module/hike'
+                ],
+                [
+                    'name'  => __('Recovery'),
+                    'class' => 'active'
+                ],
+            ]
+        ];
+        return view('Hike::admin.index', $data);
+    }
+
     public function create(Request $request)
     {
         $this->checkPermission('hike_create');
@@ -83,6 +127,7 @@ class HikeController extends AdminController
             'attributes'    => $this->attributesClass::where('service', 'hike')->get(),
             'hike_category' => $this->hikeCategoryClass::where('status', 'publish')->get()->toTree(),
             'hike_location' => $this->locationClass::where('status', 'publish')->get()->toTree(),
+            'location_category' => $this->locationCategoryClass::where("status", "publish")->get(),
             'translation' => new $this->hikeTranslationClass(),
             'breadcrumbs'   => [
                 [
@@ -118,6 +163,7 @@ class HikeController extends AdminController
             'attributes'     => $this->attributesClass::where('service', 'hike')->get(),
             'hike_category'  => $this->hikeCategoryClass::where('status', 'publish')->get()->toTree(),
             'hike_location'  => $this->locationClass::where('status', 'publish')->get()->toTree(),
+            'location_category' => $this->locationCategoryClass::where("status", "publish")->get(),
             'enable_multi_lang'=>true,
             'breadcrumbs'    => [
                 [
@@ -142,7 +188,7 @@ class HikeController extends AdminController
             }
             if($row->create_user != Auth::id() and !$this->hasPermission('hike_manage_others'))
             {
-                return redirect(route('space.admin.index'));
+                return redirect(route('hike.admin.index'));
             }
 
         }else{
@@ -151,10 +197,14 @@ class HikeController extends AdminController
             $row->status = "publish";
         }
         $row->fill($request->input());
+        if ($request->input('slug')) {
+            $row->slug = $request->input('slug');
+        }
 	    $row->ical_import_url  = $request->ical_import_url;
 	    $row->create_user = $request->input('create_user');
         $row->default_state = $request->input('default_state',1);
-
+        $row->enable_service_fee = $request->input('enable_service_fee');
+        $row->service_fee = $request->input('service_fee');
         if ($request->hasFile('gpx_file')) {
             $validator = Validator::make(
                 [
@@ -182,8 +232,10 @@ class HikeController extends AdminController
                 $row->saveMeta($request);
             }
             if($id > 0 ){
+                event(new UpdatedServiceEvent($row));
                 return back()->with('success',  __('Hike updated') );
             }else{
+                event(new CreatedServicesEvent($row));
                 return redirect(route('hike.admin.edit',$row->id))->with('success', __('Hike created') );
             }
         }
@@ -232,6 +284,21 @@ class HikeController extends AdminController
                 }
                 return redirect()->back()->with('success', __('Deleted success!'));
                 break;
+            case "recovery":
+                foreach ($ids as $id) {
+                    $query = $this->hikeClass::withTrashed()->where("id", $id);
+                    if (!$this->hasPermission('hike_manage_others')) {
+                        $query->where("create_user", Auth::id());
+                        $this->checkPermission('hike_delete');
+                    }
+                    $row = $query->first();
+                    if (!empty($row)) {
+                        $row->restore();
+                        event(new UpdatedServiceEvent($row));
+                    }
+                }
+                return redirect()->back()->with('success', __('Recovery success!'));
+                break;
             case "clone":
                 $this->checkPermission('hike_create');
                 foreach ($ids as $id) {
@@ -247,7 +314,11 @@ class HikeController extends AdminController
                         $query->where("create_user", Auth::id());
                         $this->checkPermission('hike_update');
                     }
-                    $query->update(['status' => $action]);
+                    $row = $query->first();
+                    $row->status = $action;
+                    $row->save();
+
+                    event(new UpdatedServiceEvent($row));
                 }
                 return redirect()->back()->with('success', __('Update success!'));
                 break;

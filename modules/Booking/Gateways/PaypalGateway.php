@@ -193,6 +193,58 @@ class PaypalGateway extends BaseGateway
         }
     }
 
+    public function confirmNormalPayment()
+    {
+        /**
+         * @var Payment $payment
+         */
+        $request = \request();
+        $c = $request->query('pid');
+        $payment = Payment::where('code', $c)->first();
+
+        if (!empty($payment) and in_array($payment->status,['draft'])) {
+            $this->getGateway();
+            $data = $this->handlePurchaseDataNormal([
+                'amount'        => (float)$payment->amount,
+                'transactionId' => $payment->code . '.' . time()
+            ], $payment);
+            $response = $this->gateway->completePurchase($data)->send();
+            if ($response->isSuccessful()) {
+                return $payment->markAsCompleted(\GuzzleHttp\json_encode($response->getData()));
+
+            } else {
+                return $payment->markAsFailed(\GuzzleHttp\json_encode($response->getData()));
+            }
+        }
+        if($payment){
+            if($payment->status == 'cancel'){
+                return [false,__("Your payment has been canceled")];
+            }
+        }
+        return [false];
+    }
+
+
+    public function processNormal($payment)
+    {
+        $this->getGateway();
+        $payment->payment_gateway = $this->id;
+        $data = $this->handlePurchaseDataNormal([
+            'amount'        => (float)$payment->amount,
+            'transactionId' => $payment->code . '.' . time()
+        ],  $payment);
+
+        $response = $this->gateway->purchase($data)->send();
+
+        if($response->isSuccessful()){
+            return [true];
+        }elseif($response->isRedirect()){
+            return [true,false,$response->getRedirectUrl()];
+        }else{
+            return [false,$response->getMessage()];
+        }
+    }
+
     public function cancelPayment(Request $request)
     {
         $c = $request->query('c');
@@ -206,6 +258,10 @@ class PaypalGateway extends BaseGateway
                 ]);
                 $payment->save();
             }
+
+            // Refund without check status
+            $booking->tryRefundToWallet(false);
+
             return redirect($booking->getDetailUrl())->with("error", __("You cancelled the payment"));
         }
         if (!empty($booking)) {
@@ -229,6 +285,33 @@ class PaypalGateway extends BaseGateway
             $this->gateway->setSignature($this->getOption('test_client_secret'));
             $this->gateway->setTestMode(true);
         }
+    }
+
+    public function handlePurchaseDataNormal($data, &$payment = null)
+    {
+        $main_currency = setting_item('currency_main');
+        $supported = $this->supportedCurrency();
+        $convert_to = $this->getOption('convert_to');
+        $data['currency'] = $main_currency;
+        $data['returnUrl'] = $this->getReturnUrl(true) . '?pid=' . $payment->code;
+        $data['cancelUrl'] = $this->getCancelUrl(true) . '?pid=' . $payment->code;
+        if (!array_key_exists($main_currency, $supported)) {
+            if (!$convert_to) {
+                throw new Exception(__("PayPal does not support currency: :name", ['name' => $main_currency]));
+            }
+            if (!$exchange_rate = $this->getOption('exchange_rate')) {
+                throw new Exception(__("Exchange rate to :name must be specific. Please contact site owner", ['name' => $convert_to]));
+            }
+            if ($payment) {
+                $payment->converted_currency = $convert_to;
+                $payment->converted_amount = $payment->amount / $exchange_rate;
+                $payment->exchange_rate = $exchange_rate;
+                $payment->save();
+            }
+            $data['amount'] = number_format( $payment->amount / $exchange_rate , 2 );
+            $data['currency'] = $convert_to;
+        }
+        return $data;
     }
 
     public function handlePurchaseData($data, $booking, &$payment = null)

@@ -9,7 +9,7 @@
         <div class="filter-div d-flex justify-content-between ">
             <div class="col-left">
                 @if(!empty($rows))
-                    <form method="post" action="{{url('admin/module/user/userUpgradeRequestApproved')}}" class="filter-form filter-form-left d-flex justify-content-start">
+                    <form method="post" action="{{route('user.admin.userUpgradeRequestApproved')}}" class="filter-form filter-form-left d-flex justify-content-start">
                         {{csrf_field()}}
                         <select name="action" class="form-control">
                             <option value="">{{__(" Bulk Actions ")}}</option>
@@ -64,8 +64,8 @@
                                     <td>{{ $row->approvedBy->getDisplayName()}}</td>
                                     <td class="status"><span class="badge badge-{{ $row->status }}">{{ $row->status }}</span></td>
                                     <td>
-                                        @if($row->status!='approved')
-                                            <a class="btn btn-sm btn-info approve-user" data-id="{{$row->id}}"  href="{{url('admin/module/user/userUpgradeRequestApprovedId/'.$row->id)}}">{{__('Approve')}}</a>
+                                         @if($row->status!='approved')
+                                            <a class="btn btn-sm btn-info approve-user" data-id="{{$row->id}}"  href="{{route('user.admin.upgradeId',['id' => $row->id])}}">{{__('Approve')}}</a>
                                         @endif
                                     </td>
                                 </tr>
@@ -85,19 +85,19 @@
     </div>
 @endsection
 
-{{--@section('script.body')--}}
-{{--    <script>--}}
-{{--        $(document).ready(function () {--}}
-{{--            $('.approve-user').click(function (e) {--}}
-{{--                e.preventDefault();--}}
-{{--                if(confirm('Are you sure approve?')){--}}
-{{--                    ids = '<input type="hidden" name="ids[]" value="'+$(this).data('id')+'">';--}}
-{{--                    form = $('.dungdt-apply-form-btn').closest('form');--}}
-{{--                    form.append(ids);--}}
-{{--                    form.find('select').val('approved');--}}
-{{--                    form.submit();--}}
-{{--                }--}}
-{{--            })--}}
-{{--        })--}}
-{{--    </script>--}}
-{{--@endsection--}}
+@section('script.body')
+    <script>
+        $(document).ready(function () {
+            $('.approve-user').click(function (e) {
+                e.preventDefault();
+                if(confirm('Are you sure approve?')){
+                    ids = '<input type="hidden" name="ids[]" value="'+$(this).data('id')+'">';
+                    form = $('.dungdt-apply-form-btn').closest('form');
+                    form.append(ids);
+                    form.find('select').val('approved');
+                    form.submit();
+                }
+            })
+        })
+    </script>
+@endsection

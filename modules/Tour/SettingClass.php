@@ -25,6 +25,8 @@ class SettingClass extends BaseSettingsClass
                     'tour_page_search_banner',
                     'tour_layout_search',
                     'tour_location_search_style',
+                    'tour_page_limit_item',
+
                     'tour_enable_review',
                     'tour_review_approved',
                     'tour_enable_review_after_booking',
@@ -37,6 +39,8 @@ class SettingClass extends BaseSettingsClass
                     'tour_booking_buyer_fees',
                     'tour_vendor_create_service_must_approved_by_admin',
                     'tour_allow_vendor_can_change_their_booking_status',
+                    'tour_allow_vendor_can_change_paid_amount',
+
                     'tour_search_fields',
                     'tour_map_search_fields',
 
@@ -46,7 +50,8 @@ class SettingClass extends BaseSettingsClass
                     'tour_deposit_amount',
                     'tour_deposit_fomular',
 
-                    'tour_sidebar'
+                    'tour_sidebar',
+                    'tour_layout_map_option',
                 ],
                 'html_keys'=>[
 

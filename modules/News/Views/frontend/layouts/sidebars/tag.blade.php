@@ -1,6 +1,6 @@
 @if(!empty($model_tag))
 <div class="sidebar-widget widget_tag_cloud">
-    <div class="sidebar-title"><h4>{{ $item->title }}</h4></div>
+    <div class="sidebar-title"><h2>{{ $item->title }}</h2></div>
     <div class="tagcloud">
         @php
             $list_tags = \Modules\News\Models\NewsTag::getTags();

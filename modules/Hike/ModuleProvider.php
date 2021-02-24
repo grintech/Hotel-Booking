@@ -76,6 +76,11 @@ class ModuleProvider extends ModuleServiceProvider
                         'title'      => __('Booking Calendar'),
                         'permission' => 'hike_create',
                     ],
+                    'recovery'=>[
+                        'url'        => 'admin/module/tour/recovery',
+                        'title'      => __('Recovery'),
+                        'permission' => 'tour_view',
+                    ],
                 ]
             ]
         ];
@@ -108,9 +113,9 @@ class ModuleProvider extends ModuleServiceProvider
                         'permission' => 'hike_create',
                     ],
                     [
-                        'url'        => route('hike.vendor.booking_report'),
-                        'title'      => __("Booking Report"),
-                        'permission' => 'hike_view',
+                        'url'   => route('hike.vendor.recovery'),
+                        'title'      => __("Recovery"),
+                        'permission' => 'hike_create',
                     ],
                 ]
             ];

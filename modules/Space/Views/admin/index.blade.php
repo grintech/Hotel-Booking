@@ -2,9 +2,11 @@
 @section('content')
     <div class="container-fluid">
         <div class="d-flex justify-content-between mb20">
-            <h1 class="title-bar">{{__("All Spaces")}}</h1>
+            <h1 class="title-bar">{{!empty($recovery) ? __('Recovery') : __("All Spaces")}}</h1>
             <div class="title-actions">
+                @if(empty($recovery))
                 <a href="{{route('space.admin.create')}}" class="btn btn-primary">{{__("Add new space")}}</a>
+                @endif
             </div>
         </div>
         @include('admin.message')
@@ -15,18 +17,22 @@
                         {{csrf_field()}}
                         <select name="action" class="form-control">
                             <option value="">{{__(" Bulk Actions ")}}</option>
-                            <option value="publish">{{__(" Publish ")}}</option>
-                            <option value="draft">{{__(" Move to Draft ")}}</option>
-                            <option value="pending">{{__("Move to Pending")}}</option>
-                            <option value="clone">{{__(" Clone ")}}</option>
-                            <option value="delete">{{__(" Delete ")}}</option>
+                            @if(!empty($recovery))
+                                <option value="recovery">{{__(" Recovery ")}}</option>
+                            @else
+                                <option value="publish">{{__(" Publish ")}}</option>
+                                <option value="draft">{{__(" Move to Draft ")}}</option>
+                                <option value="pending">{{__("Move to Pending")}}</option>
+                                <option value="clone">{{__(" Clone ")}}</option>
+                                <option value="delete">{{__(" Delete ")}}</option>
+                            @endif
                         </select>
                         <button data-confirm="{{__("Do you want to delete?")}}" class="btn-info btn btn-icon dungdt-apply-form-btn" type="button">{{__('Apply')}}</button>
                     </form>
                 @endif
             </div>
             <div class="col-left">
-                <form method="get" action="{{route('space.admin.index')}} " class="filter-form filter-form-right d-flex justify-content-end flex-column flex-sm-row" role="search">
+                <form method="get" action="{{ !empty($recovery) ? route('space.admin.recovery') : route('space.admin.index')}}" class="filter-form filter-form-right d-flex justify-content-end flex-column flex-sm-row" role="search">
                     @if(!empty($rows) and $space_manage_others)
                         <?php
                         $user = !empty(Request()->vendor_id) ? App\User::find(Request()->vendor_id) : false;

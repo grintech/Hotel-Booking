@@ -12,21 +12,22 @@
 use Illuminate\Support\Facades\Route;
 // Vendor Manage Hike
 Route::group(['prefix'=>'user/'.config('hike.hike_route_prefix'),'middleware' => ['auth','verified']],function(){
-    Route::match(['get',],'/','ManageHikeController@manageHike')->name('hike.vendor.index');
-    Route::match(['get',],'/create','ManageHikeController@createHike')->name('hike.vendor.create');
-    Route::match(['get',],'/edit/{slug}','ManageHikeController@editHike')->name('hike.vendor.edit');
-    Route::match(['get','post'],'/del/{slug}','ManageHikeController@deleteHike')->name('hike.vendor.delete');
-    Route::match(['post'],'/store/{slug}','ManageHikeController@store')->name('hike.vendor.store');
+    Route::get('/','ManageHikeController@manageHike')->name('hike.vendor.index');
+    Route::get('/create','ManageHikeController@createHike')->name('hike.vendor.create');
+    Route::get('/edit/{id}','ManageHikeController@editHike')->name('hike.vendor.edit');
+    Route::get('/del/{id}','ManageHikeController@deleteHike')->name('hike.vendor.delete');
+    Route::post('/store/{id}','ManageHikeController@store')->name('hike.vendor.store');
     Route::get('bulkEdit/{id}','ManageHikeController@bulkEditHike')->name("hike.vendor.bulk_edit");
     Route::get('clone/{id}','ManageHikeController@cloneHike')->name("hike.vendor.clone");
-    Route::get('/booking-report','ManageHikeController@bookingReport')->name("hike.vendor.booking_report");
     Route::get('/booking-report/bulkEdit/{id}','ManageHikeController@bookingReportBulkEdit')->name("hike.vendor.booking_report.bulk_edit");
+    Route::get('/recovery','ManageHikeController@recovery')->name('hike.vendor.recovery');
+    Route::get('/restore/{id}','ManageHIkeController@restore')->name('hike.vendor.restore');
 });
 Route::group(['prefix'=>'user/'.config('hike.hike_route_prefix')],function(){
     Route::group(['prefix'=>'availability'],function(){
         Route::get('/','AvailabilityController@index')->name('hike.vendor.availability.index');
         Route::get('/loadDates','AvailabilityController@loadDates')->name('hike.vendor.availability.loadDates');
-        Route::match(['get','post'],'/store','AvailabilityController@store')->name('hike.vendor.availability.store');
+        Route::post('/store','AvailabilityController@store')->name('hike.vendor.availability.store');
     });
 });
 // Hike

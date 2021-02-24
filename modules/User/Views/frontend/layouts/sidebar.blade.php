@@ -89,11 +89,11 @@ if(!empty($custom_modules)){
     }
 }
 
-// Custom Menu
-$custom_modules = \Custom\ServiceProvider::getModules();
-if(!empty($custom_modules)){
-    foreach($custom_modules as $module){
-        $moduleClass = "\\Custom\\".ucfirst($module)."\\ModuleProvider";
+// Plugins Menu
+$plugins_modules = \Plugins\ServiceProvider::getModules();
+if(!empty($plugins_modules)){
+    foreach($plugins_modules as $module){
+        $moduleClass = "\\Plugins\\".ucfirst($module)."\\ModuleProvider";
         if(class_exists($moduleClass))
         {
             $menuConfig = call_user_func([$moduleClass,'getUserMenu']);
@@ -115,11 +115,11 @@ if(!empty($custom_modules)){
         }
     }
 }
-// Plugins Menu
-$plugins_modules = \Plugins\ServiceProvider::getModules();
-if(!empty($plugins_modules)){
-    foreach($plugins_modules as $module){
-        $moduleClass = "\\Plugins\\".ucfirst($module)."\\ModuleProvider";
+// Custom Menu
+$custom_modules = \Custom\ServiceProvider::getModules();
+if(!empty($custom_modules)){
+    foreach($custom_modules as $module){
+        $moduleClass = "\\Custom\\".ucfirst($module)."\\ModuleProvider";
         if(class_exists($moduleClass))
         {
             $menuConfig = call_user_func([$moduleClass,'getUserMenu']);
@@ -169,7 +169,7 @@ if (!empty($menus))
     <div class="bravo-close-menu-user"><i class="icofont-scroll-left"></i></div>
     <div class="logo">
         @if($avatar_url = $dataUser->getAvatarUrl())
-            <div class="avatar"><img src="{{$avatar_url}}" alt="{{$dataUser->getDisplayName()}}"></div>
+            <div class="avatar avatar-cover" style="background-image: url('{{$dataUser->getAvatarUrl()}}')"></div>
         @else
             <span class="avatar-text">{{ucfirst($dataUser->getDisplayName()[0])}}</span>
         @endif

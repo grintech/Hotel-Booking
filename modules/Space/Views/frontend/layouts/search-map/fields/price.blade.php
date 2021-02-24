@@ -1,6 +1,7 @@
 <div class="filter-item filter-simple dropdown">
     <div class="form-group dropdown-toggle" data-toggle="dropdown" >
-        <span class="filter-title">{{__('Price filter')}} <i class="fa fa-angle-down"></i></span>
+        <h3 class="filter-title">{{__('Price filter')}} <i class="fa fa-angle-down"></i></h3>
+    </div>
     </div>
     <div class="filter-dropdown dropdown-menu dropdown-menu-right">
         <div class="bravo-filter-price">

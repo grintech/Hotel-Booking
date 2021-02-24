@@ -30,10 +30,7 @@ class RoleController extends AdminController
     public function create(Request $request)
     {
         if (!empty($request->input())) {
-            $row = new Role($request->input());
-            if ($row->save()) {
-                return redirect('admin/module/user/role')->with('success', __('Role created'));
-            }
+
         } else {
             $row = new User();
             $row->fill([
@@ -65,6 +62,30 @@ class RoleController extends AdminController
         ];
         return view('User::admin.role.detail', $data);
     }
+
+    public function store(Request $request, $id){
+        if($id>0){
+            $this->checkPermission('role_update');
+            $row = Role::find($id);
+            if (empty($row)) {
+                return redirect(route('user.admin.role.index'));
+            }
+        }else{
+            $this->checkPermission('role_create');
+            $row = new Role();
+        }
+
+        $row->fill($request->input());
+        $res = $row->save();
+        if ($res) {
+            if($id > 0 ){
+                return back()->with('success',  __('Role updated') );
+            }else{
+                return redirect(route('user.admin.role.detail',['id' => $row->id]))->with('success', __('Role created') );
+            }
+        }
+    }
+
 
     public function verifyFields(Request $request){
 
@@ -151,6 +172,14 @@ class RoleController extends AdminController
             'order'=>\request()->input('order'),
             'icon'=>\request()->input('icon'),
         ];
+        $languages = \Modules\Language\Models\Language::getActive();
+        if(!empty($languages) && setting_item('site_enable_multi_lang') && setting_item('site_locale'))
+        {
+            foreach($languages as $language){
+                $key_lang = setting_item('site_locale') != $language->locale ? "_".$language->locale : "";
+                $all[$id]['name'.$key_lang] = \request()->input('name'.$key_lang);
+            }
+        }
 
         setting_update_item('role_verify_fields',$all);
 

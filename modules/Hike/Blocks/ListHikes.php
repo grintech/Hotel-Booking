@@ -138,6 +138,25 @@ class ListHikes extends BaseBlock
 
     public function content($model = [])
     {
+        $list = $this->query($model);
+        $data = [
+            'rows'       => $list,
+            'style_list' => $model['style'],
+            'title'      => $model['title'] ?? "",
+            'desc'      => $model['desc'] ?? "",
+        ];
+        return view('Hike::frontend.blocks.list-hike.index', $data);
+    }
+
+    public function contentAPI($model = []){
+        $rows = $this->query($model);
+        $model['data']= $rows->map(function($row){
+            return $row->dataForApi();
+        });
+        return $model;
+    }
+
+    public function query($model){
         $model_Hike = Hike::select("bravo_hikes.*")->with(['location','translations','hasWishList']);
         if(empty($model['order'])) $model['order'] = "id";
         if(empty($model['order_by'])) $model['order_by'] = "desc";
@@ -157,14 +176,17 @@ class ListHikes extends BaseBlock
             $list_cat = HikeCategory::whereIn('id', $category_ids)->where("status","publish")->get();
             if(!empty($list_cat)){
                 $where_left_right = [];
+                $params = [];
                 foreach ($list_cat as $cat){
-                    $where_left_right[] = " ( bravo_hike_category._lft >= {$cat->_lft} AND bravo_hike_category._rgt <= {$cat->_rgt} ) ";
+                    $where_left_right[] = " ( bravo_hike_category._lft >= ? AND bravo_hike_category._rgt <= ? ) ";
+                    $params[] = $cat->_lft;
+                    $params[] = $cat->_rgt;
                 }
                 $sql_where_join = " ( ".implode("OR" , $where_left_right)." )  ";
                 $model_Hike
-                    ->join('bravo_hike_category', function ($join) use($sql_where_join) {
+                    ->join('bravo_hike_category', function ($join) use($sql_where_join, $params) {
                         $join->on('bravo_hike_category.id', '=', 'bravo_hikes.category_id')
-                            ->WhereRaw($sql_where_join);
+                            ->WhereRaw($sql_where_join, $params);
                     });
             }
         }
@@ -176,15 +198,6 @@ class ListHikes extends BaseBlock
         $model_Hike->where("bravo_hikes.status", "publish");
         $model_Hike->with('location');
         $model_Hike->groupBy("bravo_hikes.id");
-        $list = $model_Hike->limit($model['number'])->get();
-        $data = [
-            'rows'       => $list,
-            'style_list' => $model['style'],
-            'title'      => $model['title'] ?? "",
-            'desc'      => $model['desc'] ?? "",
-            'show_more'  => $model['show_more'] ?? false,
-            'view_more_desc' => $model['view_more_desc'] ?? false,
-        ];
-        return view('Hike::frontend.blocks.list-hike.index', $data);
+        return $model_Hike->limit($model['number'])->get();
     }
 }

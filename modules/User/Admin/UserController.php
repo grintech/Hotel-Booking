@@ -11,6 +11,7 @@ use Modules\AdminController;
 use Modules\User\Events\VendorApproved;
 use Modules\Vendor\Models\VendorRequest;
 use Spatie\Permission\Models\Role;
+use Modules\User\Exports\UserExport;
 
 class UserController extends AdminController
 {
@@ -37,6 +38,7 @@ class UserController extends AdminController
         if($request->query('role')){
             $listUser->role($request->query('role'));
         }
+        $listUser->with(['wallet']);
         $data = [
             'rows' => $listUser->paginate(20),
             'roles' => Role::all()
@@ -169,6 +171,14 @@ class UserController extends AdminController
                     'max:255',
                     Rule::unique('users')->ignore($row->id)
                 ],
+                'user_name'=> [
+                    'required',
+                    'max:255',
+                    'min:4',
+                    'string',
+                    'alpha_dash',
+                    Rule::unique('users')->ignore($row->id)
+                ],
             ]);
 
         }else{
@@ -186,6 +196,14 @@ class UserController extends AdminController
                     'max:255',
                     Rule::unique('users')
                 ],
+                'user_name'=> [
+                    'required',
+                    'max:255',
+                    'min:4',
+                    'string',
+                    'alpha_dash',
+                    Rule::unique('users')
+                ],
             ]);
 
             if(!$check->validated()){
@@ -197,6 +215,7 @@ class UserController extends AdminController
         }
 
         $row->name = $request->input('name');
+        $row->user_name = $request->input('user_name');
         $row->first_name = $request->input('first_name');
         $row->last_name = $request->input('last_name');
         $row->phone = $request->input('phone');
@@ -226,10 +245,6 @@ class UserController extends AdminController
         }
 
         if ($row->save()) {
-
-            if ($request->input('role_id') and $role = Role::findById($request->input('role_id'))) {
-                $row->syncRoles($role);
-            }
             return back()->with('success', ($id and $id>0) ? __('User updated'):__("User created"));
         }
     }
@@ -276,7 +291,7 @@ class UserController extends AdminController
         $ids = $request->input('ids');
         $action = $request->input('action');
         if (empty($ids))
-            return redirect()->back()->with('error', __('Select at leas 1 item!'));
+            return redirect()->back()->with('error', __('Select at least 1 item!'));
         if (empty($action))
             return redirect()->back()->with('error', __('Select an Action!'));
         if ($action == 'delete') {
@@ -284,7 +299,7 @@ class UserController extends AdminController
                 if($id == Auth::id()) continue;
                 $query = User::where("id", $id)->first();
                 if(!empty($query)){
-                    $query->email.='_d';
+                    $query->email.='_d_'.uniqid().rand(0,99999);
                     $query->save();
                     $query->delete();
                 }
@@ -313,10 +328,10 @@ class UserController extends AdminController
         $ids = $request->input('ids');
         $action = $request->input('action');
         if (empty($ids))
-            return redirect()->back()->with('error', __('Select at leas 1 item!'));
+            return redirect()->back()->with('error', __('Select at least 1 item!'));
         if (empty($action))
             return redirect()->back()->with('error', __('Select an Action!'));
-        
+
         switch ($action){
             case "delete":
                 foreach ($ids as $id) {
@@ -343,7 +358,7 @@ class UserController extends AdminController
                 break;
         }
     }
-    public function userUpgradeRequestApprovedId(Request $request,$id)
+    public function userUpgradeRequestApprovedId(Request $request, $id)
     {
         $this->checkPermission('user_create');
         if (empty($id))
@@ -361,4 +376,21 @@ class UserController extends AdminController
         }
         return redirect()->back()->with('success', __('Updated successfully!'));
     }
+    public function export()
+    {
+        return (new UserExport())->download('user-' . date('M-d-Y') . '.xlsx');
+    }
+    public function verifyEmail(Request $request,$id)
+    {
+        $user = User::find($id);
+        if(!empty($user)){
+            $user->email_verified_at = now();
+            $user->save();
+            return redirect()->back()->with('success', __('Verify email successfully!'));
+        }else{
+            return redirect()->back()->with('error', __('Verify email cancel!'));
+        }
+    }
+
+
 }

@@ -13,6 +13,7 @@ class EventTranslation extends Event
         'content',
         'faqs',
         'address',
+        'surrounding'
     ];
 
     protected $slugField     = false;
@@ -23,6 +24,7 @@ class EventTranslation extends Event
     ];
     protected $casts = [
         'faqs'  => 'array',
+        'surrounding'  => 'array',
     ];
 
     public function getSeoType(){
@@ -30,11 +32,11 @@ class EventTranslation extends Event
     }
 
     public static function boot() {
-		parent::boot();
-		static::saving(function($table)  {
-			unset($table->extra_price);
-			unset($table->price);
-			unset($table->sale_price);
-		});
-	}
+        parent::boot();
+        static::saving(function($table)  {
+            unset($table->extra_price);
+            unset($table->price);
+            unset($table->sale_price);
+        });
+    }
 }

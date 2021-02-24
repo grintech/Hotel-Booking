@@ -10,10 +10,13 @@
 @endsection
 @section('content')
     <div class="bravo_search_tour">
+        <h1 class="d-none">
+            {{setting_item_with_lang("tour_page_search_title")}}
+        </h1>
         <div class="bravo_form_search_map">
             @include('Hike::frontend.layouts.search-map.form-search-map')
         </div>
-        <div class="bravo_search_map">
+        <div class="bravo_search_map {{ setting_item_with_lang("hike_layout_map_option",false,"map_left") }}">
             <div class="results_map">
                 <div class="map-loading d-none">
                     <div class="st-loader"></div>

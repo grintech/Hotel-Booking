@@ -2,6 +2,7 @@
 namespace Modules\Booking\Gateways;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Modules\Booking\Events\BookingCreatedEvent;
 
 class OfflinePaymentGateway extends BaseGateway
@@ -13,15 +14,35 @@ class OfflinePaymentGateway extends BaseGateway
     {
         $service->beforePaymentProcess($booking, $this);
         // Simple change status to processing
-        $booking->markAsProcessing($this, $service);
-        $booking->sendNewBookingEmails();
+        if($booking->paid <= 0){
+            $booking->status = $booking::PROCESSING;
+        }else{
+            if($booking->paid < $booking->total){
+                $booking->status = $booking::PARTIAL_PAYMENT;
+            }else{
+                $booking->status = $booking::PAID;
+            }
+        }
 
-        event(new BookingCreatedEvent($booking));
+        $booking->save();
+        try{
+            event(new BookingCreatedEvent($booking));
+        } catch(\Swift_TransportException $e){
+            Log::warning($e->getMessage());
+        }
 
         $service->afterPaymentProcess($booking, $this);
         return response()->json([
             'url' => $booking->getDetailUrl()
         ])->send();
+    }
+
+    public function processNormal($payment)
+    {
+        $payment->status = 'processing';
+        $payment->save();
+
+        return [true,__("Thank you, we will contact you shortly")];
     }
 
     public function getOptionsConfigs()

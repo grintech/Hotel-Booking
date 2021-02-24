@@ -30,7 +30,6 @@
                     @if(is_default_lang())
                         <a data-toggle="tab" href="#nav-tour-pricing" aria-selected="false">{{__("3. Pricing")}}</a>
                         <a data-toggle="tab" href="#nav-attribute" aria-selected="false">{{__("4. Attributes")}}</a>
-                        <a data-toggle="tab" href="#nav-ical" aria-selected="false">{{__("5. Ical")}}</a>
                     @endif
                 </div>
                 <div class="tab-content" id="nav-tabContent">
@@ -45,6 +44,7 @@
                     </div>
                     <div class="tab-pane fade" id="nav-tour-location">
                         @include('Guesthouse::admin/guesthouse/location',["is_smart_search"=>"1"])
+                        @include('Guesthouse::admin.hotel.surrounding')
                     </div>
                     @if(is_default_lang())
                         <div class="tab-pane fade" id="nav-tour-pricing">
@@ -52,9 +52,6 @@
                         </div>
                         <div class="tab-pane fade" id="nav-attribute">
                             @include('Guesthouse::admin/guesthouse/attributes')
-                        </div>
-                        <div class="tab-pane fade" id="nav-ical">
-                            @include('Guesthouse::admin/guesthouse/ical')
                         </div>
                     @endif
                 </div>
@@ -91,6 +88,14 @@
                     });
                     engineMap.on('zoom_changed', function (zoom) {
                         $("input[name=map_zoom]").attr("value", zoom);
+                    });
+                    engineMap.searchBox($('#customPlaceAddress'),function (dataLatLng) {
+                        engineMap.clearMarkers();
+                        engineMap.addMarker(dataLatLng, {
+                            icon_options: {}
+                        });
+                        $("input[name=map_lat]").attr("value", dataLatLng[0]);
+                        $("input[name=map_lng]").attr("value", dataLatLng[1]);
                     });
                     engineMap.searchBox($('.bravo_searchbox'),function (dataLatLng) {
                         engineMap.clearMarkers();

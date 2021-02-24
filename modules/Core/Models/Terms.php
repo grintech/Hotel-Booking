@@ -67,4 +67,40 @@ class Terms extends BaseModel
             'slug'=>$this->slug,
         ];
     }
+
+    static public function getTermsByIdForAPI($term_IDs){
+        $listTerms = null;
+        if(empty($term_IDs)) return $listTerms;
+        $terms = parent::query()->with(['translations','attribute'])->find($term_IDs);
+        if(!empty($terms)){
+            foreach ($terms as $term){
+                $attr = $term->attribute;
+                $attrTranslation = $attr->translateOrOrigin(app()->getLocale());
+                $dataAttr = array(
+                    'id'=>$attr->id,
+                    'title'=>$attrTranslation->name,
+                    'slug'=>$attr->slug,
+                    'service'=>$attr->service,
+                    'display_type'=>$attr->display_type,
+                    'hide_in_single'=>$attr->hide_in_single,
+                );
+                if(!empty($dataAttr) and empty($dataAttr['hide_in_single'])){
+                    if(empty($listTerms[$term->attr_id]['child'])) $listTerms[$term->attr_id]['parent'] = $dataAttr;
+                    if(empty($listTerms[$term->attr_id]['child'])) $listTerms[$term->attr_id]['child'] = [];
+                    $termTranslation = $term->translateOrOrigin(app()->getLocale());
+                    $dataAttr = array(
+                        'id'=>$term->id,
+                        'title'=>$termTranslation->name,
+                        'content'=>$term->content,
+                        'image_id'=>get_file_url($term->image_id,'full'),
+                        'icon'=>$term->icon,
+                        'attr_id'=>$term->attr_id,
+                        'slug'=>$term->slug,
+                    );
+                    $listTerms[$term->attr_id]['child'][] = $dataAttr;
+                }
+            }
+        }
+        return $listTerms;
+    }
 }

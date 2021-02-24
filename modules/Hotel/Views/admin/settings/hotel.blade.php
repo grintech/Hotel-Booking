@@ -20,7 +20,7 @@
                         {!! \Modules\Media\Helpers\FileHelper::fieldUpload('hotel_page_search_banner',$settings['hotel_page_search_banner'] ?? "") !!}
                     </div>
                 </div>
-                <div class="form-group d-none">
+                <div class="form-group">
                     <label class="" >{{__("Layout Search")}}</label>
                     <div class="form-controls">
                         <select name="hotel_layout_search" class="form-control" >
@@ -29,6 +29,23 @@
                         </select>
                     </div>
                 </div>
+                @endif
+                <div class="form-group">
+                    <label class="" >{{__("Layout Map Option")}}</label>
+                    <div class="form-controls">
+                        <select name="hotel_layout_map_option" class="form-control">
+                            <option {{ (setting_item_with_lang('hotel_layout_map_option',request()->query('lang')) ?? '') == 'map_left' ? 'selected' : '' }} value="map_left">{{__('Map Left')}}</option>
+                            <option {{ (setting_item_with_lang('hotel_layout_map_option',request()->query('lang')) ?? '') == 'map_right' ? 'selected' : ''  }} value="map_right">{{__("Map Right")}}</option>
+                        </select>
+                    </div>
+                </div>
+                @if(is_default_lang())
+                    <div class="form-group">
+                        <label class="" >{{__("Limit item per Page")}}</label>
+                        <div class="form-controls">
+                            <input type="number" min="1" name="hotel_page_limit_item" placeholder="{{ __("Default: 9") }}" value="{{setting_item_with_lang('hotel_page_limit_item',request()->query('lang'), 9)}}" class="form-control">
+                        </div>
+                    </div>
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
@@ -68,6 +85,7 @@
                         <select name="hotel_location_search_style" class="form-control">
                             <option {{ ($settings['hotel_location_search_style'] ?? '') == 'normal' ? 'selected' : ''  }}      value="normal">{{__("Normal")}}</option>
                             <option {{ ($settings['hotel_location_search_style'] ?? '') == 'autocomplete' ? 'selected' : '' }} value="autocomplete">{{__('Autocomplete from locations')}}</option>
+                            <option {{ ($settings['hotel_location_search_style'] ?? '') == 'autocompletePlace' ? 'selected' : '' }} value="autocompletePlace">{{__('Autocomplete from Gmap Place')}}</option>
                         </select>
                     </div>
                 </div>
@@ -304,10 +322,10 @@
                                                 @endif
                                             </div>
                                             <div class="col-md-3">
-                                                <input type="number" min="0" name="hotel_booking_buyer_fees[{{$key}}][price]" class="form-control" value="{{$buyer_fee['price']}}">
+                                                <input type="number" min="0" step="0.1"  name="hotel_booking_buyer_fees[{{$key}}][price]" class="form-control" value="{{$buyer_fee['price']}}">
                                                 <select name="hotel_booking_buyer_fees[{{$key}}][unit]" class="form-control">
-                                                    <option @if($buyer_fee['unit'] ?? "" ==  'fixed') selected @endif value="fixed">{{ __("Fixed") }}</option>
-                                                    <option @if($buyer_fee['unit'] ?? "" ==  'percent') selected @endif value="percent">{{ __("Percent") }}</option>
+                                                    <option @if(($buyer_fee['unit'] ?? "") ==  'fixed') selected @endif value="fixed">{{ __("Fixed") }}</option>
+                                                    <option @if(($buyer_fee['unit'] ?? "") ==  'percent') selected @endif value="percent">{{ __("Percent") }}</option>
                                                 </select>
                                             </div>
                                             <div class="col-md-3">
@@ -350,7 +368,7 @@
                                         @endif
                                     </div>
                                     <div class="col-md-3">
-                                        <input type="number" min="0" __name__="hotel_booking_buyer_fees[__number__][price]" class="form-control" value="">
+                                        <input type="number" min="0" step="0.1"  __name__="hotel_booking_buyer_fees[__number__][price]" class="form-control" value="">
                                         <select __name__="hotel_booking_buyer_fees[__number__][unit]" class="form-control">
                                             <option value="fixed">{{ __("Fixed") }}</option>
                                             <option value="percent">{{ __("Percent") }}</option>
@@ -401,6 +419,14 @@
                             <label><input type="checkbox" name="hotel_allow_vendor_can_change_their_booking_status" value="1" @if(!empty($settings['hotel_allow_vendor_can_change_their_booking_status'])) checked @endif /> {{__("Yes please")}} </label>
                             <br>
                             <small class="form-text text-muted">{{__("ON: Vendor can change their booking status")}}</small>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="" >{{__("Allow vendor can change their booking paid amount")}}</label>
+                        <div class="form-controls">
+                            <label><input type="checkbox" name="hotel_allow_vendor_can_change_paid_amount" value="1" @if(!empty($settings['hotel_allow_vendor_can_change_paid_amount'])) checked @endif /> {{__("Yes please")}} </label>
+                            <br>
+                            <small class="form-text text-muted">{{__("ON: Vendor can change their booking paid amount")}}</small>
                         </div>
                     </div>
                 </div>

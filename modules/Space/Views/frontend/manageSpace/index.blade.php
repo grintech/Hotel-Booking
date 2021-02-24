@@ -4,8 +4,8 @@
 @endsection
 @section('content')
     <h2 class="title-bar">
-        {{__("Manage Spaces")}}
-        @if(Auth::user()->hasPermissionTo('space_create'))
+        {{!empty($recovery) ?__('Recovery Spaces') : __("Manage Spaces")}}
+        @if(Auth::user()->hasPermissionTo('space_create')&& empty($recovery))
             <a href="{{ route("space.vendor.create") }}" class="btn-change-password">{{__("Add Space")}}</a>
         @endif
     </h2>

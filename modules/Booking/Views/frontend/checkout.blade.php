@@ -15,7 +15,7 @@
                          </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="booking-detail">
+                        <div class="booking-detail booking-form">
                             @include ($service->checkout_booking_detail_file ?? '')
                         </div>
                     </div>
@@ -36,7 +36,7 @@
     <script type="text/javascript">
         jQuery(function () {
             $.ajax({
-                'url': bookingCore.url + '/booking/{{$booking->code}}/check-status',
+                'url': bookingCore.url + '{{$is_api ? '/api' : ''}}/booking/{{$booking->code}}/check-status',
                 'cache': false,
                 'type': 'GET',
                 success: function (data) {
@@ -61,5 +61,27 @@
             data[e.target.name] = e.target.value;
             localStorage.setItem(KEY, JSON.stringify(data));
         })
+
+        $('.deposit_amount').on('change', function(){
+            checkPaynow();
+        });
+        $('input[type=radio][name=how_to_pay]').on('change', function(){
+            checkPaynow();
+        });
+        function checkPaynow(){
+            var credit_input = $('.deposit_amount').val();
+            var how_to_pay = $("input[name=how_to_pay]:checked").val();
+            var convert_to_money = credit_input * {{ setting_item('wallet_credit_exchange_rate',1)}};
+            if(how_to_pay == 'full'){
+                var pay_now_need_pay = parseFloat({{floatval($booking->total)}}) - convert_to_money;
+            }else{
+                var pay_now_need_pay = parseFloat({{floatval($booking->deposit == null ? $booking->total : $booking->deposit)}}) - convert_to_money;
+            }
+            if(pay_now_need_pay < 0){
+                pay_now_need_pay = 0;
+            }
+            $('.convert_pay_now').html(bravo_format_money(pay_now_need_pay));
+            $('.convert_deposit_amount').html(bravo_format_money(convert_to_money));
+        }
     </script>
 @endsection

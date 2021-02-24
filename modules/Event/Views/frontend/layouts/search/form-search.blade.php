@@ -8,16 +8,17 @@
             @endphp
             @if(!empty($event_search_fields))
                 @foreach($event_search_fields as $field)
+                    @php $field['title'] = $field['title_'.app()->getLocale()] ?? $field['title'] ?? "" @endphp
                     <div class="col-md-{{ $field['size'] ?? "6" }} border-right">
                         @switch($field['field'])
                             @case ('service_name')
-                            @include('Event::frontend.layouts.search.fields.service_name')
+                                @include('Event::frontend.layouts.search.fields.service_name')
                             @break
                             @case ('location')
-                            @include('Event::frontend.layouts.search.fields.location')
+                                @include('Event::frontend.layouts.search.fields.location')
                             @break
                             @case ('date')
-                            @include('Event::frontend.layouts.search.fields.date')
+                                @include('Event::frontend.layouts.search.fields.date')
                             @break
                         @endswitch
                     </div>

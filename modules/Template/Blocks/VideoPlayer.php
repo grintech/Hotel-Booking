@@ -1,6 +1,7 @@
 <?php
 namespace Modules\Template\Blocks;
 
+use Modules\Media\Helpers\FileHelper;
 use Modules\Template\Blocks\BaseBlock;
 
 class VideoPlayer extends BaseBlock
@@ -39,5 +40,11 @@ class VideoPlayer extends BaseBlock
     {
         $model['id'] = time();
         return view('Template::frontend.blocks.video-player', $model);
+    }
+    public function contentAPI($model = []){
+        if (!empty($model['bg_image'])) {
+            $model['bg_image_url'] = FileHelper::url($model['bg_image'], 'full');
+        }
+        return $model;
     }
 }

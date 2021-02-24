@@ -20,22 +20,22 @@ class PageController extends AdminController
     public function index(Request $request)
     {
         $this->checkPermission('page_view');
-        $page_name = $request->query('page');
+        $page_name = $request->query('page_name');
         $datapage = new Page();
         if ($page_name) {
             $datapage = Page::where('title', 'LIKE', '%' . $page_name . '%');
         }
         $datapage = $datapage->orderBy('title', 'asc');
         $data = [
-            'rows'        => $datapage->paginate(20),
-            'page_title'=>__("Page Management"),
+            'rows' => $datapage->paginate(20),
+            'page_title' => __("Page Management"),
             'breadcrumbs' => [
                 [
                     'name' => __('Pages'),
-                    'url'  => 'admin/module/page'
+                    'url' => 'admin/module/page'
                 ],
                 [
-                    'name'  => __('All'),
+                    'name' => __('All'),
                     'class' => 'active'
                 ],
             ]
@@ -52,16 +52,16 @@ class PageController extends AdminController
         ]);
 
         $data = [
-            'row'         => $row,
-            'translation'=>new PageTranslation(),
-            'templates'   => Template::orderBy('id', 'desc')->limit(100)->get(),
+            'row' => $row,
+            'translation' => new PageTranslation(),
+            'templates' => Template::orderBy('id', 'desc')->limit(100)->get(),
             'breadcrumbs' => [
                 [
                     'name' => __('Pages'),
-                    'url'  => 'admin/module/page'
+                    'url' => 'admin/module/page'
                 ],
                 [
-                    'name'  => __('Add Page'),
+                    'name' => __('Add Page'),
                     'class' => 'active'
                 ],
             ]
@@ -80,45 +80,49 @@ class PageController extends AdminController
         $translation = $row->translateOrOrigin($request->query('lang'));
 
         $data = [
-            'translation'  => $translation,
-            'row'            =>$row,
-            'templates'   => Template::orderBy('id', 'desc')->limit(100)->get(),
+            'translation' => $translation,
+            'row' => $row,
+            'templates' => Template::orderBy('id', 'desc')->limit(100)->get(),
             'breadcrumbs' => [
                 [
                     'name' => __('Pages'),
-                    'url'  => 'admin/module/page'
+                    'url' => 'admin/module/page'
                 ],
                 [
-                    'name'  => __('Edit Page'),
+                    'name' => __('Edit Page'),
                     'class' => 'active'
                 ],
             ],
-            'enable_multi_lang'=>true
+            'enable_multi_lang' => true
         ];
         return view('Page::admin.detail', $data);
     }
 
-    public function store(Request $request, $id){
+    public function store(Request $request, $id)
+    {
 
-        if($id>0){
+        if ($id > 0) {
             $this->checkPermission('page_update');
             $row = Page::find($id);
             if (empty($row)) {
                 return redirect(route('page.admin.index'));
             }
-        }else{
+        } else {
             $this->checkPermission('page_create');
             $row = new Page();
         }
 
         $row->fill($request->input());
+        if ($request->input('slug')) {
+            $row->slug = $request->input('slug');
+        }
 
-        $row->saveOriginOrTranslation($request->query('lang'),true);
+        $row->saveOriginOrTranslation($request->query('lang'), true);
 
-        if($id > 0 ){
-            return back()->with('success',  __('Page updated') );
-        }else{
-            return redirect()->route('page.admin.edit',['id'=>$row->id])->with('success', $id > 0 ?  __('Page updated') : __('Page created'));
+        if ($id > 0) {
+            return back()->with('success', __('Page updated'));
+        } else {
+            return redirect()->route('page.admin.edit', ['id' => $row->id])->with('success', $id > 0 ? __('Page updated') : __('Page created'));
         }
     }
 
@@ -153,7 +157,7 @@ class PageController extends AdminController
                     $this->checkPermission('page_delete');
                 }
                 $query->first();
-                if(!empty($query)){
+                if (!empty($query)) {
                     $query->delete();
                 }
             }

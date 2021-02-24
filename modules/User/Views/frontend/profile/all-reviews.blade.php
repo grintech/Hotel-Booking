@@ -28,7 +28,11 @@
                                 <div class="review-list">
                                     @if($reviews)
                                         @foreach($reviews as $item)
-                                            @php $userInfo = $item->author; @endphp
+                                            @php $userInfo = $item->author;
+                                                 if(!$userInfo){
+                                                    continue;
+                                                 }
+                                            @endphp
                                             <div class="review-item">
                                                 <div class="review-item-head">
                                                     <div class="media">

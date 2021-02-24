@@ -94,18 +94,14 @@
             $translation = $row->translateOrOrigin(app()->getLocale());
             $tour_related = false;
             $guesthouse_related = false;
+            $hike_related = false;
             $location_id = $row->location_id;
             if (!empty($location_id)) {
                 $tour_related = $this->tourClass::where('location_id', $location_id)->where("status","publish")->take(4)->whereNotIn('id', [$row->id])->with(['location','translations','hasWishList'])->get();
                 $guesthouse_related = Guesthouse::where('location_id', $location_id)->where("status","publish")->take(4)->with(['translations']);
                 $hike_related = Hike::where('location_id', $location_id)->where("status","publish")->take(4)->with(['translations']);
             }
-            $review_list = Review::where('object_id', $row->id)
-                ->where('object_model', 'tour')
-                ->where("status", "approved")
-                ->orderBy("id", "desc")
-                ->with('author')
-                ->paginate(setting_item('tour_review_number_per_page', 5));
+            $review_list = $row->getReviewList();
             $data = [
                 'row' => $row,
                 'translation' => $translation,

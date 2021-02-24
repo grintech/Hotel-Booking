@@ -11,13 +11,19 @@
         use Queueable, SerializesModels;
 
         public $token;
+        public $user;
         const CODE = [
+            'first_name'    => '[first_name]',
+            'last_name'     => '[last_name]',
+            'name'          => '[name]',
+            'email'         => '[email]',
             'buttonReset' => '[button_reset_password]',
         ];
 
-        public function __construct($token)
+        public function __construct($token, $user)
         {
             $this->token = $token;
+            $this->user= $user;
         }
 
         public function build()
@@ -34,12 +40,10 @@
         {
             if (!empty($content)) {
                 foreach (self::CODE as $item => $value) {
-                    if (method_exists($this, $item)) {
-                        $replace = $this->$item();
-                    } else {
-                        $replace = '';
+                    if($item == "buttonReset") {
+                        $content = str_replace($value, $this->buttonReset(), $content);
                     }
-                    $content = str_replace($value, $replace, $content);
+                    $content = str_replace($value, @$this->user->$item, $content);
                 }
             }
             return $content;
