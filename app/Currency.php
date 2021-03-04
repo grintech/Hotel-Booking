@@ -55,6 +55,7 @@ class Currency
             //}
             //else
             //{
+            // TODO: Testing the deployment
                 Session::put('bc_current_currency','usd');
             //}
 
