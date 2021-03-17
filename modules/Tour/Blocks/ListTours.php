@@ -143,7 +143,9 @@ class ListTours extends BaseBlock
             'rows'       => $list,
             'style_list' => $model['style'],
             'title'      => $model['title'] ?? "",
-            'desc'      => $model['desc'] ?? "",
+            'desc'       => $model['desc'] ?? "",
+            'show_more'  => $model['show_more'] ?? true,
+            'view_more_desc' => $model['view_more_desc'] ?? "",
         ];
         return view('Tour::frontend.blocks.list-tour.index', $data);
     }

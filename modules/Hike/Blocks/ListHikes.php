@@ -144,6 +144,8 @@ class ListHikes extends BaseBlock
             'style_list' => $model['style'],
             'title'      => $model['title'] ?? "",
             'desc'      => $model['desc'] ?? "",
+            'show_more'  => $model['show_more'] ?? true,
+            'view_more_desc' => $model['view_more_desc'] ?? "",
         ];
         return view('Hike::frontend.blocks.list-hike.index', $data);
     }

@@ -128,6 +128,8 @@ class ListGuesthouse extends BaseBlock
             'style_list' => $model['style'],
             'title'      => $model['title'],
             'desc'       => $model['desc'],
+            'show_more'  => $model['show_more'],
+            'view_more_desc' => $model['view_more_desc'],
         ];
         return view('Guesthouse::frontend.blocks.list-guesthouse.index', $data);
     }

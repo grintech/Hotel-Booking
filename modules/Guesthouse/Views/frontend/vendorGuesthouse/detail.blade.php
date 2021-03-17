@@ -44,7 +44,7 @@
                     </div>
                     <div class="tab-pane fade" id="nav-tour-location">
                         @include('Guesthouse::admin/guesthouse/location',["is_smart_search"=>"1"])
-                        @include('Guesthouse::admin.hotel.surrounding')
+                        @include('Guesthouse::admin.guesthouse.surrounding')
                     </div>
                     @if(is_default_lang())
                         <div class="tab-pane fade" id="nav-tour-pricing">

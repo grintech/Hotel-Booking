@@ -736,10 +736,6 @@ class Guesthouse extends Bookable
         return $this->reviewClass::countReviewByServiceID($this->id, false, $status, $this->type) ?? 0;
     }
 
-    public function getReviewList(){
-        return $this->reviewClass::select(['id','title','content','rate_number','author_ip','status','created_at','vendor_id','create_user'])->where('object_id', $this->id)->where('object_model', 'guesthouse')->where("status", "approved")->orderBy("id", "desc")->with('author')->paginate(setting_item('guesthouse_review_number_per_page', 5));
-    }
-
     public function getNumberServiceInLocation($location)
     {
         $number = 0;
@@ -754,6 +750,16 @@ class Guesthouse extends Bookable
             return __(":number Guesthouses", ['number' => $number]);
         }
         return __(":number Guesthouse", ['number' => $number]);
+    }
+
+    public function getReviewList(){
+        return $this->reviewClass::select(['id','title','content','rate_number','author_ip','status','created_at','vendor_id','create_user'])
+            ->where('object_id', $this->id)
+            ->where('object_model', 'guesthouse')
+            ->where("status", "approved")
+            ->orderBy("id", "desc")
+            ->with('author')
+            ->paginate(setting_item('tour_review_number_per_page', 5));
     }
 
     /**

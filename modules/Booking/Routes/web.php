@@ -3,7 +3,7 @@ use Illuminate\Support\Facades\Route;
 // Booking
 Route::group(['prefix' => config('booking.booking_route_prefix'), 'as' => config('booking.booking_route_prefix') . '.'],function(){
     Route::post('/addToCart','BookingController@addToCart');
-    Route::post('/doCheckout','BookingController@doCheckout')->name('booking.doCheckout');
+    Route::post('/doCheckout','BookingController@doCheckout')->name('doCheckout');
     Route::get('/confirm/{gateway}','BookingController@confirmPayment');
     Route::get('/cancel/{gateway}','BookingController@cancelPayment');
     Route::get('/{code}','BookingController@detail')->name('detail');
@@ -11,7 +11,7 @@ Route::group(['prefix' => config('booking.booking_route_prefix'), 'as' => config
     Route::get('/{code}/check-status','BookingController@checkStatusCheckout');
 
     //ical
-	Route::get('/export-ical/{type}/{id}','BookingController@exportIcal')->name('booking.admin.export-ical');
+	Route::get('/export-ical/{type}/{id}','BookingController@exportIcal')->name('admin.export-ical');
     //inquiry
     Route::post('/addEnquiry','BookingController@addEnquiry');
     Route::post('/setPaidAmount','BookingController@setPaidAmount');

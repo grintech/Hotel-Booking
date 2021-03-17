@@ -831,6 +831,16 @@ class Hike extends Bookable
         return __(":number Hike", ['number' => $number]);
     }
 
+    public function getReviewList(){
+        return $this->reviewClass::select(['id','title','content','rate_number','author_ip','status','created_at','vendor_id','create_user'])
+            ->where('object_id', $this->id)
+            ->where('object_model', 'hike')
+            ->where("status", "approved")
+            ->orderBy("id", "desc")
+            ->with('author')
+            ->paginate(setting_item('tour_review_number_per_page', 5));
+    }
+
     /**
      * @param $from
      * @param $to

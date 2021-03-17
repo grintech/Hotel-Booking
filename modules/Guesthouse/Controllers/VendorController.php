@@ -293,6 +293,26 @@ class VendorController extends FrontendController
         return redirect()->back()->with('success', __('Update success!'));
     }
 
+    public function bookingReport(Request $request)
+    {
+        $data = [
+            'bookings' => $this->bookingClass::getBookingHistory($request->input('status'), false , Auth::id() , 'guesthouse'),
+            'statues'  => config('booking.statuses'),
+            'breadcrumbs'        => [
+                [
+                    'name' => __('Manage Guesthouse'),
+                    'url'  => route('guesthouse.vendor.index')
+                ],
+                [
+                    'name' => __('Booking Report'),
+                    'class'  => 'active'
+                ]
+            ],
+            'page_title'         => __("Booking Report"),
+        ];
+        return view('Guesthouse::frontend.vendorGuesthouse.bookingReport', $data);
+    }
+
     public function bookingReportBulkEdit($booking_id , Request $request){
         $status = $request->input('status');
         if (!empty(setting_item("guesthouse_allow_vendor_can_change_their_booking_status")) and !empty($status) and !empty($booking_id)) {
