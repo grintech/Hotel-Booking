@@ -26,7 +26,7 @@
     <link href="{{ asset('libs/ionicons/css/ionicons.min.css') }}" rel="stylesheet">
     <link href="{{ asset('libs/icofont/icofont.min.css') }}" rel="stylesheet">
     <link href="{{ asset('libs/select2/css/select2.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('dist/frontend/css/notification.css') }}" rel="newest stylesheet">
+    <link href="{{ asset('dist/frontend/css/notification.css') }}" rel="stylesheet">
     <link href="{{ asset('dist/frontend/css/app.css?_ver='.config('asset.layout.css')) }}" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ asset("libs/daterange/daterangepicker.css") }}" >
 
@@ -105,21 +105,62 @@
             ],
         };
     </script>
-    <style>
+    <style type="text/css">
         body{
             font-family: 'Quicksand', sans-serif;
         }
+
         .bravo-header-sticky{
             transition: all 1s ease;
         }
-        @php
-            //avoid rendering the transparent menu on detail pages of each module as the detail page doesn't
-            //have any visible backgrounds on header.
-            $render_transparent_menu = ($row->transparent_menu ?? true) && !strpos(\Request::route()->getName(), 'detail');
-        @endphp
-        @if($render_transparent_menu)
 
-            .bravo-form-search-all{
+        @keyframes zoomUp{
+            100%{
+                -webkit-transform: scale(1.15);
+                -ms-transform: scale(1.15);
+                transform: scale(1.15);
+            }
+        }
+
+        .bravo-forms-search-bg{
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            z-index: -10;
+            background-size: cover;
+            overflow: hidden;
+            background-position: center;
+            animation: zoomUp 15s ease-in 0s 1 normal forwards;
+        }
+
+        a.anim > span {
+            transition: all .5s ease;
+        }
+
+        a.anim:hover > span {
+            transform: translateX(8px) rotate(90deg);
+        }
+    </style>
+    @php
+        $route = \Request::route()->getName();
+
+        //avoid rendering the transparent menu on detail pages of each module as the detail page doesn't
+        //have any visible backgrounds on header.
+        $render_transparent_menu = ($row->transparent_menu ?? false);
+
+        $rex = "/(^news|^page).(detail|index)/i";
+        $searchRex = "/.search/i";
+        if(preg_match($rex, $route) || preg_match($searchRex, $route)) {
+            // render transparent menu in all generic page.detail
+            $render_transparent_menu = true;
+        }
+    @endphp
+    @if($render_transparent_menu)
+        <style type="text/css">
+
+            .bravo-form-search-all {
                 position: relative;
                 overflow: hidden;
                 height: 100vh;
@@ -179,7 +220,9 @@
             .bravo_wrap .page-template-content .bravo-form-search-all{
                 padding: 200px 0;
             }
-        @else
+        </style>
+    @else
+        <style type="text/css">
             .bravo-contact-block .section{
                 padding: 80px 0 !important;
             }
@@ -205,37 +248,9 @@
                 box-shadow: 1px 0 1px #1a2b48;
                 /*box-shadow: 2px 3px 8px rgba(0,0,0,.1);*/
             }
-        @endif
+        </style>
+    @endif
 
-        .bravo-forms-search-bg{
-            position: absolute;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            right: 0;
-            z-index: -10;
-            background-size: cover;
-            overflow: hidden;
-            background-position: center;
-            animation: zoomUp 15s ease-in 0s 1 normal forwards;
-        }
-
-        @keyframes zoomUp{
-            100%{
-                -webkit-transform: scale(1.15);
-                -ms-transform: scale(1.15);
-                transform: scale(1.15);
-            }
-        }
-
-        a.anim > span {
-            transition: all .5s ease;
-        }
-
-        a.anim:hover > span {
-            transform: translateX(8px) rotate(90deg);
-        }
-    </style>
     <!-- Styles -->
     @yield('head')
     {{--Custom Style--}}

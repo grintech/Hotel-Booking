@@ -1,7 +1,6 @@
 @extends ('layouts.app')
 @section('head')
-    <style type="text/css">
-    </style>
+
 @endsection
 @section ('content')
     @if($row->template_id)
@@ -9,7 +8,7 @@
             {!! $row->getProcessedContent() !!}
         </div>
     @else
-        <div class="container " style="padding-top: 40px;padding-bottom: 40px;">
+        <div class="container" style="padding-top: 40px;padding-bottom: 40px;">
             <h1>{!! clean($translation->title) !!}</h1>
             <div class="blog-content">
                 {!! $translation->content !!}

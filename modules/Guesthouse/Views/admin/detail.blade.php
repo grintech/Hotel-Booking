@@ -30,8 +30,8 @@
                     <div class="col-md-9">
                         @include('Guesthouse::admin.guesthouse.content')
                         @include('Guesthouse::admin.guesthouse.pricing')
-                        @include('Guesthouse::admin.hotel.location')
-                        @include('Guesthouse::admin.hotel.surrounding')
+{{--                        @include('Guesthouse::admin.guesthouse.location')--}}
+{{--                        @include('Guesthouse::admin.guesthouse.surrounding')--}}
                         @include('Core::admin/seo-meta/seo-meta')
                     </div>
                     <div class="col-md-3">
@@ -99,8 +99,7 @@
                                     </div>
                                 </div>
                             </div>
-{{--                            @include('Guesthouse::admin.guesthouse.ical')--}}
-
+                            @include('Guesthouse::admin.guesthouse.ical')
                         @endif
                     </div>
                 </div>

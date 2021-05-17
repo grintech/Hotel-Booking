@@ -2,9 +2,9 @@
     <div class="left">
         <h2>{{$translation->title}}</h2>
         @if($translation->address)
-            <h2 class="address"><i class="fa fa-map-marker"></i>
+            <span class="address"><i class="fa fa-map-marker"></i>
                 {{$translation->address}}
-            </h2>
+            </span>
         @endif
     </div>
     <div class="right">

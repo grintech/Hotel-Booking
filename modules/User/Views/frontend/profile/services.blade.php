@@ -1,7 +1,7 @@
 <?php
-$types = get_bookable_services();
-if (empty($types)) return;
-$list_service = [];
+    $types = get_bookable_services();
+    if (empty($types)) return;
+    $list_service = [];
 ?>
 <div class="profile-service-tabs">
     <div class="service-nav-tabs">

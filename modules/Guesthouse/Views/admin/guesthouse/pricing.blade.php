@@ -121,7 +121,6 @@
                             </div>
                         @endforeach
                     @endif
-                </div>
                     <div class="text-right">
                         @if(is_default_lang())
                             <span class="btn btn-info btn-sm btn-add-item"><i class="icon ion-ios-add-circle-outline"></i> {{__('Add item')}}</span>

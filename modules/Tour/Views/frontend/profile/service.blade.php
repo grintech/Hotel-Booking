@@ -4,7 +4,7 @@ $services = \Modules\Tour\Models\Tour::getVendorServicesQuery($user->id)->orderB
 ?>
 @if(!empty($services) and $services->total())
     <div class="bravo-profile-list-services">
-        @include('Tour::frontend.blocks.list-tour.index', ['rows'=>$services,'style_list'=> 'normal','title'=>!empty($view_all) ? __('Tour by :name',['name'=>$user->first_name]) : '','col'=>4])
+        @include('Tour::frontend.blocks.list-tour.index', ['rows'=>$services,'style_list'=> 'normal','title'=>!empty($view_all) ? __('Tour by :name',['name'=>$user->first_name]) : '','col'=>4, 'show_more' => false, 'view_more_desc' => ''])
 
         <div class="container">
             @if(!empty($view_all))

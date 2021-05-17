@@ -280,6 +280,26 @@ class ManageTourController extends FrontendController
         return redirect()->back()->with('success', __('Update success!'));
     }
 
+    public function bookingReport(Request $request)
+    {
+        $data = [
+            'bookings'    => $this->bookingClass::getBookingHistory($request->input('status'), false, Auth::id(), 'tour'),
+            'statues'     => config('booking.statuses'),
+            'breadcrumbs' => [
+                [
+                    'name' => __('Manage Guided Tours'),
+                    'url'  => route('tour.vendor.index'),
+                ],
+                [
+                    'name'  => __('Booking Report'),
+                    'class' => 'active'
+                ],
+            ],
+            'page_title'  => __("Booking Report"),
+        ];
+        return view('Tour::frontend.manageTour.bookingReport', $data);
+    }
+
     public function bookingReportBulkEdit($booking_id, Request $request)
     {
         $status = $request->input('status');

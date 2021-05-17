@@ -1,6 +1,6 @@
 <div class="sidebar-widget">
     <div class="sidebar-title">
-        <h2>{{ $item->title }}</h2>
+        <h4>{{ $item->title }}</h4>
     </div>
     <div class="textwidget">
         {{ $item->content }}

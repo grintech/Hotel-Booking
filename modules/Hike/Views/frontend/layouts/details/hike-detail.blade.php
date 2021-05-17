@@ -178,7 +178,7 @@
 @include('Hike::frontend.layouts.details.hike-attributes')
 @include('Hike::frontend.layouts.details.hike-faqs')
 @includeIf("Hotel::frontend.layouts.details.hotel-surrounding")
-@if($row->map_lat && $row->map_lng)
+@if($row->gpx_file)
 <div class="g-location">
     <div class="location-title">
         <h3>{{__("Hike Location")}}</h3>

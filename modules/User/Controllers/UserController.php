@@ -241,13 +241,18 @@ class UserController extends FrontendController
                     ], 200);
                 }
 
-                $vendor_redirect = Auth::user()->hasPermissionTo('dashboard_vendor_access')
-                    ? route('vendor.dashboard') : false;
+                $vendor_redirect = false;
+                $roles = Auth::user()->roles;
+                if (count($roles)) {
+                    if($roles[0]->service != 'none' && Auth::user()->hasPermissionTo('dashboard_vendor_access')) {
+                        $vendor_redirect = route('vendor.dashboard');
+                    }
+                }
 
                 return response()->json([
                     'error'    => false,
                     'messages' => false,
-                    'redirect' => $vendor_redirect ?? $request->input('redirect') ?? $request->headers->get('referer') ?? url(app_get_locale(false, '/'))
+                    'redirect' => $vendor_redirect ? $vendor_redirect : $request->input('redirect') ?? $request->headers->get('referer') ?? url(app_get_locale(false, '/'))
                 ], 200);
             } else {
                 $errors = new MessageBag(['message_error' => __('Username or password incorrect')]);

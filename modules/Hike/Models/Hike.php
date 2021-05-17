@@ -957,6 +957,23 @@ class Hike extends Bookable
         return false;
     }
 
+    public static function isFormEnquiryAndBook(){
+        $check = setting_item('booking_enquiry_for_hike');
+        if(!empty($check) and setting_item('booking_enquiry_type') == "booking_and_enquiry" ){
+            return true;
+        }
+        return false;
+    }
+
+    public static function getBookingEnquiryType(){
+        $check = setting_item('booking_enquiry_for_hike');
+        if(!empty($check)){
+            if( setting_item('booking_enquiry_type') == "only_enquiry" ) {
+                return "enquiry";
+            }
+        }
+        return "book";
+    }
 
     public static function search(Request $request)
     {

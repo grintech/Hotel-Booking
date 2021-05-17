@@ -21,13 +21,14 @@
                             </div>
                             <div class="form-group">
                                 <label>{{ __('Default service for vendor dashboard')}}</label>
-                                <select name="service" value="{{ $row->service }}" class="form-control">
+                                <select name="service" class="form-control">
                                     @php
                                         $services = get_bookable_services();
                                     @endphp
                                     @foreach($services as $service_name => $className)
-                                        <option value="{{ $service_name }}">{{ $service_name }}</option>
+                                        <option value="{{ $service_name }}" @if($row->service && $row->service == $service_name) selected @endif>{{ ucfirst($service_name) }}</option>
                                     @endforeach
+                                    <option value="none" @if(($row->service && $row->service == 'none') || !$row->service) selected @endif>{{ __('None')}}</option>
                                 </select>
                             </div>
                         </div>

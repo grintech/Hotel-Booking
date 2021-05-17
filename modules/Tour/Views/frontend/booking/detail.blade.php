@@ -40,7 +40,7 @@
                         </div>
                     </li>
                 @endif
-                @php $person_types = $booking->getJsonMeta('person_types')@endphp
+                @php $person_types = $booking->getJsonMeta('person_types'); @endphp
                 @if(!empty($person_types))
                     @foreach($person_types as $type)
                         <li>
@@ -125,6 +125,7 @@
                             @endforeach
                         </ul>
                     </li>
+                @endif
                 @php
                     $list_all_fee = [];
                     if(!empty($booking->buyer_fees)){

@@ -169,7 +169,7 @@ if (!empty($menus))
     <div class="bravo-close-menu-user"><i class="icofont-scroll-left"></i></div>
     <div class="logo">
         @if($avatar_url = $dataUser->getAvatarUrl())
-            <div class="avatar avatar-cover" style="background-image: url('{{$dataUser->getAvatarUrl()}}')"></div>
+            <div class="avatar avatar-cover" style="background-image: url('{{$dataUser->getAvatarUrl()}}');background-size: cover;background-position: top center;"></div>
         @else
             <span class="avatar-text">{{ucfirst($dataUser->getDisplayName()[0])}}</span>
         @endif

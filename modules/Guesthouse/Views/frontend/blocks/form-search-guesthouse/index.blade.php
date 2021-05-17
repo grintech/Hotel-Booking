@@ -1,4 +1,4 @@
-<div class="bravo-form-search-guesthouse @if(!empty($style) and $style == "carousel") bravo-form-search-slider @endif" @if(empty($style)) style="background-image: linear-gradient(0deg,rgba(0, 0, 0, 0.2),rgba(0, 0, 0, 0.2)),url('{{$bg_image_url}}') !important" @endif>
+<div class="bravo-form-search-guesthouse @if(!empty($style) and $style == "carousel") bravo-form-search-slider @endif" @if(empty($style)) style="background-image: linear-gradient(0deg,rgba(0, 0, 0, 0.2),rgba(0, 0, 0, 0.2)),url('{{$bg_image_url}}') !important; margin-top: -92px;  padding: 120px 0; background-position: 50%!important; background-repeat: no-repeat!important; background-size: cover!important;" @endif>
     @if(!empty($style) and $style == "carousel" and !empty($list_slider))
         <div class="effect">
             <div class="owl-carousel">
