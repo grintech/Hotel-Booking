@@ -10,8 +10,8 @@
                         </div>
                         <div class="contact-form">
                             <div class="contact-header">
-                                <h3>{{ setting_item_with_lang("page_contact_title") }}</h3>
-                                <p>{{ setting_item_with_lang("page_contact_sub_title") }}</p>
+                                <h1>{{ setting_item_with_lang("page_contact_title") }}</h1>
+                                <h2>{{ setting_item_with_lang("page_contact_sub_title") }}</h2>
                             </div>
                             @include('admin.message')
                             <div class="contact-form">

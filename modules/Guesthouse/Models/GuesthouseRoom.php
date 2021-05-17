@@ -22,6 +22,7 @@ class GuesthouseRoom extends Bookable
     use SoftDeletes;
     protected $table = 'bravo_guesthouse_rooms';
     public $type = 'guesthouse_room';
+    public $availabilityClass = GuesthouseRoomDate::class;
 
     protected $fillable = [
         'title',
@@ -72,9 +73,11 @@ class GuesthouseRoom extends Bookable
         $allDates = [];
         $tmp_price = 0;
         $tmp_night = 0;
-        for($i = strtotime($filters['start_date']); $i < strtotime($filters['end_date']); $i+= DAY_IN_SECONDS)
-        {
-            $allDates[date('Y-m-d',$i)] = [
+        $period = periodDate($filters['start_date'],$filters['end_date'],false);
+        foreach ($period as $dt){
+//        for($i = strtotime($filters['start_date']); $i < strtotime($filters['end_date']); $i+= DAY_IN_SECONDS)
+//        {
+            $allDates[$dt->format('Y-m-d')] = [
                 'number'=>$this->number,
                 'price'=>$this->price
             ];
@@ -99,12 +102,14 @@ class GuesthouseRoom extends Bookable
         $roomBookings = $this->getBookingsInRange($filters['start_date'],$filters['end_date']);
         if(!empty($roomBookings)){
             foreach ($roomBookings as $roomBooking){
-                for($i = strtotime($roomBooking->start_date); $i <= strtotime($roomBooking->end_date); $i+= DAY_IN_SECONDS)
-                {
-                    if(!array_key_exists(date('Y-m-d',$i),$allDates)) continue;
-                    $allDates[date('Y-m-d',$i)]['number'] -= $roomBooking->number;
-
-                    if($allDates[date('Y-m-d',$i)]['number'] <= 0){
+                $period = periodDate($roomBooking->start_date,$roomBooking->end_date,false);
+                foreach ($period as $dt){
+                    $date = $dt->format('Y-m-d');
+//                for($i = strtotime($roomBooking->start_date); $i <= strtotime($roomBooking->end_date); $i+= DAY_IN_SECONDS)
+//                {
+                    if(!array_key_exists($date,$allDates)) continue;
+                    $allDates[$date]['number'] -= $roomBooking->number;
+                    if($allDates[$date]['number'] <= 0){
                         return false;
                     }
                 }

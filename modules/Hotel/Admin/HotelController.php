@@ -4,11 +4,14 @@ namespace Modules\Hotel\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Modules\AdminController;
+use Modules\Core\Events\CreatedServicesEvent;
+use Modules\Core\Events\UpdatedServiceEvent;
 use Modules\Core\Models\Attributes;
 use Modules\Location\Models\Location;
 use Modules\Hotel\Models\Hotel;
 use Modules\Hotel\Models\HotelTerm;
 use Modules\Hotel\Models\HotelTranslation;
+use Modules\Location\Models\LocationCategory;
 
 class HotelController extends AdminController
 {
@@ -17,6 +20,8 @@ class HotelController extends AdminController
     protected $hotelTermClass;
     protected $attributesClass;
     protected $locationClass;
+    private $locationCategoryClass;
+
     public function __construct()
     {
         parent::__construct();
@@ -26,6 +31,7 @@ class HotelController extends AdminController
         $this->hotelTermClass = HotelTerm::class;
         $this->attributesClass = Attributes::class;
         $this->locationClass = Location::class;
+        $this->locationCategoryClass = LocationCategory::class;
     }
     public function callAction($method, $parameters)
     {
@@ -82,6 +88,7 @@ class HotelController extends AdminController
             'row'            => $row,
             'attributes'     => $this->attributesClass::where('service', 'hotel')->get(),
             'hotel_location' => $this->locationClass::where('status', 'publish')->get()->toTree(),
+            'location_category' => $this->locationCategoryClass::where('status', 'publish')->get(),
             'translation'    => new $this->hotelTranslationClass(),
             'breadcrumbs'    => [
                 [
@@ -96,6 +103,42 @@ class HotelController extends AdminController
             'page_title'     => __("Add new Hotel")
         ];
         return view('Hotel::admin.detail', $data);
+    }
+
+    public function recovery(Request $request)
+    {
+        $this->checkPermission('hotel_view');
+        $query = $this->hotelClass::onlyTrashed() ;
+        $query->orderBy('id', 'desc');
+        if (!empty($hotel_name = $request->input('s'))) {
+            $query->where('title', 'LIKE', '%' . $hotel_name . '%');
+            $query->orderBy('title', 'asc');
+        }
+
+        if ($this->hasPermission('hotel_manage_others')) {
+            if (!empty($author = $request->input('vendor_id'))) {
+                $query->where('create_user', $author);
+            }
+        } else {
+            $query->where('create_user', Auth::id());
+        }
+        $data = [
+            'rows'               => $query->with(['author'])->paginate(20),
+            'hotel_manage_others' => $this->hasPermission('hotel_manage_others'),
+            'recovery'           => 1,
+            'breadcrumbs'        => [
+                [
+                    'name' => __('Hotels'),
+                    'url'  => 'admin/module/hotel'
+                ],
+                [
+                    'name'  => __('Recovery'),
+                    'class' => 'active'
+                ],
+            ],
+            'page_title'=>__("Recovery Hotel Management")
+        ];
+        return view('Hotel::admin.index', $data);
     }
 
     public function edit(Request $request, $id)
@@ -117,6 +160,7 @@ class HotelController extends AdminController
             "selected_terms" => $row->terms->pluck('term_id'),
             'attributes'     => $this->attributesClass::where('service', 'hotel')->get(),
             'hotel_location'  => $this->locationClass::where('status', 'publish')->get()->toTree(),
+            'location_category' => $this->locationCategoryClass::where('status', 'publish')->get(),
             'enable_multi_lang'=>true,
             'breadcrumbs'    => [
                 [
@@ -154,7 +198,6 @@ class HotelController extends AdminController
         $dataKeys = [
             'title',
             'content',
-            'slug',
             'video',
             'image_id',
             'banner_image_id',
@@ -177,12 +220,20 @@ class HotelController extends AdminController
             'enable_extra_price',
             'extra_price',
             'status',
+            'min_day_before_booking',
+            'min_day_stays',
+            'enable_service_fee',
+            'service_fee',
+            'surrounding',
         ];
         if($this->hasPermission('hotel_manage_others')){
             $dataKeys[] = 'create_user';
         }
 
         $row->fillByAttr($dataKeys,$request->input());
+        if($request->input('slug')){
+            $row->slug = $request->input('slug');
+        }
 
         $res = $row->saveOriginOrTranslation($request->input('lang'),true);
 
@@ -192,8 +243,10 @@ class HotelController extends AdminController
             }
 
             if($id > 0 ){
+                event(new UpdatedServiceEvent($row));
                 return back()->with('success',  __('Hotel updated') );
             }else{
+                event(new CreatedServicesEvent($row));
                 return redirect(route('hotel.admin.edit',$row->id))->with('success', __('Hotel created') );
             }
         }
@@ -234,12 +287,29 @@ class HotelController extends AdminController
                         $query->where("create_user", Auth::id());
                         $this->checkPermission('hotel_delete');
                     }
-                    $query->first();
-                    if(!empty($query)){
-                        $query->delete();
+                    $row = $query->first();
+                    if(!empty($row)){
+                        $row->delete();
+                        event(new UpdatedServiceEvent($row));
                     }
                 }
                 return redirect()->back()->with('success', __('Deleted success!'));
+                break;
+            case "recovery":
+                foreach ($ids as $id) {
+                    $query = $this->hotelClass::withTrashed()->where("id", $id);
+                    if (!$this->hasPermission('hotel_manage_others')) {
+                        $query->where("create_user", Auth::id());
+                        $this->checkPermission('hotel_delete');
+                    }
+                    $row= $query->first();
+
+                    if(!empty($row)){
+                        $row->restore();
+                        event(new UpdatedServiceEvent($row));
+                    }
+                }
+                return redirect()->back()->with('success', __('Recovery success!'));
                 break;
             case "clone":
                 $this->checkPermission('hotel_create');
@@ -256,7 +326,10 @@ class HotelController extends AdminController
                         $query->where("create_user", Auth::id());
                         $this->checkPermission('hotel_update');
                     }
-                    $query->update(['status' => $action]);
+                    $row = $query->first();
+                    $row->status  = $action;
+                    $row->save();
+                    event(new UpdatedServiceEvent($row));
                 }
                 return redirect()->back()->with('success', __('Update success!'));
                 break;

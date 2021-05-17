@@ -27,7 +27,17 @@
                                 <div class="item" data-number="{{$key}}">
                                     <div class="row">
                                         <div class="col-md-7">
-                                            <input type="text" name="hike_search_fields[{{$key}}][title]" value="{{$item['title']}}" class="form-control">
+                                            @if(!empty($languages) && setting_item('site_enable_multi_lang') && setting_item('site_locale'))
+                                                @foreach($languages as $language)
+                                                    <?php $key_lang = setting_item('site_locale') != $language->locale ? "_".$language->locale : ""   ?>
+                                                    <div class="g-lang">
+                                                        <div class="title-lang">{{$language->name}}</div>
+                                                        <input type="text" name="hike_search_fields[{{$key}}][title{{$key_lang}}]" value="{{$item['title'.$key_lang] ?? ''}}" class="form-control">
+                                                    </div>
+                                                @endforeach
+                                            @else
+                                                <input type="text" name="hike_search_fields[{{$key}}][title]" value="{{$item['title']}}" class="form-control">
+                                            @endif
                                             <select name="hike_search_fields[{{$key}}][field]" class="custom-select">
                                                 <option value="">{{__("-- Select field type --")}}</option>
                                                 @foreach($types as $type=>$name)

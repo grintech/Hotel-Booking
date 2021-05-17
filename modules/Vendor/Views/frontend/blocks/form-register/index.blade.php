@@ -5,7 +5,7 @@
     <div class="bravo-vendor-form-register py-5 @if(!empty($layout)) {{ $layout }} @endif">
         <div class="row">
             <div class="col-12 col-lg-5">
-                <h2>{{$title}}</h2>
+                <h1>{{$title}}</h1>
                 <p class="sub-heading">{{$desc}}</p>
                 <form class="form bravo-form-register-vendor" method="post" action="{{route('vendor.register')}}">
                     @csrf
@@ -62,7 +62,7 @@
             <div class="col-12 col-lg-6">
                 <div class="bravo_gallery">
                     <div class="btn-group">
-                        <span class="btn-transparent has-icon bravo-video-popup" @if(!empty($youtube)) data-toggle="modal" @endif data-src="{{ str_ireplace("watch?v=","embed/",$youtube) }}" data-target="#video-register">
+                        <span class="btn-transparent has-icon bravo-video-popup" @if(!empty($youtube)) data-toggle="modal" @endif data-src="{{ handleVideoUrl($youtube) }}" data-target="#video-register">
                             @if($bg_image)
                                 <img src="{{get_file_url($bg_image,'full')}}" class="img-fluid" alt="Youtube">
                             @endif

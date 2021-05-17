@@ -19,11 +19,11 @@
                         <a href="{{ $page_search }}">
                             <div class="featured-item">
                                 <div class="image">
-                                    <img src="{{$image_url}}" class="img-responsive">
+                                    <img src="{{$image_url}}" class="img-responsive" alt="{{$item->name}}">
                                 </div>
-                                <h4 class="text">
+                                <h3 class="text">
                                     {{$item->name}}
-                                </h4>
+                                </h3>
                             </div>
                         </a>
                     </div>

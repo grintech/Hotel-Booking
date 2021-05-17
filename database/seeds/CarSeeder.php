@@ -488,6 +488,11 @@ class CarSeeder extends Seeder
                     'group' => "car",
                 ],
                 [
+                    'name' => 'car_page_limit_item',
+                    'val' => 9,
+                    'group' => "car",
+                ],
+                [
                     'name' => 'car_page_search_banner',
                     'val' => MediaFile::findMediaByName("banner-search-space-2")->id,
                     'group' => "car",

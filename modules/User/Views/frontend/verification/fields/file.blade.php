@@ -13,7 +13,7 @@
                 @php ($old = json_decode($field['data'],true))
                 @if(!empty($old))
                     <input type="hidden" name="verify_data_{{$field['id']}}" value="{{($field['data'])}}">
-                    <a target="_blank" href="{{route('media.private.view',['path'=>$old['path'] ?? ''])}}" class="file-item">{{$old['name']}} <i class="fa fa-download"></i></a>
+                    <a target="_blank" href="{{route('media.private.view',['path'=>$old['path'] ?? '','v'=>uniqid()])}}" class="file-item">{{$old['name']}} <i class="fa fa-download"></i></a>
                 @endif
             </div>
             @if(empty($only_show_data))

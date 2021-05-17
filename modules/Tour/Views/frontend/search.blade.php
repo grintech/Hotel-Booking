@@ -5,7 +5,7 @@
 @endsection
 @section('content')
     <div class="bravo_search_tour">
-        <div class="bravo_banner" @if($bg = setting_item("tour_page_search_banner")) style="background-image: url({{get_file_url($bg,'full')}})" @endif >
+        <div class="bravo_banner" style="margin-top: -100px;padding-top: 140px;padding-bottom: 140px;" @if($bg = setting_item("tour_page_search_banner")) style="background-image: url({{get_file_url($bg,'full')}})" @endif >
             <div class="container">
                 <h1>
                     {{setting_item_with_lang("tour_page_search_title")}}
@@ -15,7 +15,7 @@
         <div class="bravo_form_search">
             <div class="container">
                 <div class="row">
-                    <div class="col-lg-9 col-md-12">
+                    <div class="col-12">
                         @include('Tour::frontend.layouts.search.form-search')
                     </div>
                 </div>

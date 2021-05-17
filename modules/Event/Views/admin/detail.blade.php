@@ -29,6 +29,7 @@
                         @include('Event::admin.event.pricing')
                         @include('Event::admin.event.location')
                         @include('Core::admin/seo-meta/seo-meta')
+                        @include('Hotel::admin.hotel.surrounding')
                     </div>
                     <div class="col-md-3">
                         <div class="panel">
@@ -135,6 +136,14 @@
                     });
                     engineMap.on('zoom_changed', function (zoom) {
                         $("input[name=map_zoom]").attr("value", zoom);
+                    });
+                    engineMap.searchBox($('#customPlaceAddress'),function (dataLatLng) {
+                        engineMap.clearMarkers();
+                        engineMap.addMarker(dataLatLng, {
+                            icon_options: {}
+                        });
+                        $("input[name=map_lat]").attr("value", dataLatLng[0]);
+                        $("input[name=map_lng]").attr("value", dataLatLng[1]);
                     });
                     engineMap.searchBox($('.bravo_searchbox'),function (dataLatLng) {
                         engineMap.clearMarkers();

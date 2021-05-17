@@ -29,8 +29,9 @@
                 <div class="row">
                     <div class="col-md-9">
                         @include('Guesthouse::admin.guesthouse.content')
-                        @include('Guesthouse::admin.guesthouse.location')
                         @include('Guesthouse::admin.guesthouse.pricing')
+{{--                        @include('Guesthouse::admin.guesthouse.location')--}}
+{{--                        @include('Guesthouse::admin.guesthouse.surrounding')--}}
                         @include('Core::admin/seo-meta/seo-meta')
                     </div>
                     <div class="col-md-3">
@@ -98,8 +99,7 @@
                                     </div>
                                 </div>
                             </div>
-{{--                            @include('Guesthouse::admin.guesthouse.ical')--}}
-
+                            @include('Guesthouse::admin.guesthouse.ical')
                         @endif
                     </div>
                 </div>
@@ -133,6 +133,14 @@
                     });
                     engineMap.on('zoom_changed', function (zoom) {
                         $("input[name=map_zoom]").attr("value", zoom);
+                    });
+                    engineMap.searchBox($('#customPlaceAddress'),function (dataLatLng) {
+                        engineMap.clearMarkers();
+                        engineMap.addMarker(dataLatLng, {
+                            icon_options: {}
+                        });
+                        $("input[name=map_lat]").attr("value", dataLatLng[0]);
+                        $("input[name=map_lng]").attr("value", dataLatLng[1]);
                     });
                     engineMap.searchBox($('.bravo_searchbox'),function (dataLatLng) {
                         engineMap.clearMarkers();

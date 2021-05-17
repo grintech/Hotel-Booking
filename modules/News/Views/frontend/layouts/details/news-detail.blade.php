@@ -19,7 +19,7 @@
             </div>
         @endif
     </div>
-    <h2 class="title">{{$translation->title}}</h2>
+    <h2 class="title">{!! clean($translation->title) !!}</h2>
     <div class="post-info">
         <ul>
             @if(!empty($row->getAuthor))
@@ -32,7 +32,7 @@
             {{--<li> <span class="fa fa-calendar"></span> {{ display_date($row->updated_at, 'F d, Y')}}  </li>--}}
         </ul>
     </div>
-    <div class="post-content" style=" border-top: solid 2px #1a2b48; padding:20px 40px; background-color: #f8f9fa;"> {!! $translation->content !!}</div>
+    <div class="post-content" style="font-size: 13pt; font-family: verdana, serif; border-top: solid 2px #1a2b48; padding:20px 40px; background-color: #f8f9fa; line-height: 20pt;"> {!! $translation->content !!}</div>
     <div class="space-between">
         @if (!empty($tags = $row->getTags()) and count($tags) > 0)
             <div class="tags">
@@ -49,4 +49,4 @@
         </div>
     </div>
 </div>
- 
+

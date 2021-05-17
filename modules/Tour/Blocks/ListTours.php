@@ -138,6 +138,27 @@ class ListTours extends BaseBlock
 
     public function content($model = [])
     {
+        $list = $this->query($model);
+        $data = [
+            'rows'       => $list,
+            'style_list' => $model['style'],
+            'title'      => $model['title'] ?? "",
+            'desc'       => $model['desc'] ?? "",
+            'show_more'  => $model['show_more'] ?? true,
+            'view_more_desc' => $model['view_more_desc'] ?? "",
+        ];
+        return view('Tour::frontend.blocks.list-tour.index', $data);
+    }
+
+    public function contentAPI($model = []){
+        $rows = $this->query($model);
+        $model['data']= $rows->map(function($row){
+            return $row->dataForApi();
+        });
+        return $model;
+    }
+
+    public function query($model){
         $model_Tour = Tour::select("bravo_tours.*")->with(['location','translations','hasWishList']);
         if(empty($model['order'])) $model['order'] = "id";
         if(empty($model['order_by'])) $model['order_by'] = "desc";
@@ -157,14 +178,17 @@ class ListTours extends BaseBlock
             $list_cat = TourCategory::whereIn('id', $category_ids)->where("status","publish")->get();
             if(!empty($list_cat)){
                 $where_left_right = [];
+                $params = [];
                 foreach ($list_cat as $cat){
-                    $where_left_right[] = " ( bravo_tour_category._lft >= {$cat->_lft} AND bravo_tour_category._rgt <= {$cat->_rgt} ) ";
+                    $where_left_right[] = " ( bravo_tour_category._lft >= ? AND bravo_tour_category._rgt <= ? ) ";
+                    $params[] = $cat->_lft;
+                    $params[] = $cat->_rgt;
                 }
                 $sql_where_join = " ( ".implode("OR" , $where_left_right)." )  ";
                 $model_Tour
-                    ->join('bravo_tour_category', function ($join) use($sql_where_join) {
+                    ->join('bravo_tour_category', function ($join) use($sql_where_join, $params) {
                         $join->on('bravo_tour_category.id', '=', 'bravo_tours.category_id')
-                            ->WhereRaw($sql_where_join);
+                            ->WhereRaw($sql_where_join, $params);
                     });
             }
         }
@@ -176,15 +200,6 @@ class ListTours extends BaseBlock
         $model_Tour->where("bravo_tours.status", "publish");
         $model_Tour->with('location');
         $model_Tour->groupBy("bravo_tours.id");
-        $list = $model_Tour->limit($model['number'])->get();
-        $data = [
-            'rows'       => $list,
-            'style_list' => $model['style'],
-            'title'      => $model['title'] ?? "",
-            'desc'      => $model['desc'] ?? "",
-            'show_more'  => $model['show_more'] ?? false,
-            'view_more_desc' => $model['view_more_desc'] ?? false,
-        ];
-        return view('Tour::frontend.blocks.list-tour.index', $data);
+        return $model_Tour->limit($model['number'])->get();
     }
 }

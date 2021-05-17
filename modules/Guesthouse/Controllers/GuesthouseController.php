@@ -6,6 +6,7 @@ use Modules\Guesthouse\Models\Guesthouse;
 use Illuminate\Http\Request;
 use Modules\Hike\Models\Hike;
 use Modules\Location\Models\Location;
+use Modules\Location\Models\LocationCategory;
 use Modules\Review\Models\Review;
 use Modules\Core\Models\Attributes;
 use DB;
@@ -15,10 +16,13 @@ class GuesthouseController extends Controller
 {
     protected $guesthouseClass;
     protected $locationClass;
+    private $locationCategoryClass;
+
     public function __construct()
     {
         $this->guesthouseClass = Guesthouse::class;
         $this->locationClass = Location::class;
+        $this->locationCategoryClass = LocationCategory::class;
     }
     public function callAction($method, $parameters)
     {
@@ -95,11 +99,12 @@ class GuesthouseController extends Controller
             $hike_related = Hike::where('location_id', $location_id)->where("status", "publish")->take(4)->with(['translations']);
             $tour_related = Tour::where('location_id', $location_id)->where("status", "publish")->take(4)->with(['translations']);
         }
-        $review_list = Review::where('object_id', $row->id)->where('object_model', 'guesthouse')->where("status", "approved")->orderBy("id", "desc")->with('author')->paginate(setting_item('guesthouse_review_number_per_page', 5));
+        $review_list = $row->getReviewList();
         $data = [
             'row'          => $row,
             'translation'       => $translation,
             'guesthouse_related' => $guesthouse_related,
+            'location_category'=>$this->locationCategoryClass::where("status", "publish")->with('translations')->get(),
             'tour_related' => $tour_related,
             'hike_related' => $hike_related,
             'booking_data' => $row->getBookingData(),
@@ -114,13 +119,18 @@ class GuesthouseController extends Controller
     public function checkAvailability(){
         $guesthouse_id = \request('guesthouse_id');
 
-        if(!\request()->input('firstLoad')) {
-            request()->validate([
+        if(\request()->input('firstLoad') == "false") {
+            $rules = [
                 'guesthouse_id'   => 'required',
                 'start_date' => 'required:date_format:Y-m-d',
                 'end_date'   => 'required:date_format:Y-m-d',
                 'adults'     => 'required',
-            ]);
+            ];
+
+            $validator = \Validator::make(request()->all(), $rules);
+            if ($validator->fails()) {
+                return $this->sendError($validator->errors()->all());
+            }
 
             if(strtotime(\request('end_date')) - strtotime(\request('start_date')) < DAY_IN_SECONDS){
                 return $this->sendError(__("Dates are not valid"));
@@ -133,6 +143,20 @@ class GuesthouseController extends Controller
         $guesthouse = $this->guesthouseClass::find($guesthouse_id);
         if(empty($guesthouse_id) or empty($guesthouse)){
             return $this->sendError(__("Guesthouse not found"));
+        }
+
+        if(\request()->input('firstLoad') == "false") {
+            $numberDays = abs(strtotime(\request('end_date')) - strtotime(\request('start_date'))) / 86400;
+            if(!empty($guesthouse->min_day_stays) and  $numberDays < $guesthouse->min_day_stays){
+                return $this->sendError(__("You must to book a minimum of :number days",['number'=>$guesthouse->min_day_stays]));
+            }
+
+            if(!empty($guesthouse->min_day_before_booking)){
+                $minday_before = strtotime("today +".$guesthouse->min_day_before_booking." days");
+                if(  strtotime(\request('start_date')) < $minday_before){
+                    return $this->sendError(__("You must book the service for :number days in advance",["number"=>$guesthouse->min_day_before_booking]));
+                }
+            }
         }
 
         $rooms = $guesthouse->getRoomsAvailability(request()->input());

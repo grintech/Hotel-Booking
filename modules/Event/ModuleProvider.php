@@ -52,6 +52,11 @@ class ModuleProvider extends ModuleServiceProvider
                         'title'      => __('Availability'),
                         'permission' => 'event_create',
                     ],
+                    'recovery'=>[
+                        'url'        => 'admin/module/event/recovery',
+                        'title'      => __('Recovery'),
+                        'permission' => 'event_view',
+                    ],
                 ]
             ]
         ];
@@ -107,6 +112,11 @@ class ModuleProvider extends ModuleServiceProvider
                         'url'   => route('event.vendor.booking_report'),
                         'title'      => __("Booking Report"),
                         'permission' => 'event_view',
+                    ],
+                    [
+                        'url'   => route('event.vendor.recovery'),
+                        'title'      => __("Recovery"),
+                        'permission' => 'event_create',
                     ],
                 ]
             ],

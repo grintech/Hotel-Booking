@@ -1,6 +1,8 @@
 <?php
 namespace Modules\Booking\Controllers;
 
+use App\Notifications\AdminChannelServices;
+use App\User;
 use DebugBar\DebugBar;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Log;
@@ -8,7 +10,10 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Mockery\Exception;
 //use Modules\Booking\Events\VendorLogPayment;
+use Modules\Booking\Events\BookingCreatedEvent;
+use Modules\Booking\Events\BookingUpdatedEvent;
 use Modules\Booking\Events\EnquirySendEvent;
+use Modules\Booking\Events\SetPaidAmountEvent;
 use Modules\Tour\Models\TourDate;
 use Validator;
 use Illuminate\Http\Request;
@@ -22,6 +27,7 @@ class BookingController extends \App\Http\Controllers\Controller
     use AuthorizesRequests;
     protected $booking;
     protected $enquiryClass;
+    protected $bookingInst;
 
     public function __construct()
     {
@@ -29,13 +35,15 @@ class BookingController extends \App\Http\Controllers\Controller
         $this->enquiryClass = Enquiry::class;
     }
 
-    public function checkout($code)
-    {
+    protected function validateCheckout($code){
+
         if(!is_enable_guest_checkout() and !Auth::check()){
             return $this->sendError(__("You have to login in to do this"))->setStatusCode(401);
         }
 
         $booking = $this->booking::where('code', $code)->first();
+
+        $this->bookingInst = $booking;
 
         if (empty($booking)) {
             abort(404);
@@ -43,16 +51,30 @@ class BookingController extends \App\Http\Controllers\Controller
         if (!is_enable_guest_checkout() and $booking->customer_id != Auth::id()) {
             abort(404);
         }
+        return true;
+    }
+
+    public function checkout($code)
+    {
+
+        $res = $this->validateCheckout($code);
+        if($res !== true) return $res;
+
+        $booking = $this->bookingInst;
 
         if($booking->status != 'draft'){
             return redirect('/');
         }
+
+        $is_api = request()->segment(1) == 'api';
+
         $data = [
             'page_title' => __('Checkout'),
             'booking'    => $booking,
             'service'    => $booking->service,
             'gateways'   => $this->getGateways(),
-            'user'       => Auth::user()
+            'user'       => Auth::user(),
+            'is_api'    =>  $is_api
         ];
         return view('Booking::frontend/checkout', $data);
     }
@@ -71,7 +93,7 @@ class BookingController extends \App\Http\Controllers\Controller
                 'redirect' => url('/')
             ];
         }
-        if ($booking->customer_id != Auth::id()) {
+        if (!is_enable_guest_checkout() and $booking->customer_id != Auth::id()) {
             $data = [
                 'error'    => true,
                 'redirect' => url('/')
@@ -86,11 +108,15 @@ class BookingController extends \App\Http\Controllers\Controller
         return response()->json($data, 200);
     }
 
-    public function doCheckout(Request $request)
-    {
+    protected function validateDoCheckout(){
 
+        $request = \request();
         if(!is_enable_guest_checkout() and !Auth::check()){
             return $this->sendError(__("You have to login in to do this"))->setStatusCode(401);
+        }
+
+        if(Auth::user() && !Auth::user()->hasVerifiedEmail() && setting_item('enable_verify_email_register_user') == 1){
+            return $this->sendError(__("You have to verify email first"), ['url' => url('/email/verify')]);
         }
         /**
          * @param Booking $booking
@@ -102,13 +128,32 @@ class BookingController extends \App\Http\Controllers\Controller
             return $this->sendError('', ['errors' => $validator->errors()]);
         }
         $code = $request->input('code');
+
         $booking = $this->booking::where('code', $code)->first();
+        $this->bookingInst = $booking;
+
         if (empty($booking)) {
             abort(404);
         }
         if (!is_enable_guest_checkout() and $booking->customer_id != Auth::id()) {
             abort(404);
         }
+        return true;
+    }
+
+    public function doCheckout(Request $request)
+    {
+
+        /**
+         * @var $booking Booking
+         * @var $user User
+         */
+        $res = $this->validateDoCheckout();
+        if($res !== true) return $res;
+        $user = auth()->user();
+
+        $booking = $this->bookingInst;
+
         if ($booking->status != 'draft') {
             return $this->sendError('',[
                 'url'=>$booking->getDetailUrl()
@@ -118,43 +163,62 @@ class BookingController extends \App\Http\Controllers\Controller
         if (empty($service)) {
             return $this->sendError(__("Service not found"));
         }
+
+        $is_api = request()->segment(1) == 'api';
+
         /**
          * Google ReCapcha
          */
-        if(ReCaptchaEngine::isEnable() and setting_item("booking_enable_recaptcha")){
+        if(!$is_api and ReCaptchaEngine::isEnable() and setting_item("booking_enable_recaptcha")){
             $codeCapcha = $request->input('g-recaptcha-response');
             if(!$codeCapcha or !ReCaptchaEngine::verify($codeCapcha)){
                 return $this->sendError(__("Please verify the captcha"));
             }
         }
+        // TODO payment_gateway property is deprecated, check gpgcheckout plugin for possible update
         $rules = [
             'first_name'      => 'required|string|max:255',
             'last_name'       => 'required|string|max:255',
             'email'           => 'required|string|email|max:255',
             'phone'           => 'required|string|max:255',
             'country' => 'required',
-            'payment_gateway' => 'required',
             'term_conditions' => 'required',
         ];
-        $how_to_pay = $request->input('how_to_pay');
+        $how_to_pay = $request->input('how_to_pay', '');
+        $credit = $request->input('credit', 0);
+        $payment_gateway = $request->input('payment_gateway');
+
+        // require payment gateway except pay full
+        if(empty(floatval($booking->deposit)) || $how_to_pay == 'deposit' || !auth()->check()){
+            $rules['payment_gateway'] = 'required';
+        }
+
+        if(auth()->check()) {
+            if ($credit > $user->balance) {
+                return $this->sendError(__("Your credit balance is :amount", ['amount' => $user->balance]));
+            }
+        }else{
+            // force credit to 0 if not login
+            $credit = 0;
+        }
         $rules = $service->filterCheckoutValidate($request, $rules);
         if (!empty($rules)) {
-            $validator = Validator::make($request->all(), $rules);
+            $messages = [
+                'term_conditions.required'    => __('Term conditions is required field'),
+                'payment_gateway.required' => __('Payment gateway is required field'),
+            ];
+            $validator = Validator::make($request->all(), $rules , $messages );
             if ($validator->fails()) {
                 return $this->sendError('', ['errors' => $validator->errors()]);
             }
         }
-        if (!empty($rules['payment_gateway'])) {
-            $payment_gateway = $request->input('payment_gateway');
-            $gateways = get_payment_gateways();
-            if (empty($gateways[$payment_gateway]) or !class_exists($gateways[$payment_gateway])) {
-                return $this->sendError(__("Payment gateway not found"));
-            }
-            $gatewayObj = new $gateways[$payment_gateway]($payment_gateway);
-            if (!$gatewayObj->isAvailable()) {
-                return $this->sendError(__("Payment gateway is not available"));
-            }
+
+        $wallet_total_used = credit_to_money($credit);
+        if($wallet_total_used > $booking->total){
+            $credit = money_to_credit($booking->total,true);
+            $wallet_total_used = $booking->total;
         }
+
         $service->beforeCheckout($request, $booking);
         // Normal Checkout
         $booking->first_name = $request->input('first_name');
@@ -171,16 +235,65 @@ class BookingController extends \App\Http\Controllers\Controller
         $booking->customer_notes = $request->input('customer_notes');
         $booking->gateway = $payment_gateway;
         $booking->pay_now = $booking->deposit;
+        $booking->wallet_credit_used = floatval($credit);
+        $booking->wallet_total_used = floatval($wallet_total_used);
+        $booking->pay_now = floatval($booking->deposit == null ? $booking->total : $booking->deposit);
 
-        Log::info(json_encode($booking));
+        // If using credit
+        if($booking->wallet_total_used > 0){
+            if($how_to_pay == 'full'){
+                $booking->deposit = 0;
+                $booking->pay_now = $booking->total;
+            }elseif($how_to_pay == 'deposit') {
+                // case guest input credit more than "pay deposit" need to pay
+                // Ex : pay deposit 10$ but guest input 20$ -> minus credit balance = 10$
+                if ($wallet_total_used > $booking->deposit) {
+                    $wallet_total_used = $booking->deposit;
+                    $booking->wallet_total_used = floatval($wallet_total_used);
+                    $booking->wallet_credit_used = money_to_credit($wallet_total_used, true);
+                }
+            }
 
-        if($how_to_pay != 'deposit'){
-            $booking->deposit = 0;
-            $booking->pay_now = $booking->total;
+            $booking->pay_now = max(0,$booking->pay_now - $wallet_total_used);
+            $booking->paid = $booking->wallet_total_used;
+        }else{
+            if($how_to_pay == 'full'){
+                $booking->deposit = 0;
+                $booking->pay_now = $booking->total;
+            }
         }
+
+        $gateways = get_payment_gateways();
+        if($booking->pay_now > 0){
+            $gatewayObj = new $gateways[$payment_gateway]($payment_gateway);
+            if (!empty($rules['payment_gateway'])) {
+                if (empty($gateways[$payment_gateway]) or !class_exists($gateways[$payment_gateway])) {
+                    return $this->sendError(__("Payment gateway not found"));
+                }
+                if (!$gatewayObj->isAvailable()) {
+                    return $this->sendError(__("Payment gateway is not available"));
+                }
+            }
+        }
+
+        if($booking->wallet_credit_used && auth()->check()) {
+            try {
+                $transaction = $user->withdraw($booking->wallet_credit_used, [
+                    'wallet_total_used' => $booking->wallet_total_used
+                ]);
+
+            }catch (\Exception $exception){
+                return $this->sendError($exception->getMessage());
+            }
+
+            $transaction->booking_id = $booking->id;
+            $transaction->save();
+            $booking->wallet_transaction_id = $transaction->id;
+        }
+
         $booking->save();
 
-//        event(new VendorLogPayment($booking));
+        //event(new VendorLogPayment($booking));
 
         if(Auth::check()) {
             $user = Auth::user();
@@ -200,13 +313,27 @@ class BookingController extends \App\Http\Controllers\Controller
         $booking->addMeta('how_to_pay',$how_to_pay);
 
         $service->afterCheckout($request, $booking);
-        try {
-            $view = $gatewayObj->process($request, $booking, $service);
-            if($gatewayObj->isTerminal()){
-                return $view;
+
+        if($booking->pay_now > 0) {
+            try {
+                $view = $gatewayObj->process($request, $booking, $service);
+                if($gatewayObj->isTerminal()){
+                    return $view;
+                }
+            } catch (Exception $exception) {
+                return $this->sendError($exception->getMessage());
             }
-        } catch (Exception $exception) {
-            return $this->sendError($exception->getMessage());
+        }else{
+            if($booking->paid < $booking->total){
+                $booking->status = $booking::PARTIAL_PAYMENT;
+            }else{
+                $booking->status = $booking::PAID;
+            }
+            $booking->save();
+            event(new BookingCreatedEvent($booking));
+            return $this->sendSuccess( [
+                'url'=>$booking->getDetailUrl()
+            ], __("You payment has been processed successfully"));
         }
     }
 
@@ -250,6 +377,10 @@ class BookingController extends \App\Http\Controllers\Controller
             return $this->sendError(__("You have to login in to do this"))->setStatusCode(401);
         }
 
+        if(Auth::user() && !Auth::user()->hasVerifiedEmail() && setting_item('enable_verify_email_register_user')==1){
+            return $this->sendError(__("You have to verify email first"), ['url' => url('/email/verify')]);
+        }
+
         $validator = Validator::make($request->all(), [
             'service_id'   => 'required|integer',
             'service_type' => 'required'
@@ -279,7 +410,7 @@ class BookingController extends \App\Http\Controllers\Controller
         return $service->addToCart($request);
     }
 
-    protected function getGateways()
+    public function getGateways()
     {
 
         $all = get_payment_gateways();
@@ -396,6 +527,50 @@ class BookingController extends \App\Http\Controllers\Controller
         event(new EnquirySendEvent($row));
         return $this->sendSuccess([
             'message' => __("Thank you for contacting us! We will be in contact shortly.")
+        ]);
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function setPaidAmount(Request $request){
+        $rules =  [
+            'remain'   => 'required|integer',
+            'id' => 'required'
+        ];
+
+        $validator = Validator::make($request->all(),$rules);
+        if ($validator->fails()) {
+            return $this->sendError('', ['errors' => $validator->errors()]);
+        }
+
+
+        $id = $request->input('id');
+        $remain = floatval($request->input('remain'));
+
+        if($remain < 0){
+            return $this->sendError(__('Remain can not smaller than 0'));
+        }
+
+        $booking = Booking::where('id', $id)->first();
+        if (empty($booking)) {
+            return $this->sendError(__('Booking not found'));
+        }
+
+        $booking->pay_now = $remain;
+        $booking->paid = floatval($booking->total) - $remain;
+        event(new SetPaidAmountEvent($booking));
+        if($remain == 0){
+            $booking->status = $booking::PAID;
+            //$booking->sendStatusUpdatedEmails();
+            event(new BookingUpdatedEvent($booking));
+        }
+
+        $booking->save();
+
+        return $this->sendSuccess([
+            'message' => __("You booking has been changed successfully")
         ]);
     }
 }

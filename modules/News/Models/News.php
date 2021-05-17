@@ -13,7 +13,6 @@ class News extends BaseModel
         'title',
         'content',
         'status',
-        'slug',
         'cat_id',
         'image_id',
         'thumbnail_id',
@@ -104,5 +103,25 @@ class News extends BaseModel
     {
         $lang = $this->lang ?? setting_item("site_locale");
         return route('news.admin.edit',['id'=>$this->id , "lang"=> $lang]);
+    }
+
+    public function dataForApi($forSingle = false){
+        $translation = $this->translateOrOrigin(app()->getLocale());
+        $data = [
+            'id'=>$this->id,
+            'slug'=>$this->slug,
+            'title'=>$translation->title,
+            'content'=>$translation->content,
+            'image_id'=>$this->image_id,
+            'image_url'=>get_file_url($this->image_id,'full'),
+            'category'=>NewsCategory::selectRaw("id,name,slug")->find($this->cat_id) ?? null,
+            'created_at'=>display_date($this->created_at),
+            'author'=>[
+                'display_name'=>$this->getAuthor->getDisplayName(),
+                'avatar_url'=>$this->getAuthor->getAvatarUrl()
+            ],
+            'url'=>$this->getDetailUrl()
+        ];
+        return $data;
     }
 }

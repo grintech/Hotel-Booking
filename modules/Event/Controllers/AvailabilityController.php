@@ -83,11 +83,18 @@ class AvailabilityController extends FrontendController{
     }
 
     public function loadDates(Request $request){
-        $request->validate([
+
+        $rules = [
             'id'=>'required',
             'start'=>'required',
             'end'=>'required',
-        ]);
+        ];
+
+        $validator = \Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
+            return $this->sendError($validator->errors());
+        }
+
         $event = $this->eventClass::find($request->query('id'));
         if(empty($event)){
             return $this->sendError(__('Event not found'));
@@ -100,14 +107,15 @@ class AvailabilityController extends FrontendController{
         $query->where('end_date','<=',date('Y-m-d H:i:s',strtotime($request->query('end'))));
         $rows =  $query->take(50)->get();
         $allDates = [];
-        for($i = strtotime($request->query('start')); $i <= strtotime($request->query('end')); $i+= DAY_IN_SECONDS)
-        {
+
+        $period = periodDate($request->input('start'),$request->input('end'));
+        foreach ($period as $dt){
             $date = [
                 'id'=>rand(0,999),
                 'active'=>0,
                 'textColor'=>'#2791fe'
             ];
-            $date['start'] = $date['end'] = date('Y-m-d',$i);
+            $date['start'] = $date['end'] = $dt->format('Y-m-d');
             if($event->default_state){
                 $date['active'] = 1;
             }else{
@@ -136,12 +144,13 @@ class AvailabilityController extends FrontendController{
                         $ticket['number'] = 0;
                     }
                 }
+                $date['ticket_types'] = array_values($date['ticket_types']);
                 $date['title'] = $date['event']  = $c_title;
             }
-            $allDates[date('Y-m-d',$i)] = $date;
+            $allDates[$dt->format('Y-m-d')] = $date;
         }
 
-       // dd($rows);
+        // dd($rows);
 
         if(!empty($rows))
         {
@@ -190,10 +199,12 @@ class AvailabilityController extends FrontendController{
         if(!empty($bookings))
         {
             foreach ($bookings as $booking){
-                for($i = strtotime($booking->start_date); $i <= strtotime($booking->end_date); $i+= DAY_IN_SECONDS){
-                    if(isset($allDates[date('Y-m-d',$i)])){
+                $period = periodDate($booking->start_date,$booking->end_date);
+                foreach ($period as $dt){
+                    $date = $dt->format('Y-m-d');
+                    if(isset($allDates[$date])){
                         $isBook = false;
-                        $list_ticket_types = $allDates[date('Y-m-d',$i)]['ticket_types'];
+                        $list_ticket_types = $allDates[$dt->format('Y-m-d')]['ticket_types'];
                         $bookingTicketTypes = $booking->getJsonMeta('ticket_types') ?? [];
                         foreach ($bookingTicketTypes as $bookingTicket){
                             $numberBoook = $bookingTicket['number'];
@@ -209,12 +220,12 @@ class AvailabilityController extends FrontendController{
                                 }
                             }
                         }
-                        $allDates[date('Y-m-d',$i)]['ticket_types'] = $list_ticket_types;
+                        $allDates[$dt->format('Y-m-d')]['ticket_types'] = $list_ticket_types;
                         if($isBook == false){
-                            $allDates[date('Y-m-d',$i)]['active'] = 0;
-                            $allDates[date('Y-m-d',$i)]['event'] = __('Full Book');
-                            $allDates[date('Y-m-d',$i)]['title'] = __('Full Book');
-                            $allDates[date('Y-m-d',$i)]['classNames'] = ['full-book-event'];
+                            $allDates[$date]['active'] = 0;
+                            $allDates[$date]['event'] = __('Full Book');
+                            $allDates[$date]['title'] = __('Full Book');
+                            $allDates[$date]['classNames'] = ['full-book-event'];
                         }
                     }
                 }
@@ -273,15 +284,16 @@ class AvailabilityController extends FrontendController{
             }
         }
         $postData = $request->input();
-        for($i = strtotime($request->input('start_date')); $i <= strtotime($request->input('end_date')); $i+= DAY_IN_SECONDS)
-        {
-            $date = $this->eventDateClass::where('start_date',date('Y-m-d',$i))->where('target_id',$target_id)->first();
+        $period = periodDate($request->input('start_date'),$request->input('end_date'));
+        foreach ($period as $dt){
+
+            $date = $this->eventDateClass::where('start_date',$dt->format('Y-m-d'))->where('target_id',$target_id)->first();
             if(empty($date)){
                 $date = new $this->eventDateClass();
                 $date->target_id = $target_id;
             }
-            $postData['start_date'] = date('Y-m-d H:i:s',$i);
-            $postData['end_date'] = date('Y-m-d H:i:s',$i);
+            $postData['start_date'] = $dt->format('Y-m-d H:i:s');
+            $postData['end_date'] = $dt->format('Y-m-d H:i:s');
 
             $date->fillByAttr([
                 'start_date','end_date','active',

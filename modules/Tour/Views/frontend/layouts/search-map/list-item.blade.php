@@ -1,6 +1,13 @@
 <div class="bravo-list-item @if(!$rows->count()) not-found @endif">
     @if($rows->count())
         <div class="text-paginate">
+            <h2 class="text">
+                @if($rows->total() > 1)
+                    {{ __(":count tours found",['count'=>$rows->total()]) }}
+                @else
+                    {{ __(":count tour found",['count'=>$rows->total()]) }}
+                @endif
+            </h2>
             <span class="count-string">{{ __("Showing :from - :to of :total Guided Tours",["from"=>$rows->firstItem(),"to"=>$rows->lastItem(),"total"=>$rows->total()]) }}</span>
         </div>
         <div class="list-item">

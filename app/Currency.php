@@ -46,17 +46,18 @@ class Currency
         if($sess){
             $code = Session::get('bc_current_currency');
         }else{
-            $code = strtolower(geoip(request()->getClientIp())->getAttribute('currency'));
-
-            $available_countries = setting_item_array('extra_currency');
-            $arra_col = array_column($available_countries, 'currency_main');
-            if(in_array($code , $arra_col, TRUE)){
-                Session::put('bc_current_currency',$code);
-            }
-            else
-            {
+            // TODO: geoip not available, temporary removal
+            // $code = strtolower(geoip(request()->getClientIp())->getAttribute('currency'));
+            // $available_countries = setting_item_array('extra_currency');
+            // $arra_col = array_column($available_countries, 'currency_main');
+            // if(in_array($code , $arra_col, TRUE)){
+            //   Session::put('bc_current_currency',$code);
+            //}
+            //else
+            //{
+            // TODO: Testing the deployment v3
                 Session::put('bc_current_currency','usd');
-            }
+            //}
 
         }
 

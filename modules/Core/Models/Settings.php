@@ -52,20 +52,15 @@ class Settings extends BaseModel
 
     public static function getSettingPages(){
         $allSettings = [
-            [
+            'general'=>[
                 'id'=>'general',
                 'title' => __("General Settings"),
                 'position'=>10
             ],
-            [
+            'style'=>[
                 'id'   => 'style',
                 'title' => __("Style Settings"),
                 'position'=>70
-            ],
-            [
-                'id'   => 'advance',
-                'title' => __("Advance Settings"),
-                'position'=>80
             ],
         ];
 
@@ -78,7 +73,9 @@ class Settings extends BaseModel
                 {
                     $blockConfig = call_user_func([$moduleClass,'getSettingPages']);
                     if(!empty($blockConfig)){
-                        $allSettings = array_merge($allSettings,$blockConfig);
+                        foreach ($blockConfig as $k=>$v){
+                            $allSettings[$v['id']] = $v;
+                        }
                     }
                 }
             }
@@ -92,7 +89,9 @@ class Settings extends BaseModel
                 {
                     $blockConfig = call_user_func([$moduleClass,'getSettingPages']);
                     if(!empty($blockConfig)){
-                        $allSettings = array_merge($allSettings,$blockConfig);
+                        foreach ($blockConfig as $k=>$v){
+                            $allSettings[$v['id']] = $v;
+                        }
                     }
                 }
             }
@@ -106,7 +105,9 @@ class Settings extends BaseModel
                 {
                     $blockConfig = call_user_func([$moduleClass,'getSettingPages']);
                     if(!empty($blockConfig)){
-                        $allSettings = array_merge($allSettings,$blockConfig);
+                        foreach ($blockConfig as $k=>$v){
+                            $allSettings[$v['id']] = $v;
+                        }
                     }
                 }
             }

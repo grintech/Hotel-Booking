@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use Modules\Event\Models\Event;
 use Illuminate\Http\Request;
 use Modules\Location\Models\Location;
+use Modules\Location\Models\LocationCategory;
 use Modules\Review\Models\Review;
 use Modules\Core\Models\Attributes;
 use DB;
@@ -13,10 +14,16 @@ class EventController extends Controller
 {
     protected $eventClass;
     protected $locationClass;
+    /**
+     * @var string
+     */
+    private $locationCategoryClass;
+
     public function __construct()
     {
         $this->eventClass = Event::class;
         $this->locationClass = Location::class;
+        $this->locationCategoryClass = LocationCategory::class;
     }
 
     public function callAction($method, $parameters)
@@ -89,11 +96,12 @@ class EventController extends Controller
         if (!empty($location_id)) {
             $event_related = $this->eventClass::where('location_id', $location_id)->where("status", "publish")->take(4)->whereNotIn('id', [$row->id])->with(['location','translations','hasWishList'])->get();
         }
-        $review_list = Review::where('object_id', $row->id)->where('object_model', 'event')->where("status", "approved")->orderBy("id", "desc")->with('author')->paginate(setting_item('event_review_number_per_page', 5));
+        $review_list = $row->getReviewList();
         $data = [
             'row'          => $row,
             'translation'       => $translation,
             'event_related' => $event_related,
+            'location_category'=>$this->locationCategoryClass::where("status", "publish")->with('translations')->get(),
             'booking_data' => $row->getBookingData(),
             'review_list'  => $review_list,
             'seo_meta'  => $row->getSeoMetaWithTranslation(app()->getLocale(),$translation),

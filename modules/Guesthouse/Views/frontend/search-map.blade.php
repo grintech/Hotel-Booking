@@ -1,6 +1,6 @@
 @extends('layouts.app',['container_class'=>'container-fluid','header_right_menu'=>true])
 @section('head')
-    <link href="{{ asset('module/hotel/css/hotel.css?v='.config('asset.guesthouse.css')) }}" rel="stylesheet">
+    <link href="{{ asset('dist/frontend/module/hotel/css/hotel.css?_ver='.config('asset.guesthouse.css')) }}" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ asset("libs/ion_rangeslider/css/ion.rangeSlider.min.css") }}"/>
     <style type="text/css">
         .bravo_topbar, .bravo_footer {
@@ -10,10 +10,13 @@
 @endsection
 @section('content')
     <div class="bravo_search_tour bravo_search_space">
+        <h1 class="d-none">
+            {{setting_item_with_lang("guesthouse_page_search_title")}}
+        </h1>
         <div class="bravo_form_search_map">
             @include('Guesthouse::frontend.layouts.search-map.form-search-map')
         </div>
-        <div class="bravo_search_map">
+        <div class="bravo_search_map {{ setting_item_with_lang("guesthouse_layout_map_option",false,"map_left") }}">
             <div class="results_map">
                 <div class="map-loading d-none">
                     <div class="st-loader"></div>

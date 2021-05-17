@@ -28,6 +28,7 @@
                         @include('Hike::admin.hike.hike-content')
                         @include('Hike::admin.hike.gpx-location')
                         @include('Hike::admin.hike.hike-location')
+                        @include('Hotel::admin.hotel.surrounding')
                         @if(is_default_lang())
                             {{--@include('Hike::admin.hike.pricing')--}}
                             @include('Hike::admin.hike.availability')
@@ -87,9 +88,8 @@
                                         <label >{{__('Default State')}}</label>
                                         <br>
                                         <select name="default_state" class="custom-select">
-                                            <option value="">{{__('-- Please select --')}}</option>
-                                            <option value="1" @if(old('default_state',$row->default_state ?? 0) == 1) selected @endif>{{__("Always available")}}</option>
-                                            <option value="0" @if(old('default_state',$row->default_state ?? 0) == 0) selected @endif>{{__("Only available on specific dates")}}</option>
+                                            <option value="1" @if(old('default_state',$row->default_state ?? -1) == 1) selected @endif>{{__("Always available")}}</option>
+                                            <option value="0" @if(old('default_state',$row->default_state ?? -1) == 0) selected @endif>{{__("Only available on specific dates")}}</option>
                                         </select>
                                     </div>
                                 </div>
@@ -138,6 +138,15 @@
                     });
                     engineMap.on('zoom_changed', function (zoom) {
                         $("input[name=map_zoom]").attr("value", zoom);
+                    });
+
+                    engineMap.searchBox($('#customPlaceAddress'),function (dataLatLng) {
+                        engineMap.clearMarkers();
+                        engineMap.addMarker(dataLatLng, {
+                            icon_options: {}
+                        });
+                        $("input[name=map_lat]").attr("value", dataLatLng[0]);
+                        $("input[name=map_lng]").attr("value", dataLatLng[1]);
                     });
 
                     engineMap.searchBox($('.bravo_searchbox'),function (dataLatLng) {

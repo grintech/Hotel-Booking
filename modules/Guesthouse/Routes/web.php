@@ -7,18 +7,20 @@ Route::group(['prefix'=>config('guesthouse.guesthouse_route_prefix')],function()
 });
 
 Route::group(['prefix'=>'user/'.config('guesthouse.guesthouse_route_prefix'),'middleware' => ['auth','verified']],function(){
-    Route::match(['get','post'],'/','VendorController@index')->name('guesthouse.vendor.index');
-    Route::match(['get','post'],'/create','VendorController@create')->name('guesthouse.vendor.create');
-    Route::match(['get','post'],'/edit/{slug}','VendorController@edit')->name('guesthouse.vendor.edit');
-    Route::match(['get','post'],'/del/{slug}','VendorController@delete')->name('guesthouse.vendor.delete');
-    Route::match(['post'],'/store/{slug}','VendorController@store')->name('guesthouse.vendor.store');
+    Route::get('/','VendorController@index')->name('guesthouse.vendor.index');
+    Route::get('/create','VendorController@create')->name('guesthouse.vendor.create');
+    Route::get('/recovery','VendorController@recovery')->name('guesthouse.vendor.recovery');
+    Route::get('/restore/{id}','VendorController@restore')->name('guesthouse.vendor.restore');
+    Route::get('/edit/{id}','VendorController@edit')->name('guesthouse.vendor.edit');
+    Route::get('/del/{id}','VendorController@delete')->name('guesthouse.vendor.delete');
+    Route::post('/store/{id}','VendorController@store')->name('guesthouse.vendor.store');
     Route::get('bulkEdit/{id}','VendorController@bulkEditguesthouse')->name("guesthouse.vendor.bulk_edit");
     Route::get('/booking-report','VendorController@bookingReport')->name("guesthouse.vendor.booking_report");
     Route::get('/booking-report/bulkEdit/{id}','VendorController@bookingReportBulkEdit')->name("guesthouse.vendor.booking_report.bulk_edit");
     Route::group(['prefix'=>'availability'],function(){
         Route::get('/','AvailabilityController@index')->name('guesthouse.vendor.availability.index');
         Route::get('/loadDates','AvailabilityController@loadDates')->name('guesthouse.vendor.availability.loadDates');
-        Route::match(['get','post'],'/store','AvailabilityController@store')->name('guesthouse.vendor.availability.store');
+        Route::post('/store','AvailabilityController@store')->name('guesthouse.vendor.availability.store');
     });
     Route::group(['prefix'=>'room'],function (){
         Route::get('{guesthouse_id}/index','VendorRoomController@index')->name('guesthouse.vendor.room.index');
@@ -34,7 +36,7 @@ Route::group(['prefix'=>'user/'.config('guesthouse.guesthouse_route_prefix')],fu
     Route::group(['prefix'=>'{guesthouse_id}/availability'],function(){
         Route::get('/','AvailabilityController@index')->name('guesthouse.vendor.room.availability.index');
         Route::get('/loadDates','AvailabilityController@loadDates')->name('guesthouse.vendor.room.availability.loadDates');
-        Route::match(['get','post'],'/store','AvailabilityController@store')->name('guesthouse.vendor.room.availability.store');
+        Route::post('/store','AvailabilityController@store')->name('guesthouse.vendor.room.availability.store');
     });
 });
 

@@ -1,6 +1,7 @@
 <?php
 namespace Modules\User\Controllers;
 
+use App\Notifications\AdminChannelServices;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
@@ -8,7 +9,7 @@ use Matrix\Exception;
 use Modules\FrontendController;
 use Modules\User\Events\NewVendorRegistered;
 use Modules\User\Events\SendMailUserRegistered;
-use Modules\User\Models\Newsletter;
+use Modules\User\Events\UserSubscriberSubmit;
 use Modules\User\Models\Subscriber;
 use Modules\User\Models\User;
 use Illuminate\Http\Request;
@@ -23,6 +24,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Modules\Booking\Models\Enquiry;
 use Modules\Guesthouse\Models\Guesthouse;
 use Modules\Guesthouse\Models\GuesthouseRoom;
+use Illuminate\Support\Str;
 
 class UserController extends FrontendController
 {
@@ -86,23 +88,6 @@ class UserController extends FrontendController
     public function profile(Request $request)
     {
         $user = Auth::user();
-        if (!empty($request->input())) {
-
-            $request->validate([
-                'first_name' => 'required|max:255',
-                'last_name'  => 'required|max:255',
-                'email'      => [
-                    'required',
-                    'email',
-                    'max:255',
-                    Rule::unique('users')->ignore($user->id)
-                ],
-            ]);
-            $user->fill($request->input());
-            $user->birthday = date("Y-m-d", strtotime($user->birthday));
-            $user->save();
-            return redirect()->back()->with('success', __('Update successfully'));
-        }
         $data = [
             'dataUser'         => $user,
             'page_title'       => __("Profile"),
@@ -117,27 +102,46 @@ class UserController extends FrontendController
         return view('User::frontend.profile', $data);
     }
 
+    public function profileUpdate(Request $request){
+        $user = Auth::user();
+        $messages = [
+            'user_name.required'      => __('The User name field is required.'),
+        ];
+        $request->validate([
+            'first_name' => 'required|max:255',
+            'last_name'  => 'required|max:255',
+            'email'      => [
+                'required',
+                'email',
+                'max:255',
+                Rule::unique('users')->ignore($user->id)
+            ],
+            'user_name'=> [
+                'required',
+                'max:255',
+                'min:4',
+                'string',
+                'alpha_dash',
+                Rule::unique('users')->ignore($user->id)
+            ],
+            'phone'       => [
+                'required',
+                Rule::unique('users')->ignore($user->id)
+            ],
+        ],$messages);
+        $input = $request->except('bio');
+        $user->fill($input);
+        $user->bio = clean($request->input('bio'));
+        $user->birthday = date("Y-m-d", strtotime($user->birthday));
+        $user->user_name = Str::slug( $request->input('user_name') ,"_");
+        $user->save();
+        return redirect()->back()->with('success', __('Update successfully'));
+    }
+
+
     public function changePassword(Request $request)
     {
-        if (!empty($request->input())) {
-            if (!(Hash::check($request->get('current-password'), Auth::user()->password))) {
-                // The passwords matches
-                return redirect()->back()->with("error", __("Your current password does not matches with the password you provided. Please try again."));
-            }
-            if (strcmp($request->get('current-password'), $request->get('new-password')) == 0) {
-                //Current password and new password are same
-                return redirect()->back()->with("error", __("New Password cannot be same as your current password. Please choose a different password."));
-            }
-            $request->validate([
-                'current-password' => 'required',
-                'new-password'     => 'required|string|min:6|confirmed',
-            ]);
-            //Change Password
-            $user = Auth::user();
-            $user->password = bcrypt($request->get('new-password'));
-            $user->save();
-            return redirect()->back()->with('success', __('Password changed successfully !'));
-        }
+
         $data = [
             'breadcrumbs' => [
                 [
@@ -153,6 +157,28 @@ class UserController extends FrontendController
         ];
         return view('User::frontend.changePassword', $data);
     }
+
+    public function changePasswordUpdate(Request $request)
+    {
+        if (!(Hash::check($request->get('current-password'), Auth::user()->password))) {
+            // The passwords matches
+            return redirect()->back()->with("error", __("Your current password does not matches with the password you provided. Please try again."));
+        }
+        if (strcmp($request->get('current-password'), $request->get('new-password')) == 0) {
+            //Current password and new password are same
+            return redirect()->back()->with("error", __("New Password cannot be same as your current password. Please choose a different password."));
+        }
+        $request->validate([
+            'current-password' => 'required',
+            'new-password'     => 'required|string|min:6|confirmed',
+        ]);
+        //Change Password
+        $user = Auth::user();
+        $user->password = bcrypt($request->get('new-password'));
+        $user->save();
+        return redirect()->back()->with('success', __('Password changed successfully !'));
+    }
+
 
     public function bookingHistory(Request $request)
     {
@@ -215,13 +241,18 @@ class UserController extends FrontendController
                     ], 200);
                 }
 
-                $vendor_redirect = Auth::user()->hasPermissionTo('dashboard_vendor_access')
-                    ? route('vendor.dashboard') : false;
+                $vendor_redirect = false;
+                $roles = Auth::user()->roles;
+                if (count($roles)) {
+                    if($roles[0]->service != 'none' && Auth::user()->hasPermissionTo('dashboard_vendor_access')) {
+                        $vendor_redirect = route('vendor.dashboard');
+                    }
+                }
 
                 return response()->json([
                     'error'    => false,
                     'messages' => false,
-                    'redirect' => $vendor_redirect ?? $request->input('redirect') ?? $request->headers->get('referer') ?? url(app_get_locale(false, '/'))
+                    'redirect' => $vendor_redirect ? $vendor_redirect : $request->input('redirect') ?? $request->headers->get('referer') ?? url(app_get_locale(false, '/'))
                 ], 200);
             } else {
                 $errors = new MessageBag(['message_error' => __('Username or password incorrect')]);
@@ -258,9 +289,11 @@ class UserController extends FrontendController
                 'required',
                 'string'
             ],
+            'phone'       => ['required','unique:users'],
             'term'       => ['required'],
         ];
         $messages = [
+            'phone.required'      => __('Phone is required field'),
             'email.required'      => __('Email is required field'),
             'email.email'         => __('Email invalidate'),
             'password.required'   => __('Password is required field'),
@@ -291,13 +324,12 @@ class UserController extends FrontendController
                 'last_name'  => $request->input('last_name'),
                 'email'      => $request->input('email'),
                 'password'   => Hash::make($request->input('password')),
-                'publish'    => $request->input('publish'),
+                'status'    => $request->input('publish','publish'),
                 'phone'    => $request->input('phone'),
             ]);
             event(new Registered($user));
             Auth::loginUsingId($user->id);
             try {
-
                 event(new SendMailUserRegistered($user));
             } catch (Exception $exception) {
 
@@ -330,6 +362,7 @@ class UserController extends FrontendController
             $a->first_name = $request->input('first_name');
             $a->last_name = $request->input('last_name');
             $a->save();
+            event(new UserSubscriberSubmit($a));
             return $this->sendSuccess([], __('Thank you for subscribing'));
         }
     }

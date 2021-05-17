@@ -103,4 +103,9 @@ class Review extends BaseModel
         }
         return $check;
     }
+
+    public function author()
+    {
+        return $this->belongsTo("App\User", "create_user", "id")->select(['id','name','first_name','last_name','avatar_id'])->withDefault();
+    }
 }

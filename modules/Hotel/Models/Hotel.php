@@ -1,6 +1,7 @@
 <?php
 namespace Modules\Hotel\Models;
 
+use App\Currency;
 use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
@@ -9,6 +10,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Modules\Booking\Models\Bookable;
 use Modules\Booking\Models\Booking;
+use Modules\Booking\Traits\CapturesService;
 use Modules\Core\Models\Attributes;
 use Modules\Core\Models\SEO;
 use Modules\Core\Models\Terms;
@@ -18,14 +20,18 @@ use Modules\Review\Models\Review;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Hotel\Models\HotelTranslation;
 use Modules\User\Models\UserWishList;
+use Illuminate\Notifications\Notifiable;
 
 class Hotel extends Bookable
 {
     use SoftDeletes;
+    use Notifiable;
+    use CapturesService;
     protected $table                              = 'bravo_hotels';
     public    $type                               = 'hotel';
     public    $checkout_booking_detail_file       = 'Hotel::frontend/booking/detail';
     public    $checkout_booking_detail_modal_file = 'Hotel::frontend/booking/detail-modal';
+    public    $set_paid_modal_file                = 'Hotel::frontend/booking/set-paid-modal';
     public    $email_new_booking_file             = 'Hotel::emails.new_booking_detail';
     protected $fillable      = [
         'title',
@@ -38,6 +44,8 @@ class Hotel extends Bookable
     protected $casts = [
         'policy' => 'array',
         'extra_price' => 'array',
+        'service_fee' => 'array',
+        'surrounding' => 'array',
     ];
     protected $bookingClass;
     protected $reviewClass;
@@ -255,26 +263,46 @@ class Hotel extends Bookable
                 }
             }
         }
-        //Buyer Fees
+        //Buyer Fees for Admin
         $total_before_fees = $total;
         $list_fees = setting_item('hotel_booking_buyer_fees');
-        if (!empty($list_fees)) {
-            $total_fee = 0;
-            $lists = json_decode($list_fees, true);
+        $list_buyer_fees = setting_item('hotel_booking_buyer_fees');
+        $total_buyer_fee = 0;
+        if (!empty($list_buyer_fees)) {
+            $lists = json_decode($list_buyer_fees, true);
             foreach ($lists as $item) {
                 //for Fixed
                 $fee_price = $item['price'];
                 // for Percent
-                if(!empty($item['unit']) and $item['unit'] == "percent"){
-                    $fee_price = ( $total_before_fees / 100 ) * $item['price'];
+                if (!empty($item['unit']) and $item['unit'] == "percent") {
+                    $fee_price = ($total_before_fees / 100) * $item['price'];
                 }
                 if (!empty($item['per_person']) and $item['per_person'] == "on") {
-                    $total_fee += $fee_price * $total_guests;
+                    $total_buyer_fee += $fee_price * $total_guests;
                 } else {
-                    $total_fee += $fee_price;
+                    $total_buyer_fee += $fee_price;
                 }
             }
-            $total += $total_fee;
+            $total += $total_buyer_fee;
+        }
+
+        //Service Fees for Vendor
+        $total_service_fee = 0;
+        if(!empty($this->enable_service_fee) and !empty($list_service_fee = $this->service_fee)){
+            foreach ($list_service_fee as $item) {
+                //for Fixed
+                $serice_fee_price = $item['price'];
+                // for Percent
+                if (!empty($item['unit']) and $item['unit'] == "percent") {
+                    $serice_fee_price = ($total_before_fees / 100) * $item['price'];
+                }
+                if (!empty($item['per_person']) and $item['per_person'] == "on") {
+                    $total_service_fee += $serice_fee_price * $total_guests;
+                } else {
+                    $total_service_fee += $serice_fee_price;
+                }
+            }
+            $total += $total_service_fee;
         }
 
         $booking = new $this->bookingClass();
@@ -287,7 +315,9 @@ class Hotel extends Bookable
         $booking->total_guests = $total_guests;
         $booking->start_date = $start_date->format('Y-m-d H:i:s');
         $booking->end_date = $end_date->format('Y-m-d H:i:s');
-        $booking->buyer_fees = $list_fees ?? '';
+        $booking->vendor_service_fee_amount = $total_service_fee ?? '';
+        $booking->vendor_service_fee = $list_service_fee ?? '';
+        $booking->buyer_fees = $list_buyer_fees ?? '';
         $booking->total_before_fees = $total_before_fees;
         $booking->calculateCommission();
 
@@ -308,7 +338,7 @@ class Hotel extends Bookable
                     break;
             }
             if($booking_deposit_fomular == "deposit_and_fee"){
-                $booking->deposit = $booking->deposit + $total_fee;
+                $booking->deposit = $booking->deposit + $total_buyer_fee + $total_service_fee;
             }
         }
 
@@ -359,7 +389,8 @@ class Hotel extends Bookable
                 }
             }
             return $this->sendSuccess([
-                'url' => $booking->getCheckoutUrl()
+                'url' => $booking->getCheckoutUrl(),
+                'booking_code' => $booking->code,
             ]);
         }
         return $this->sendError(__("Can not check availability"));
@@ -554,6 +585,17 @@ class Hotel extends Bookable
                 $booking_data['buyer_fees'][] = $item;
             }
         }
+        if(!empty($this->enable_service_fee) and !empty($service_fee = $this->service_fee)){
+            foreach ($service_fee as $item) {
+                $item['type_name'] = $item['name_' . app()->getLocale()] ?? $item['name'] ?? '';
+                $item['type_desc'] = $item['desc_' . app()->getLocale()] ?? $item['desc'] ?? '';
+                $item['price_type'] = '';
+                if (!empty($item['per_person']) and $item['per_person'] == 'on') {
+                    $item['price_type'] .= '/' . __('guest');
+                }
+                $booking_data['buyer_fees'][] = $item;
+            }
+        }
         return $booking_data;
     }
 
@@ -694,6 +736,10 @@ class Hotel extends Bookable
         return $this->reviewClass::countReviewByServiceID($this->id, false, $status, $this->type) ?? 0;
     }
 
+    public function getReviewList(){
+        return $this->reviewClass::select(['id','title','content','rate_number','author_ip','status','created_at','vendor_id','create_user'])->where('object_id', $this->id)->where('object_model', 'hotel')->where("status", "approved")->orderBy("id", "desc")->with('author')->paginate(setting_item('hotel_review_number_per_page', 5));
+    }
+
     public function getNumberServiceInLocation($location)
     {
         $number = 0;
@@ -812,7 +858,8 @@ class Hotel extends Bookable
                     'image'           => $room->image_id ? get_file_url($room->image_id, 'medium') : '',
                     'tmp_number'      => $room->tmp_number,
                     'gallery'         => $room->getGallery(),
-                    'price_html'      => format_money($room->tmp_price) . '<span class="unit">/' . ($room->tmp_nights ? __(':count nights', ['count' => $room->tmp_nights]) : __(":count night", ['count' => $room->tmp_nights])) . '</span>'
+                    'price_html'      => format_money($room->tmp_price) . '<span class="unit">/' . ($room->tmp_nights ? __(':count nights', ['count' => $room->tmp_nights]) : __(":count night", ['count' => $room->tmp_nights])) . '</span>',
+                    'price_text'      => format_money($room->tmp_price) . '/' . ($room->tmp_nights ? __(':count nights', ['count' => $room->tmp_nights]) : __(":count night", ['count' => $room->tmp_nights]))
                 ];
                 $this->tmp_rooms[] = $room;
             }
@@ -852,16 +899,16 @@ class Hotel extends Bookable
 	    $roomsDates = $query->get();
 	    $allDates=[];
 	    foreach ($rooms as $r=> $room){
-		    for($i = strtotime($startDate); $i < strtotime($endDate); $i+= DAY_IN_SECONDS)
-		    {
+            $period = periodDate($startDate,$endDate,false);
+            foreach ($period as $dt){
 		    	$price = $room->room->price * $room->number;
 			    $date['price'] =$price;
 			    $date['price_html'] = format_money($price);
-			    $date['from'] = $i;
-			    $date['from_html'] = date('d/m/Y',$i);
-			    $date['to'] = $i;
-			    $date['to_html'] = date('d/m/Y',($i));
-			    $allDates[$room->room_id][date('Y-m-d',$i)] = $date;
+                $date['from'] = $dt->getTimestamp();
+                $date['from_html'] = $dt->format('d/m/Y');
+                $date['to'] = $dt->getTimestamp();
+                $date['to_html'] = $dt->format('d/m/Y');
+                $allDates[$room->room_id][$dt->format('d/m/Y')] = $date;
 		    }
 	    }
 
@@ -946,11 +993,14 @@ class Hotel extends Bookable
         $review_scores = $request->query('review_score');
         if (is_array($review_scores) && !empty($review_scores)) {
             $where_review_score = [];
+            $params = [];
             foreach ($review_scores as $number){
-                $where_review_score[] = " ( bravo_hotels.review_score >= {$number} AND bravo_hotels.review_score <= {$number}.9 ) ";
+                $where_review_score[] = " ( bravo_hotels.review_score >= ? AND bravo_hotels.review_score <= ? ) ";
+                $params[] = $number;
+                $params[] = $number.'.9';
             }
             $sql_where_review_score = " ( " . implode("OR", $where_review_score) . " )  ";
-            $model_hotel->WhereRaw($sql_where_review_score);
+            $model_hotel->WhereRaw($sql_where_review_score, $params);
         }
 
         if(!empty( $service_name = $request->query("service_name") )){
@@ -965,12 +1015,103 @@ class Hotel extends Bookable
             }
         }
 
-        $model_hotel->orderBy("is_featured", "desc");
-        $model_hotel->orderBy("id", "desc");
+        if(!empty($lat = $request->query('map_lat')) and !empty($lgn = $request->query('map_lgn'))){
+//            ORDER BY (POW((lon-$lon),2) + POW((lat-$lat),2))";
+            $model_hotel->orderByRaw("POW((bravo_hotels.map_lng-?),2) + POW((bravo_hotels.map_lat-?),2)",[$lgn,$lat]);
+        }
+        $orderby = $request->input("orderby");
+        switch ($orderby){
+            case "price_low_high":
+                $raw_sql = "CASE WHEN IFNULL( bravo_hotels.sale_price, 0 ) > 0 THEN bravo_hotels.sale_price ELSE bravo_hotels.price END AS tmp_min_price";
+                $model_hotel->selectRaw($raw_sql);
+                $model_hotel->orderBy("tmp_min_price", "asc");
+                break;
+            case "price_high_low":
+                $raw_sql = "CASE WHEN IFNULL( bravo_hotels.sale_price, 0 ) > 0 THEN bravo_hotels.sale_price ELSE bravo_hotels.price END AS tmp_min_price";
+                $model_hotel->selectRaw($raw_sql);
+                $model_hotel->orderBy("tmp_min_price", "desc");
+                break;
+            case "rate_high_low":
+                $model_hotel->orderBy("review_score", "desc");
+                break;
+            default:
+                $model_hotel->orderBy("is_featured", "desc");
+                $model_hotel->orderBy("id", "desc");
+        }
+
         $model_hotel->groupBy("bravo_hotels.id");
 
-        $limit = min(20,$request->query('limit',9));
+        if(!empty($request->query('limit'))){
+            $limit = $request->query('limit');
+        }else{
+            $limit = !empty(setting_item("hotel_page_limit_item"))? setting_item("hotel_page_limit_item") : 9;
+        }
+
         $list = $model_hotel->with(['location','hasWishList','translations','termsByAttributeInListingPage'])->paginate($limit);
         return $list;
+    }
+
+    public function dataForApi($forSingle = false){
+        $data = parent::dataForApi($forSingle);
+        if($forSingle){
+            $data['review_score'] = $this->getReviewDataAttribute();
+            $data['review_stats'] = $this->getReviewStats();
+            $data['review_lists'] = $this->getReviewList();
+            $data['policy'] = $this->policy;
+            $data['star_rate'] = $this->star_rate;
+            $data['check_in_time'] = $this->check_in_time;
+            $data['check_out_time'] = $this->check_out_time;
+            $data['allow_full_day'] = $this->allow_full_day;
+            $data['booking_fee'] = setting_item_array('hotel_booking_buyer_fees');
+            if (!empty($location_id = $this->location_id)) {
+                $related =  parent::query()->where('location_id', $location_id)->where("status", "publish")->take(4)->whereNotIn('id', [$this->id])->with(['location','translations','hasWishList'])->get();
+                $data['related'] = $related->map(function ($related) {
+                        return $related->dataForApi();
+                    }) ?? null;
+            }
+            $data['terms'] = Terms::getTermsByIdForAPI($this->terms->pluck('term_id'));
+        }else{
+            $data['review_score'] = $this->getScoreReview();
+        }
+        return $data;
+    }
+
+    static public function getClassAvailability()
+    {
+        return "\Modules\Hotel\Controllers\HotelController";
+    }
+
+    static public function getFiltersSearch()
+    {
+        $min_max_price = self::getMinMaxPrice();
+        return [
+            [
+                "title"    => __("Filter Price"),
+                "field"    => "price_range",
+                "position" => "1",
+                "min_price" => floor ( Currency::convertPrice($min_max_price[0]) ),
+                "max_price" => ceil (Currency::convertPrice($min_max_price[1]) ),
+            ],
+            [
+                "title"    => __("Hotel Star"),
+                "field"    => "star_rate",
+                "position" => "2",
+                "min" => "1",
+                "max" => "5",
+            ],
+            [
+                "title"    => __("Review Score"),
+                "field"    => "review_score",
+                "position" => "3",
+                "min" => "1",
+                "max" => "5",
+            ],
+            [
+                "title"    => __("Attributes"),
+                "field"    => "terms",
+                "position" => "4",
+                "data" => Attributes::getAllAttributesForApi("hotel")
+            ]
+        ];
     }
 }

@@ -16,7 +16,7 @@ class Dashboard
      */
     public function handle($request, Closure $next, $guard = null)
     {
-        if (!Auth::user()->hasPermissionTo('dashboard_access')) {
+        if (!Auth::check() or !Auth::user()->hasPermissionTo('dashboard_access')) {
             return redirect('/');
         }
         return $next($request);

@@ -37,4 +37,13 @@ class HikeCategory extends BaseModel
     public function getDetailUrl(){
         return url(app_get_locale(false, false, '/') . config('hike.hike_route_prefix').'?cat_id[]='.$this->id);
     }
+
+    public function dataForApi(){
+        $translation = $this->translateOrOrigin(app()->getLocale());
+        return [
+            'id'=>$this->id,
+            'name'=>$translation->name,
+            'slug'=>$this->slug,
+        ];
+    }
 }

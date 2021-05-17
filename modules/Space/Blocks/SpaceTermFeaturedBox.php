@@ -57,4 +57,23 @@ class SpaceTermFeaturedBox extends BaseBlock
         $model['list_term'] = $list_term;
         return view('Space::frontend.blocks.term-featured-box.index', $model);
     }
+    public function contentAPI($model = []){
+        $model['list_term'] = null;
+        if (!empty($term_space = $model['term_space'])) {
+            $list_term = Terms::whereIn('id',$term_space)->get();
+            if(!empty($list_term)){
+                foreach ( $list_term as $item){
+                    $model['list_term'][] = [
+                        "id"=>$item->id,
+                        "attr_id"=>$item->attr_id,
+                        "name"=>$item->name,
+                        "image_id"=>$item->image_id,
+                        "image_url"=>get_file_url($item->image_id,"full"),
+                        "icon"=>$item->icon,
+                    ];
+                }
+            }
+        }
+        return $model;
+    }
 }

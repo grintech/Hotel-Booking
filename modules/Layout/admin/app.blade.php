@@ -42,11 +42,19 @@
             map_gmap_key:'{{setting_item('map_gmap_key')}}',
             csrf:'{{csrf_token()}}',
             date_format:'{{get_moment_date_format()}}',
+            markAsRead:'{{route('core.admin.notification.markAsRead')}}',
+            markAllAsRead:'{{route('core.admin.notification.markAllAsRead')}}',
+            loadNotify : '{{route('core.admin.notification.loadNotify')}}',
+            pusher_api_key : '{{setting_item("pusher_api_key")}}',
+            pusher_cluster : '{{setting_item("pusher_cluster")}}',
+            isAdmin : {{is_admin() ? 1 : 0}},
+            currentUser: {{(int)Auth::id()}},
         };
         var i18n = {
             warning:"{{__("Warning")}}",
             success:"{{__("Success")}}",
             confirm_delete:"{{__("Do you want to delete?")}}",
+            confirm_recovery:"{{__("Do you want to restore?")}}",
             confirm:"{{__("Confirm")}}",
             cancel:"{{__("Cancel")}}",
         };
@@ -102,13 +110,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-6 copy-right" >
-                        {{date('Y')}} &copy; {{__('Booking Core by')}} <a href="{{__('https://www.bookingcore.org')}}" target="_blank">{{__('BookingCore Team')}}</a>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="text-md-right footer-links d-none d-sm-block">
-                            <a href="{{__('https://www.bookingcore.org')}}" target="_blank">{{__('About Us')}}</a>
-                            <a href="{{__('https://m.me/bookingcore')}}" target="_blank">{{__('Contact Us')}}</a>
-                        </div>
+                        {{date('Y')}} &copy; {{__('Wildyness')}}
                     </div>
                 </div>
             </div>
@@ -123,6 +125,7 @@
 <!-- Scripts -->
 {!! \App\Helpers\Assets::css(true) !!}
 
+<script src="{{ asset('libs/pusher.min.js') }}"></script>
 <script src="{{ asset('dist/admin/js/manifest.js?_ver='.config('app.version')) }}" ></script>
 <script src="{{ asset('dist/admin/js/vendor.js?_ver='.config('app.version')) }}" ></script>
 

@@ -8,7 +8,7 @@ Route::get('/create','EventController@create')->name('event.admin.create');
 Route::get('/edit/{id}','EventController@edit')->name('event.admin.edit');
 Route::post('/store/{id}','EventController@store')->name('event.admin.store');
 Route::post('/bulkEdit','EventController@bulkEdit')->name('event.admin.bulkEdit');
-Route::post('/bulkEdit','EventController@bulkEdit')->name('event.admin.bulkEdit');
+Route::get('/recovery','EventController@recovery')->name('event.admin.recovery');
 
 Route::group(['prefix'=>'attribute'],function (){
     Route::get('/','AttributeController@index')->name('event.admin.attribute.index');
@@ -25,5 +25,5 @@ Route::group(['prefix'=>'attribute'],function (){
 Route::group(['prefix'=>'availability'],function(){
     Route::get('/','AvailabilityController@index')->name('event.admin.availability.index');
     Route::get('/loadDates','AvailabilityController@loadDates')->name('event.admin.availability.loadDates');
-    Route::match(['get','post'],'/store','AvailabilityController@store')->name('event.admin.availability.store');
+    Route::post('/store','AvailabilityController@store')->name('event.admin.availability.store');
 });

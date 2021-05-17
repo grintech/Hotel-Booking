@@ -364,9 +364,7 @@
                         service_type:"space",
                         start_date:this.start_date,
                         end_date:this.end_date,
-                        // person_types:this.person_types,
                         extra_price:this.extra_price,
-                        // step:this.step,
                         adults:this.adults,
                         children:this.children
                     },

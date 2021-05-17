@@ -176,28 +176,25 @@ class MenuController extends AdminController
             }
         }
 
-        // Custom Menu
-        $custom_modules = \Custom\ServiceProvider::getModules();
-        if(!empty($custom_modules)){
-            foreach($custom_modules as $module){
-                $moduleClass = "\\Custom\\".ucfirst($module)."\\ModuleProvider";
-                if(class_exists($moduleClass))
-                {
-                    $menuConfig = call_user_func([$moduleClass,'getMenuBuilderTypes']);
-
-                    if(!empty($menuConfig)){
-                        $menuModels = array_merge($menuModels,$menuConfig);
-                    }
-
-                }
-
-            }
-        }
         // Plugins Menu
         $plugins_modules = \Plugins\ServiceProvider::getModules();
         if(!empty($plugins_modules)){
             foreach($plugins_modules as $module){
                 $moduleClass = "\\Plugins\\".ucfirst($module)."\\ModuleProvider";
+                if(class_exists($moduleClass))
+                {
+                    $menuConfig = call_user_func([$moduleClass,'getMenuBuilderTypes']);
+                    if(!empty($menuConfig)){
+                        $menuModels = array_merge($menuModels,$menuConfig);
+                    }
+                }
+            }
+        }
+        // Custom Menu
+        $custom_modules = \Custom\ServiceProvider::getModules();
+        if(!empty($custom_modules)){
+            foreach($custom_modules as $module){
+                $moduleClass = "\\Custom\\".ucfirst($module)."\\ModuleProvider";
                 if(class_exists($moduleClass))
                 {
                     $menuConfig = call_user_func([$moduleClass,'getMenuBuilderTypes']);
@@ -239,6 +236,10 @@ class MenuController extends AdminController
 
     public function store(Request $request)
     {
+        /** @info Demo mode checker code, not required to check in production system */
+        /**if(is_demo_mode()){
+            return $this->sendError("DEMO MODE: You are not allowed to do it");
+        }*/
         $request->validate([
             'items' => 'required',
             'name'  => 'required|max:255'
@@ -256,7 +257,9 @@ class MenuController extends AdminController
             return $this->sendError(__('Menu not found'));
 
 
-        $menu->items = $request->input('items');
+        $items = json_decode($request->input('items'),true);
+        $newItems = clean_by_key($items, 'name');
+        $menu->items = $newItems;
         $menu->name = $request->input('name');
         $menu->saveOriginOrTranslation($request->input('lang'));
 

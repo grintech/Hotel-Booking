@@ -65,4 +65,14 @@ class HowItWork extends BaseBlock
     {
         return view('Template::frontend.blocks.how-it-work.index', $model);
     }
+
+    public function contentAPI($model = []){
+        if(!empty($model['list_item'])){
+            foreach (  $model['list_item'] as &$item ){
+                $item['icon_image_url'] = FileHelper::url($item['icon_image'], 'full');
+            }
+        }
+        $model['background_image_url'] = get_file_url($model['background_image'],'full');
+        return $model;
+    }
 }

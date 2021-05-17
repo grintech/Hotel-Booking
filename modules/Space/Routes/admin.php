@@ -8,7 +8,7 @@ Route::get('/create','SpaceController@create')->name('space.admin.create');
 Route::get('/edit/{id}','SpaceController@edit')->name('space.admin.edit');
 Route::post('/store/{id}','SpaceController@store')->name('space.admin.store');
 Route::post('/bulkEdit','SpaceController@bulkEdit')->name('space.admin.bulkEdit');
-Route::post('/bulkEdit','SpaceController@bulkEdit')->name('space.admin.bulkEdit');
+Route::get('/recovery','SpaceController@recovery')->name('space.admin.recovery');
 
 Route::group(['prefix'=>'attribute'],function (){
     Route::get('/','AttributeController@index')->name('space.admin.attribute.index');
@@ -25,5 +25,5 @@ Route::group(['prefix'=>'attribute'],function (){
 Route::group(['prefix'=>'availability'],function(){
     Route::get('/','AvailabilityController@index')->name('space.admin.availability.index');
     Route::get('/loadDates','AvailabilityController@loadDates')->name('space.admin.availability.loadDates');
-    Route::match(['get','post'],'/store','AvailabilityController@store')->name('space.admin.availability.store');
+    Route::post('/store','AvailabilityController@store')->name('space.admin.availability.store');
 });

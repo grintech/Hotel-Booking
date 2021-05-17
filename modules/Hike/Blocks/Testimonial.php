@@ -1,6 +1,8 @@
 <?php
+
 namespace Modules\Hike\Blocks;
 
+use Modules\Media\Helpers\FileHelper;
 use Modules\Template\Blocks\BaseBlock;
 
 class Testimonial extends BaseBlock
@@ -57,5 +59,14 @@ class Testimonial extends BaseBlock
     public function content($model = [])
     {
         return view('Hike::frontend.blocks.testimonial.index', $model);
+    }
+
+    public function contentAPI($model = []){
+        if(!empty($model['list_item'])){
+            foreach (  $model['list_item'] as &$item ){
+                $item['avatar_url'] = FileHelper::url($item['avatar'], 'full');
+            }
+        }
+        return $model;
     }
 }

@@ -83,12 +83,12 @@ function app_get_locale($locale = false , $before = false , $after = false){
 
 function format_money($price){
 
-   return Currency::format($price);
+   return Currency::format((float)$price);
 
 }
 function format_money_main($price){
 
-   return Currency::format($price,true);
+   return Currency::format((float)$price,true);
 
 }
 
@@ -153,7 +153,7 @@ function getDatefomat($value) {
 }
 
 function get_file_url($file_id,$size="thumb",$resize = true){
-    if(empty($file_id)) return false;
+    if(empty($file_id)) return null;
     return \Modules\Media\Helpers\FileHelper::url($file_id,$size,$resize);
 }
 
@@ -735,12 +735,12 @@ function get_bookable_services(){
 
         }
     }
+    // Plugin Menu
+    $plugins_modules = \Plugins\ServiceProvider::getModules();
+    if(!empty($plugins_modules)){
+        foreach($plugins_modules as $module){
+            $moduleClass = "\\Plugins\\".ucfirst($module)."\\ModuleProvider";
 
-    // Custom Menu
-    $custom_modules = \Custom\ServiceProvider::getModules();
-    if(!empty($custom_modules)){
-        foreach($custom_modules as $module){
-            $moduleClass = "\\Custom\\".ucfirst($module)."\\ModuleProvider";
             if(class_exists($moduleClass))
             {
                 $services = call_user_func([$moduleClass,'getBookableServices']);
@@ -749,11 +749,12 @@ function get_bookable_services(){
         }
     }
 
-    // Plugin Menu
-    $plugins_modules = \Plugins\ServiceProvider::getModules();
-    if(!empty($plugins_modules)){
-        foreach($plugins_modules as $module){
-            $moduleClass = "\\Plugins\\".ucfirst($module)."\\ModuleProvider";
+    // Custom Menu
+    $custom_modules = \Custom\ServiceProvider::getModules();
+    if(!empty($custom_modules)){
+        foreach($custom_modules as $module){
+            $moduleClass = "\\Custom\\".ucfirst($module)."\\ModuleProvider";
+
             if(class_exists($moduleClass))
             {
                 $services = call_user_func([$moduleClass,'getBookableServices']);
@@ -821,11 +822,11 @@ function get_payment_gateways(){
             }
         }
     }
-    //Custom
-    $custom_modules = \Custom\ServiceProvider::getModules();
-    if(!empty($custom_modules)){
-        foreach($custom_modules as $module){
-            $moduleClass = "\\Custom\\".ucfirst($module)."\\ModuleProvider";
+    //Plugin
+    $plugin_modules = \Plugins\ServiceProvider::getModules();
+    if(!empty($plugin_modules)){
+        foreach($plugin_modules as $module){
+            $moduleClass = "\\Plugins\\".ucfirst($module)."\\ModuleProvider";
             if(class_exists($moduleClass))
             {
                 $gateway = call_user_func([$moduleClass,'getPaymentGateway']);
@@ -835,11 +836,11 @@ function get_payment_gateways(){
             }
         }
     }
-    //Plugin
-    $plugin_modules = \Plugins\ServiceProvider::getModules();
-    if(!empty($plugin_modules)){
-        foreach($plugin_modules as $module){
-            $moduleClass = "\\Plugins\\".ucfirst($module)."\\ModuleProvider";
+    //Custom
+    $custom_modules = \Custom\ServiceProvider::getModules();
+    if(!empty($custom_modules)){
+        foreach($custom_modules as $module){
+            $moduleClass = "\\Custom\\".ucfirst($module)."\\ModuleProvider";
             if(class_exists($moduleClass))
             {
                 $gateway = call_user_func([$moduleClass,'getPaymentGateway']);
@@ -880,8 +881,18 @@ function booking_status_to_text($status)
             break;
         case "cancelled":
             return __('Cancelled');
+            break;
+        case "cancel":
+            return __('Cancel');
+            break;
+        case "pending":
+            return __('Pending');
+            break;
         case "partial_payment":
             return __('Partial Payment');
+            break;
+        case "fail":
+            return __('Failed');
             break;
         default:
             return ucfirst($status ?? '');
@@ -983,4 +994,137 @@ function duration_format($hour,$is_full = false)
 }
 function is_enable_guest_checkout(){
     return setting_item('booking_guest_checkout');
+}
+
+function handleVideoUrl($string)
+{
+    if (strpos($string, 'youtu') !== false) {
+        preg_match("#(?<=v=)[a-zA-Z0-9-]+(?=&)|(?<=v\/)[^&\n]+|(?<=v=)[^&\n]+|(?<=youtu.be/)[^&\n]+#", $string, $matches);
+
+        if (!empty($matches[0])) return "https://www.youtube.com/embed/" . e($matches[0]);
+    }
+    return $string;
+}
+
+function is_api(){
+    return request()->segment(1) == 'api';
+}
+
+function is_demo_mode(){
+    return env('DEMO_MODE',false);
+}
+function credit_to_money($amount){
+    return $amount * setting_item('wallet_credit_exchange_rate',1);
+}
+
+function money_to_credit($amount,$roundUp = false){
+    $res = $amount / setting_item('wallet_credit_exchange_rate',1);
+
+    if($roundUp) return ceil($res);
+
+    return $res;
+}
+
+function clean_by_key($object, $keyIndex, $children = 'children'){
+    if(is_string($object)){
+        return clean($object);
+    }
+
+    if(is_array($object)){
+        if(isset($object[$keyIndex])){
+            $newClean = clean($object[$keyIndex]);
+            $object[$keyIndex] =  $newClean;
+            if(!empty($object[$children])){
+                $object[$children] = clean_by_key($object[$children], $keyIndex);
+            }
+
+        }else{
+            foreach($object as $key => $oneObject){
+                if(isset($oneObject[$keyIndex])){
+                    $newClean = clean($oneObject[$keyIndex]);
+                    $object[$key][$keyIndex] =  $newClean;
+                }
+
+                if(!empty($oneObject[$children])){
+                    $object[$key][$children] = clean_by_key($oneObject[$children], $keyIndex);
+                }
+            }
+        }
+
+        return $object;
+    }
+    return $object;
+}
+function periodDate($startDate,$endDate,$day = true,$interval='1 day'){
+    $begin = new \DateTime($startDate);
+    $end = new \DateTime($endDate);
+
+//    if($begin==$end){
+//        $end = $end->modify('+1 day');
+//    }
+
+    if($day){
+        $end = $end->modify('+1 day');
+    }
+
+
+    $interval = \DateInterval::createFromDateString($interval);
+    $period = new \DatePeriod($begin, $interval, $end);
+    return $period;
+}
+
+function _fixTextScanTranslations(){
+    return __("Show on the map");
+}
+
+
+function is_admin(){
+    if(!auth()->check()) return false;
+    if(auth()->user()->hasPermissionTo('dashboard_access')) return true;
+    return false;
+}
+function is_vendor(){
+    if(!auth()->check()) return false;
+    if(auth()->user()->hasPermissionTo('dashboard_vendor_access')) return true;
+    return false;
+}
+
+function get_link_detail_services($services, $id,$action='edit'){
+    if( \Route::has($services.'.admin.'.$action) ){
+        return route($services.'.admin.'.$action, ['id' => $id]);
+    }else{
+        return '#';
+    }
+
+}
+
+function get_link_vendor_detail_services($services, $id,$action='edit'){
+    if( \Route::has($services.'.vendor.'.$action) ){
+        return route($services.'.vendor.'.$action, ['id' => $id]);
+    }else{
+        return '#';
+    }
+
+}
+
+function format_interval($d1, $d2 = ''){
+    $first_date = new DateTime($d1);
+    if(!empty($d2)){
+        $second_date = new DateTime($d2);
+    }else{
+        $second_date = new DateTime();
+    }
+
+
+    $interval = $first_date->diff($second_date);
+
+    $result = "";
+    if ($interval->y) { $result .= $interval->format("%y years "); }
+    if ($interval->m) { $result .= $interval->format("%m months "); }
+    if ($interval->d) { $result .= $interval->format("%d days "); }
+    if ($interval->h) { $result .= $interval->format("%h hours "); }
+    if ($interval->i) { $result .= $interval->format("%i minutes "); }
+    if ($interval->s) { $result .= $interval->format("%s seconds "); }
+
+    return $result;
 }

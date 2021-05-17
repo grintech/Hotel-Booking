@@ -1,7 +1,8 @@
 @extends('admin.layouts.app')
 @section('content')
-    <form action="" method="post">
+    <form action="{{route('user.admin.role.store', ['id' => ($row->id) ? $row->id : '-1'])}}" method="post">
         @csrf
+        @include('admin.message')
         <div class="container">
             <div class="d-flex justify-content-between mb20">
                 <div class="">
@@ -20,13 +21,14 @@
                             </div>
                             <div class="form-group">
                                 <label>{{ __('Default service for vendor dashboard')}}</label>
-                                <select name="service" value="{{ $row->service }}" class="form-control">
+                                <select name="service" class="form-control">
                                     @php
                                         $services = get_bookable_services();
                                     @endphp
                                     @foreach($services as $service_name => $className)
-                                        <option value="{{ $service_name }}">{{ $service_name }}</option>
+                                        <option value="{{ $service_name }}" @if($row->service && $row->service == $service_name) selected @endif>{{ ucfirst($service_name) }}</option>
                                     @endforeach
+                                    <option value="none" @if(($row->service && $row->service == 'none') || !$row->service) selected @endif>{{ __('None')}}</option>
                                 </select>
                             </div>
                         </div>

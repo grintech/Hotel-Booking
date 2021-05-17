@@ -2,30 +2,41 @@
 
 namespace Modules\Hike\Models;
 use App\Currency;
+use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Modules\Booking\Models\Bookable;
 use Modules\Booking\Models\Booking;
+use Modules\Booking\Traits\CapturesService;
 use Modules\Core\Models\Attributes;
 use Modules\Location\Models\Location;
 use Modules\Review\Models\Review;
 use Modules\Media\Helpers\FileHelper;
 use Illuminate\Support\Facades\Cache;
-use Modules\Tour\Models\TourCategory;
+use Modules\Hike\Models\HikeCategory;
 use Validator;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Core\Models\SEO;
 use Modules\User\Models\UserWishList;
+use Modules\Core\Models\Terms;
+use Modules\Hike\Models\HikeTerm;
 
 class Hike extends Bookable
 {
+    use Notifiable;
     use SoftDeletes;
-    protected $table                              = 'bravo_hikes';
-    public    $checkout_booking_detail_file       = 'Hike::frontend/booking/detail';
+    use CapturesService;
+
+    protected $table = 'bravo_hikes';
+    public    $checkout_booking_detail_file = 'Hike::frontend/booking/detail';
     public    $checkout_booking_detail_modal_file = 'Hike::frontend/booking/detail-modal';
-    public    $email_new_booking_file             = 'Hike::emails.new_booking_detail';
-    public    $type                               = 'hike';
-    protected $fillable                           = [
+    public    $email_new_booking_file = 'Hike::emails.new_booking_detail';
+    public    $type = 'hike';
+    protected $fillable = [
         'title',
         'slug',
         'content',
@@ -66,10 +77,12 @@ class Hike extends Bookable
         'include',
         'exclude',
         'itinerary',
+        'surrounding',
     ];
-    protected $slugField                          = 'slug';
-    protected $slugFromField                      = 'title';
-    protected $seo_type                           = 'hike';
+
+    protected $slugField = 'slug';
+    protected $slugFromField = 'title';
+    protected $seo_type = 'hike';
     /**
      * The attributes that should be casted to native types.
      *
@@ -80,6 +93,8 @@ class Hike extends Bookable
         'include' => 'array',
         'exclude' => 'array',
         'itinerary' => 'array',
+        'service_fee' => 'array',
+        'surrounding' => 'array',
     ];
 
     public static function getModelName()
@@ -241,6 +256,10 @@ class Hike extends Bookable
             $meta = new $this->hikeMetaClass();
             $meta->hike_id = $this->id;
         }
+        $arg = $request->input();
+        if (!empty($arg['person_types'])) {
+            $arg['person_types'] = array_values($arg['person_types']);
+        }
         $meta->fill($request->input());
         return $meta->save();
     }
@@ -264,7 +283,9 @@ class Hike extends Bookable
 
     public function addToCart(Request $request)
     {
-        $this->addToCartValidate($request);
+        $res = $this->addToCartValidate($request);
+        if ($res !== true)
+            return $res;
         // Add Booking
         // get Price Availability Calendar
         $dataPriceAvailability = $this->getDataPriceAvailabilityInRanges($request->input('start_date'));
@@ -356,18 +377,48 @@ class Hike extends Bookable
         if (empty($start_date)) {
             $this->sendError(__("Start date is not a valid date"));
         }
+        if (!$this->checkBusyDate($start_date)) {
+            return $this->sendError(__("Start date is not a valid date"));
+        }
+
+        //Buyer Fees for Admin
+        $total_before_fees = $total;
+        $list_buyer_fees = setting_item('hike_booking_buyer_fees');
+        $total_buyer_fee = 0;
+        if (!empty($list_buyer_fees)) {
+            $lists = json_decode($list_buyer_fees, true);
+            foreach ($lists as $item) {
+                //for Fixed
+                $fee_price = $item['price'];
+                // for Percent
+                if (!empty($item['unit']) and $item['unit'] == "percent") {
+                    $fee_price = ($total_before_fees / 100) * $item['price'];
+                }
+                if (!empty($item['per_person']) and $item['per_person'] == "on") {
+                    $total_buyer_fee += $fee_price * $total_guests;
+                } else {
+                    $total_buyer_fee += $fee_price;
+                }
+            }
+            $total += $total_buyer_fee;
+        }
 
         //Buyer Fees
-        $total_before_fees = $total;
-        $list_fees = setting_item('hike_booking_buyer_fees');
-        if (!empty($list_fees)) {
-            $lists = json_decode($list_fees, true);
-            foreach ($lists as $item) {
-                if (!empty($item['per_person']) and $item['per_person'] == "on") {
-                    $total += $item['price'] * $total_guests;
-                } else {
-                    $total += $item['price'];
+        $total_service_fee = 0;
+        if(!empty($this->enable_service_fee) and !empty($list_service_fee = $this->service_fee)) {
+            foreach ($list_service_fee as $item) {
+                //for Fixed
+                $serice_fee_price = $item['price'];
+                // for Percent
+                if (!empty($item['unit']) and $item['unit'] == "percent") {
+                    $serice_fee_price = ($total_before_fees / 100) * $item['price'];
+                    if (!empty($item['per_person']) and $item['per_person'] == "on") {
+                        $total_service_fee += $serice_fee_price * $total_guests;
+                    } else {
+                        $total_service_fee += $serice_fee_price;
+                    }
                 }
+                $total += $total_service_fee;
             }
         }
 
@@ -382,24 +433,49 @@ class Hike extends Bookable
         $booking->start_date = $start_date->format('Y-m-d H:i:s');
         $start_date->modify('+ ' . max(1, $this->duration) . ' hours');
         $booking->end_date = $start_date->format('Y-m-d H:i:s');
-        $booking->buyer_fees = $list_fees ?? '';
+        $booking->vendor_service_fee_amount = $total_service_fee ?? '';
+        $booking->vendor_service_fee = $list_service_fee ?? '';
+        $booking->buyer_fees = $list_buyer_fees ?? '';
         $booking->total_before_fees = $total_before_fees;
 
         $booking->calculateCommission();
-
+        if ($this->isDepositEnable()) {
+            $booking_deposit_fomular = $this->getDepositFomular();
+            $tmp_price_total = $booking->total;
+            if ($booking_deposit_fomular == "deposit_and_fee") {
+                $tmp_price_total = $booking->total_before_fees;
+            }
+            switch ($this->getDepositType()) {
+                case "percent":
+                    $booking->deposit = $tmp_price_total * $this->getDepositAmount() / 100;
+                    break;
+                default:
+                    $booking->deposit = $this->getDepositAmount();
+                    break;
+            }
+            if ($booking_deposit_fomular == "deposit_and_fee") {
+                $booking->deposit = $booking->deposit + $total_buyer_fee + $total_service_fee;
+            }
+        }
         $check = $booking->save();
         if ($check) {
-
             $this->bookingClass::clearDraftBookings();
-
             $booking->addMeta('duration', $this->duration);
             $booking->addMeta('base_price', $base_price);
             $booking->addMeta('guests', max($total_guests, $request->input('guests')));
             $booking->addMeta('extra_price', $extra_price);
             $booking->addMeta('person_types', $person_types);
             $booking->addMeta('discount_by_people', $discount_by_people);
+            if ($this->isDepositEnable()) {
+                $booking->addMeta('deposit_info', [
+                    'type'    => $this->getDepositType(),
+                    'amount'  => $this->getDepositAmount(),
+                    'fomular' => $this->getDepositFomular(),
+                ]);
+            }
             $this->sendSuccess([
-                'url' => $booking->getCheckoutUrl()
+                'url' => $booking->getCheckoutUrl(),
+                'booking_code' => $booking->code,
             ]);
         }
         $this->sendError(__("Can not check availability"));
@@ -408,8 +484,8 @@ class Hike extends Bookable
     public function getDataPriceAvailabilityInRanges($start_date){
         $datesRaw = $this->hikeDateClass::getDatesInRanges($start_date,$this->id);
         $dates = [
-            'base_price' => null,
-            'person_types' => null,
+            'base_price' => $datesRaw->price,
+            'person_types' => is_array($datesRaw->person_types) ? $datesRaw->person_types : false,
         ];
         if(!empty($datesRaw))
         {
@@ -518,6 +594,12 @@ class Hike extends Bookable
             'start_date_html' => request()->input('start') ? display_date(request()->input('start')) : "",
             'end_date'        => request()->input('end') ?? "",
             'end_date_html'   => request()->input('end') ? display_date(request()->input('end')) : "",
+            'deposit'         => $this->isDepositEnable(),
+            'deposit_type'    => $this->getDepositType(),
+            'deposit_amount'  => $this->getDepositAmount(),
+            'deposit_fomular' => $this->getDepositFomular(),
+            'is_form_enquiry_and_book' => $this->isFormEnquiryAndBook(),
+            'enquiry_type'             => $this->getBookingEnquiryType(),
         ];
         $meta = $this->meta ?? false;
         $lang = app()->getLocale();
@@ -585,6 +667,17 @@ class Hike extends Bookable
                 $booking_data['buyer_fees'][] = $item;
             }
         }
+        if(!empty($this->enable_service_fee) and !empty($service_fee = $this->service_fee)){
+            foreach ($service_fee as $item) {
+                $item['type_name'] = $item['name_' . app()->getLocale()] ?? $item['name'] ?? '';
+                $item['type_desc'] = $item['desc_' . app()->getLocale()] ?? $item['desc'] ?? '';
+                $item['price_type'] = '';
+                if (!empty($item['per_person']) and $item['per_person'] == 'on') {
+                    $item['price_type'] .= '/' . __('guest');
+                }
+                $booking_data['buyer_fees'][] = $item;
+            }
+        }
         return $booking_data;
     }
 
@@ -631,6 +724,20 @@ class Hike extends Bookable
             $number_review = $this->reviewClass::countReviewByServiceID($this->id, Auth::id(),false,$this->type) ?? 0;
             $number_booking = $this->bookingClass::countBookingByServiceID($this->id, Auth::id()) ?? 0;
             if ($number_review >= $number_booking) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public function check_allow_review_after_making_completed_booking()
+    {
+        $options = setting_item("hike_allow_review_after_making_completed_booking", false);
+        if (!empty($options)) {
+            $status = json_decode($options);
+            $booking = $this->bookingClass::select("status")->where("object_id", $this->id)->where("object_model", $this->type)->where("customer_id", Auth::id())->orderBy("id", "desc")->first();
+            $booking_status = $booking->status ?? false;
+            if (!in_array($booking_status, $status)) {
                 return false;
             }
         }
@@ -724,6 +831,16 @@ class Hike extends Bookable
         return __(":number Hike", ['number' => $number]);
     }
 
+    public function getReviewList(){
+        return $this->reviewClass::select(['id','title','content','rate_number','author_ip','status','created_at','vendor_id','create_user'])
+            ->where('object_id', $this->id)
+            ->where('object_model', 'hike')
+            ->where("status", "approved")
+            ->orderBy("id", "desc")
+            ->with('author')
+            ->paginate(setting_item('tour_review_number_per_page', 5));
+    }
+
     /**
      * @param $from
      * @param $to
@@ -807,8 +924,55 @@ class Hike extends Bookable
         // return "icofont-travelling";
         return "tracking.svg";
     }
+
     public static function isEnable(){
         return setting_item('hike_disable') == false;
+    }
+
+    public function isDepositEnable()
+    {
+        return (setting_item('tour_deposit_enable') and setting_item('tour_deposit_amount'));
+    }
+
+    public function getDepositAmount()
+    {
+        return setting_item('tour_deposit_amount');
+    }
+
+    public function getDepositType()
+    {
+        return setting_item('tour_deposit_type');
+    }
+
+    public function getDepositFomular()
+    {
+        return setting_item('tour_deposit_fomular', 'default');
+    }
+
+    public static function isEnableEnquiry()
+    {
+        if (!empty(setting_item('booking_enquiry_for_tour'))) {
+            return true;
+        }
+        return false;
+    }
+
+    public static function isFormEnquiryAndBook(){
+        $check = setting_item('booking_enquiry_for_hike');
+        if(!empty($check) and setting_item('booking_enquiry_type') == "booking_and_enquiry" ){
+            return true;
+        }
+        return false;
+    }
+
+    public static function getBookingEnquiryType(){
+        $check = setting_item('booking_enquiry_for_hike');
+        if(!empty($check)){
+            if( setting_item('booking_enquiry_type') == "only_enquiry" ) {
+                return "enquiry";
+            }
+        }
+        return "book";
     }
 
     public static function search(Request $request)

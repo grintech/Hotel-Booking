@@ -16,7 +16,7 @@
 
                             {{__("Customer Information")}}
                         </a>
-                    </li>R
+                    </li>
                 </ul>
                 <div class="tab-content">
                     <div id="booking-detail-{{$booking->id}}" class="tab-pane active"><br>
@@ -35,10 +35,12 @@
                                             </li>
                                             @if(!empty($booking->gateway))
                                                 <?php $gateway = get_payment_gateway_obj($booking->gateway);?>
-                                                <li>
-                                                    <div class="label">{{__('Payment Method')}}</div>
-                                                    <div class="val">{{$gateway->name}}</div>
-                                                </li>
+                                                @if($gateway)
+                                                    <li>
+                                                        <div class="label">{{__('Payment Method')}}</div>
+                                                        <div class="val">{{$gateway->name}}</div>
+                                                    </li>
+                                                @endif
                                             @endif
                                             @php $vendor = $service->author; @endphp
                                             @if($vendor->hasPermissionTo('dashboard_vendor_access') and !$vendor->hasPermissionTo('dashboard_access'))

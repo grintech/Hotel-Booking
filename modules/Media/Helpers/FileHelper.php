@@ -106,8 +106,7 @@ class FileHelper
 
     public static function isImage($fileObj)
     {
-
-        if (false !== mb_strpos($fileObj->file_type, "image") and $fileObj->file_type != "image/webp") {
+        if (false !== mb_strpos($fileObj->file_type, "image") and in_array($fileObj->file_type,['image/jpg','image/jpeg','image/png','image/gif'])) {
 
             return true;
         } else {

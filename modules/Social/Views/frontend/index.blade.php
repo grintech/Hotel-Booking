@@ -13,13 +13,29 @@
             <div class="row">
                 <div class="col-md-3">
                     <div class="nav-group">
+                        <ul class="nav-items nav flex-column nav-pills">
+                            <li class=""><a class="nav-link media active" href="{{route('social.index')}}">
+                                    <i class="bravo-icon fa fa-paper-plane-o"></i>
+                                    <span class="media-body">{{__("News Feed")}}</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="nav-group">
                         <div class="nav-title">{{__("Forums")}}</div>
-                        <ul class="nav-items">
+                        <ul class="nav-items nav flex-column nav-pills">
                             @foreach($forums as $forum)
                                 <li><a href="{{$forum->getDetailUrl()}}">
                                     {!! $forum->icon_html !!}
                                     {{$forum->name}}
                                 </a></li>
+                                <li class=""><a class="nav-link media" href="{{$forum->getDetailUrl()}}">
+                                        {!! $forum->icon_html !!}
+                                        <span class="media-body">
+                                            {{$forum->name}}
+                                        </span>
+                                    </a>
+                                </li>
                             @endforeach
                         </ul>
                     </div>

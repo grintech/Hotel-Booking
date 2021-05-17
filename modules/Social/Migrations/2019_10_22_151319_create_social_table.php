@@ -124,6 +124,11 @@ class CreateSocialTable extends Migration
     public function down()
     {
         Schema::dropIfExists('social_posts');
+        Schema::dropIfExists('social_user_follow');
         Schema::dropIfExists('social_forums');
+        Schema::dropIfExists('social_group_user');
+        Schema::dropIfExists('social_groups');
+        Schema::dropIfExists('social_post_comments');
+        Schema::dropIfExists('social_post_comments');
     }
 }

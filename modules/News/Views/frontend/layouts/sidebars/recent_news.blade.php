@@ -1,6 +1,6 @@
 <div class="sidebar-widget widget_bloglist">
     <div class="sidebar-title">
-        <h4>{{ $item->title }}</h4>
+        <h2>{{ $item->title }}</h2>
     </div>
     <ul class="thumb-list">
         @php $list_blog = $model_news->with(['getCategory','translations'])->orderBy('id','desc')->limit(3)->get() @endphp
@@ -16,11 +16,9 @@
                         </div>
                     @endif
                     <div class="content">
-                        <h5 class="thumb-list-item-title">
-                            <a href="{{ $blog->getDetailUrl(app()->getLocale()) }}">
-                                {{ strlen($translation->title) > 40 ? substr($translation->title, 0 , 39) . ' ...' : $translation->title}}
-                            </a>
-                        </h5>
+                        <h3 class="thumb-list-item-title">
+                            <a href="{{ $blog->getDetailUrl(app()->getLocale()) }}">{!! clean($translation->title) !!}</a>
+                        </h3>
                     </div>
                 </li>
             @endforeach

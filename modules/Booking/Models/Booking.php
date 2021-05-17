@@ -17,6 +17,7 @@ use Modules\Space\Models\Space;
 use Modules\Tour\Models\Tour;
 use App\User;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Modules\User\Models\Wallet\Transaction;
 
 class Booking extends BaseModel
 {
@@ -35,6 +36,7 @@ class Booking extends BaseModel
 
     protected $casts = [
         'commission' => 'array',
+        'vendor_service_fee' => 'array',
     ];
 
     public static $notAcceptedStatus = [
@@ -96,10 +98,25 @@ class Booking extends BaseModel
 
     public function getDetailUrl($full = true)
     {
+        $is_api = request()->segment(1) == 'api';
         if (!$full) {
-            return app_get_locale(false,false , "/").config('booking.booking_route_prefix') . '/' . $this->code;
+            return ($is_api ? 'api/' : '').app_get_locale(false,false , "/").config('booking.booking_route_prefix') . '/' . $this->code;
         }
-        return url(app_get_locale(false,false , "/").config('booking.booking_route_prefix') . '/' . $this->code);
+        if($is_api){
+            return route('booking.thankyou',['code'=>$this->code]);
+        }
+        return url(($is_api ? 'api/' : '').app_get_locale(false,false , "/").config('booking.booking_route_prefix') . '/' . $this->code);
+    }
+
+    public function getAllMeta()
+    {
+        $meta = DB::table('bravo_booking_meta')->select(['name','val'])->where([
+            'booking_id' => $this->id,
+        ])->get();
+        if (!empty($meta)) {
+            return $meta;
+        }
+        return false;
     }
 
     public function getMeta($key, $default = '')
@@ -181,6 +198,7 @@ class Booking extends BaseModel
 
         $this->status = static::PROCESSING;
         $this->save();
+        event(new BookingUpdatedEvent($this));
     }
 
     public function markAsPaid()
@@ -193,17 +211,14 @@ class Booking extends BaseModel
 
         $this->save();
 
-        $this->sendStatusUpdatedEmails();
-
         event(new BookingUpdatedEvent($this));
     }
 
     public function markAsPaymentFailed(){
 
         $this->status = static::UNPAID;
+        $this->tryRefundToWallet();
         $this->save();
-
-        $this->sendStatusUpdatedEmails();
 
         event(new BookingUpdatedEvent($this));
 
@@ -278,7 +293,7 @@ class Booking extends BaseModel
     {
 
         $res = [];
-        $total_data = parent::selectRaw('sum(`total`) as total_price , sum( `total` - `total_before_fees` + `commission` ) AS total_earning ')->whereNotIn('status',static::$notAcceptedStatus)->first();
+        $total_data = parent::selectRaw('sum(`total`) as total_price , sum( `total` - `total_before_fees` + `commission` - `vendor_service_fee_amount` ) AS total_earning ')->whereNotIn('status',static::$notAcceptedStatus)->first();
         $total_booking = parent::whereNotIn('status',static::$notAcceptedStatus)->count('id');
         $total_service = 0;
         $services = get_bookable_services();
@@ -349,7 +364,7 @@ class Booking extends BaseModel
             ]
         ];
         $sql_raw[] = 'sum(`total`) as total_price';
-        $sql_raw[] = 'sum( `total` - `total_before_fees` + `commission` ) AS total_earning';
+        $sql_raw[] = 'sum( `total` - `total_before_fees` + `commission` - `vendor_service_fee_amount` ) AS total_earning';
         if (($to - $from) / DAY_IN_SECONDS > 90) {
             $year = date("Y", $from);
             // Report By Month
@@ -390,11 +405,12 @@ class Booking extends BaseModel
             }
         } else {
             // Report By Day
-            for ($i = strtotime(date('Y-m-d', $from)); $i <= strtotime(date('Y-m-d 23:59:59', $to)); $i += DAY_IN_SECONDS) {
+            $period = periodDate(date('Y-m-d', $from),date('Y-m-d 23:59:59', $to));
+            foreach ($period as $dt) {
                 $dataBooking = parent::selectRaw(implode(",", $sql_raw))->whereBetween('created_at', [
-                    date('Y-m-d 00:00:00', $i),
-                    date('Y-m-d 23:59:59', $i),
-                ])->whereNotIn('status',static::$notAcceptedStatus);
+                    $dt->format('Y-m-d 00:00:00'),
+                    $dt->format('Y-m-d 23:59:59'),
+                ])->whereNotIn('status', static::$notAcceptedStatus);
                 if (!empty($customer_id)) {
                     $dataBooking = $dataBooking->where('customer_id', $customer_id);
                 }
@@ -402,7 +418,7 @@ class Booking extends BaseModel
                     $dataBooking = $dataBooking->where('vendor_id', $vendor_id);
                 }
                 $dataBooking = $dataBooking->first();
-                $data['labels'][] = display_date($i);
+                $data['labels'][] = display_date($dt->getTimestamp());
                 $data['datasets'][0]['data'][] = $dataBooking->total_price ?? 0;
                 $data['datasets'][1]['data'][] = $dataBooking->total_earning ?? 0;
             }
@@ -434,7 +450,7 @@ class Booking extends BaseModel
     {
 
         $res = [];
-        $total_money = parent::selectRaw('sum( `total_before_fees` - `commission` ) AS total_price , sum( CASE WHEN `status` = "completed" THEN `total_before_fees` - `commission` ELSE NULL END ) AS total_earning')->whereNotIn('status',static::$notAcceptedStatus)->where("vendor_id", $user_id)->first();
+        $total_money = parent::selectRaw('sum( `total_before_fees` - `commission` + `vendor_service_fee_amount` ) AS total_price , sum( CASE WHEN `status` = "completed" THEN `total_before_fees` - `commission` + `vendor_service_fee_amount` ELSE NULL END ) AS total_earning')->whereNotIn('status',static::$notAcceptedStatus)->where("vendor_id", $user_id)->first();
         $total_booking = parent::whereNotIn('status',static::$notAcceptedStatus)->where("vendor_id", $user_id)->count('id');
         $total_service = 0;
         $services = get_bookable_services();
@@ -498,8 +514,8 @@ class Booking extends BaseModel
                 ]
             ]
         ];
-        $sql_raw[] = 'sum( `total_before_fees` - `commission` ) AS total_price';
-        $sql_raw[] = 'sum( CASE WHEN `status` = "completed" THEN `total_before_fees` - `commission` ELSE NULL END ) AS total_earning';
+        $sql_raw[] = 'sum( `total_before_fees` - `commission` + `vendor_service_fee_amount`) AS total_price';
+        $sql_raw[] = 'sum( CASE WHEN `status` = "completed" THEN `total_before_fees` - `commission` + `vendor_service_fee_amount` ELSE NULL END ) AS total_earning';
         if (($to - $from) / DAY_IN_SECONDS > 90) {
             $year = date("Y", $from);
             // Report By Month
@@ -640,7 +656,7 @@ class Booking extends BaseModel
             ]
         ];
         $sql_raw[] = 'sum(`total`) as total_price';
-        $sql_raw[] = 'sum( CASE WHEN `total_before_fees` > 0 THEN  `total` - `total_before_fees` ELSE null END ) AS total_fees';
+        $sql_raw[] = 'sum( CASE WHEN `total_before_fees` > 0 THEN  `total` - `total_before_fees` - `vendor_service_fee_amount` ELSE null END ) AS total_fees';
         $sql_raw[] = 'sum( `commission` ) AS total_commission';
         if ($statuses) {
             $sql_raw[] = "count( CASE WHEN `status` != 'draft' THEN id ELSE NULL END ) AS total_booking";
@@ -814,6 +830,10 @@ class Booking extends BaseModel
                     $commission['amount'] = $vendor->vendor_commission_amount;
                 }
 
+                if($commission['type'] == 'disable'){
+                    return $returnArray;
+                }
+
                 if ($commission['type'] == 'percent') {
                     $returnArray['commission'] = (float)($total / 100) * $commission['amount'];
                 } else {
@@ -837,6 +857,22 @@ class Booking extends BaseModel
 		$calendar = new Calendar($proid);
 		$data  = $module::find($id);
 		if (!empty($data)) {
+
+            $availabilityData = $data->availabilityClass::where(['target_id'=>$id,'active'=>0])->get();
+            if(!empty($availabilityData)){
+                foreach ($availabilityData as $availabilityDatum){
+                    $eventCalendar = new Event();
+                    $eventCalendar
+                        ->setUniqueId($data->id.time())
+                        ->setCategories(ucfirst($service_type))
+                        ->setDtStart(new \DateTime($availabilityDatum->start_date))
+                        ->setDtEnd(new \DateTime($availabilityDatum->end_date))
+                        ->setSummary($data->title . '#'.$id.' Blocked')
+                        ->setNoTime(false);
+                    $calendar->addComponent($eventCalendar);
+                }
+            }
+
 			$bookingData = self::where('object_id', $id)->where('object_model', $service_type)
 				->whereNotIn('status', self::$notAcceptedStatus)
 				->where('start_date','>=',now())
@@ -905,5 +941,32 @@ class Booking extends BaseModel
 
         return $this->total_before_fees - $extra_price_collection->sum('total');
 	}
+
+    public function wallet_transaction(){
+        return $this->belongsTo(Transaction::class,'wallet_transaction_id')->withDefault();
+    }
+
+    public function tryRefundToWallet($checkStatus = true){
+        if($checkStatus and in_array($this->status,[self::CANCELLED]) ){
+            return;
+        }
+
+        if( $this->customer_id and $this->wallet_transaction_id && !$this->is_refund_wallet){
+            $user = User::find($this->customer_id);
+            if($user) {
+                $transaction = $this->wallet_transaction;
+                if ($transaction->amount) {
+                    $transaction = $user->deposit($transaction->amount);
+                    $transaction->object_id = $user;
+                    $transaction->object_model = "booking_refund_wallet";
+                    $transaction->booking_id = $this->id;
+                    $transaction->save();
+
+                    $this->is_refund_wallet = 1;
+                    $this->save();
+                }
+            }
+        }
+    }
 
 }

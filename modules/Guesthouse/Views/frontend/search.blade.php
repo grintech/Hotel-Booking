@@ -1,11 +1,11 @@
 @extends('layouts.app')
 @section('head')
-    <link href="{{ asset('module/guesthouse/css/hotel.css?v='.config('asset.guesthouse.css')) }}" rel="stylesheet">
+    <link href="{{ asset('dist/frontend/module/guesthouse/css/hotel.css?v='.config('asset.guesthouse.css')) }}" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ asset("libs/ion_rangeslider/css/ion.rangeSlider.min.css") }}"/>
 @endsection
 @section('content')
     <div class="bravo_search_hotel">
-        <div class="bravo_banner" @if($bg = setting_item("guesthouse_page_search_banner")) style="background-image: url({{get_file_url($bg,'full')}})" @endif >
+        <div class="bravo_banner" style="margin-top: -100px;padding-top: 140px;padding-bottom: 140px;" @if($bg = setting_item("guesthouse_page_search_banner")) style="background-image: url({{get_file_url($bg,'full')}})" @endif >
             <div class="container">
                 <h1>
                     {{setting_item_with_lang("guesthouse_page_search_title")}}

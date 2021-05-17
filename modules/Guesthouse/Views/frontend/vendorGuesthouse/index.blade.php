@@ -4,8 +4,8 @@
 @endsection
 @section('content')
     <h2 class="title-bar">
-        {{__("Manage Guesthouses")}}
-        @if(Auth::user()->hasPermissionTo('guesthouse_create'))
+        {{!empty($recovery) ?__('Recovery Guesthouses') : __("Manage Guesthouses")}}
+        @if(Auth::user()->hasPermissionTo('guesthouse_create') && empty($recovery))
             <a href="{{ route("guesthouse.vendor.create") }}" class="btn-change-password">{{__("Add Guesthouse")}}</a>
         @endif
     </h2>

@@ -4,7 +4,7 @@
 @if(!empty($list_category))
 <div class="sidebar-widget widget_category">
     <div class="sidebar-title">
-        <h4>{{ $item->title }}</h4>
+        <h2>{{ $item->title }}</h2>
     </div>
     <ul>
         <?php

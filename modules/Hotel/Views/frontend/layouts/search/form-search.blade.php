@@ -8,6 +8,7 @@
             @endphp
             @if(!empty($hotel_search_fields))
                 @foreach($hotel_search_fields as $field)
+                    @php $field['title'] = $field['title_'.app()->getLocale()] ?? $field['title'] ?? "" @endphp
                     <div class="col-md-{{ $field['size'] ?? "6" }} border-right">
                         @switch($field['field'])
                             @case ('service_name')

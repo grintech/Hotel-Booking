@@ -38,8 +38,13 @@ class HikeTranslation extends BaseModel
         'include' => 'array',
         'exclude' => 'array',
         'itinerary' => 'array',
+        'surrounding' => 'array',
     ];
     public function getSeoType(){
         return $this->seo_type;
+    }
+
+    public function getRecordRoot(){
+        return $this->belongsTo(Tour::class,'origin_id');
     }
 }

@@ -3,6 +3,7 @@ namespace Modules\Media\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -14,8 +15,24 @@ use Modules\Media\Models\MediaFile;
 use Intervention\Image\ImageManagerStatic as Image;
 use Spatie\LaravelImageOptimizer\Facades\ImageOptimizer;
 
-class MediaController extends AdminController
+
+class MediaController extends Controller
 {
+
+    public function index(Response $request){
+
+        $this->setActiveMenu(route('media.admin.index'));
+        $data = [
+            'page_title'=>__("Media Management"),
+            'breadcrumbs'        => [
+                [
+                    'name' => __('Media Management'),
+                    'url'  => route('media.admin.index')
+                ],
+            ]
+        ];
+        return view('Media::admin.index', $data);
+    }
 
     public function sendError($message, $data = [])
     {
@@ -69,6 +86,9 @@ class MediaController extends AdminController
 
     public function store(Request $request)
     {
+        if(!$user_id = Auth::id()){
+            return $this->sendError(__("Please log in"));
+        }
 
         $ckEditor = $request->query('ckeditor');
 
@@ -79,7 +99,7 @@ class MediaController extends AdminController
         if($ckEditor) $fileName = 'upload';
 
         $file = $request->file($fileName);
-        $file_type = $request->file('type');
+        $file_type = $request->input('type');
         if (empty($file)) {
             return $this->sendError(__("Please select file"));
         }

@@ -9,7 +9,7 @@ namespace Modules\User\Events;
 
 use Illuminate\Queue\SerializesModels;
 
-class  VendorApproved
+class VendorApproved
 {
     use SerializesModels;
     public $user;

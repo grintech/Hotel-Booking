@@ -13,7 +13,7 @@
         </div>
         <div class="g-filter-item">
             <div class="item-title">
-                <h4>{{__("Review Score")}}</h4>
+                <h3>{{__("Review Score")}}</h3>
                 <i class="fa fa-angle-up" aria-hidden="true"></i>
             </div>
             <div class="item-content">
@@ -36,7 +36,7 @@
         </div>
         <div class="g-filter-item">
             <div class="item-title">
-                <h4>{{__("Hike Type")}}</h4>
+                <h3>{{__("Hike Type")}}</h3>
                 <i class="fa fa-angle-up" aria-hidden="true"></i>
             </div>
             <div class="item-content">
@@ -85,7 +85,7 @@
             @endphp
             <div class="g-filter-item">
                 <div class="item-title">
-                    <h4> {{$translate->name}} </h4>
+                    <h3> {{$translate->name}} </h3>
                     <i class="fa fa-angle-up" aria-hidden="true"></i>
                 </div>
                 <div class="item-content">

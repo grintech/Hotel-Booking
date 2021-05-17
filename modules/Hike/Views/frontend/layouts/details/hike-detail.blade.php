@@ -1,6 +1,6 @@
 <div class="g-header">
     <div class="left">
-        <h2>{{$translation->title}}</h2>
+        <h1>{!! clean($translation->title) !!}</h1>
         @if($translation->address)
             <p class="address"><i class="fa fa-map-marker"></i>
                 {{$translation->address}}
@@ -138,7 +138,7 @@
     <div class="g-gallery">
         <div class="fotorama" data-width="100%" data-thumbwidth="135" data-thumbheight="135" data-thumbmargin="15" data-nav="thumbs" data-allowfullscreen="true">
             @foreach($row->getGallery() as $key=>$item)
-                <a href="{{$item['large']}}" data-thumb="{{$item['thumb']}}"></a>
+                <a href="{{$item['large']}}" data-thumb="{{$item['thumb']}}" data-alt="{{ __("Gallery") }}"></a>
             @endforeach
         </div>
         <div class="social">
@@ -177,7 +177,8 @@
 @include('Hike::frontend.layouts.details.hike-itinerary')
 @include('Hike::frontend.layouts.details.hike-attributes')
 @include('Hike::frontend.layouts.details.hike-faqs')
-@if($row->map_lat && $row->map_lng)
+@includeIf("Hotel::frontend.layouts.details.hotel-surrounding")
+@if($row->gpx_file)
 <div class="g-location">
     <div class="location-title">
         <h3>{{__("Hike Location")}}</h3>

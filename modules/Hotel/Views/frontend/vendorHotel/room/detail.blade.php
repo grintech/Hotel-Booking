@@ -24,6 +24,7 @@
                     @if(is_default_lang())
                         <a data-toggle="tab" href="#nav-tour-pricing" aria-selected="false">{{__("2. Pricing")}}</a>
                         <a data-toggle="tab" href="#nav-attribute" aria-selected="false">{{__("3. Attributes")}}</a>
+                        <a data-toggle="tab" href="#nav-ical" aria-selected="false">{{__("4. Ical")}}</a>
                     @endif
                 </div>
                 <div class="tab-content" id="nav-tabContent">
@@ -36,6 +37,9 @@
                         </div>
                         <div class="tab-pane fade" id="nav-attribute">
                             @include('Hotel::admin.room.form-detail.attributes')
+                        </div>
+                        <div class="tab-pane fade" id="nav-ical">
+                            @include('Hotel::admin.room.form-detail.ical')
                         </div>
                     @endif
                 </div>

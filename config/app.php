@@ -1,7 +1,5 @@
 <?php
 
-use Plugin\ServiceProvider;
-
 return [
 
     /*
@@ -173,7 +171,7 @@ return [
          */
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
-        // App\Providers\BroadcastServiceProvider::class,
+        App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
 
         /*
@@ -189,7 +187,7 @@ return [
         Custom\ServiceProvider::class,
         App\Providers\AdminRouteServiceProvider::class,
         Propaganistas\LaravelPhone\PhoneServiceProvider::class,
-        \Torann\GeoIP\GeoIPServiceProvider::class,
+//        \Torann\GeoIP\GeoIPServiceProvider::class,
     ],
 
     /*
@@ -263,13 +261,15 @@ return [
             'MAIL_PASSWORD',
             'PUSHER_APP_KEY',
             'PUSHER_APP_SECRET',
+            "MAILGUN_SECRET",
+            "MAIL_USERNAME"
         ],
         '_POST' => [
             'password',
         ],
     ],
 
-    'version'=>"1.7.0",
+    'version'=>"1.9.1",
 
     'updater_url'=>"http://check.bookingcore.org/updater.php"
 

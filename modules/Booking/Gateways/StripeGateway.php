@@ -98,6 +98,24 @@ class StripeGateway extends BaseGateway
             'card_name.required'    => __('Card Name is required field'),
             'token.required'  => __('Card invalid!'),
         ];
+
+        if(is_api()){
+            $rules = [
+                'card_name'    => ['required'],
+                'card_number'  => ['required'],
+                'cvv'          => ['required'],
+                'expiry_month' => ['required'],
+                'expiry_year'  => ['required'],
+            ];
+            $messages = [
+                'card_name.required'    => __('Card Name is required field'),
+                'card_number.required'  => __('Card Number is required field'),
+                'cvv.required'          => __('CVV Code is required field'),
+                'expiry_month.required' => __('Expiry Month is required field'),
+                'expiry_year.required'  => __('Expiry Year is required field'),
+            ];
+        }
+
         $validator = Validator::make($request->all(), $rules, $messages);
         if ($validator->fails()) {
             return response()->json(['errors'   => $validator->errors() ], 200)->send();
@@ -119,11 +137,16 @@ class StripeGateway extends BaseGateway
                 $booking->payment_id = $payment->id;
                 $booking->status = $booking::PAID;
                 $booking->paid += $data['amount'];
+
+                if($booking->paid < $booking->total){
+                    $booking->status = $booking::PARTIAL_PAYMENT;
+                }else{
+                    $booking->status = $booking::PAID;
+                }
+
                 $booking->save();
                 try{
-                    $booking->sendNewBookingEmails();
                     event(new BookingCreatedEvent($booking));
-
                 } catch(\Swift_TransportException $e){
                     Log::warning($e->getMessage());
                 }
@@ -144,6 +167,56 @@ class StripeGateway extends BaseGateway
         }
     }
 
+    public function getValidationRules()
+    {
+        $rules = [
+            'card_name'    => ['required'],
+            'token'  => ['required'],
+        ];
+        return $rules;
+    }
+
+    /**
+     * @param Payment $payment
+     * @return array|void
+     */
+    public function processNormal($payment)
+    {
+        $this->getGateway();
+        $data = $this->handlePurchaseDataNormal([
+            'amount'        => (float)$payment->amount,
+            'transactionId' => $payment->id . '.' . time()
+        ],  $payment);
+        try{
+            $response = $this->gateway->purchase($data)->send();
+            if ($response->isSuccessful()) {
+                $payment->markAsCompleted(\GuzzleHttp\json_encode($response->getData()));
+                return [true];
+
+            } else {
+                $payment->markAsFailed(\GuzzleHttp\json_encode($response->getData()));
+                return [false,$response->getMessage()];
+            }
+        }
+        catch(Exception | InvalidCreditCardException $e){
+            return [false,$e->getMessage()];
+        }
+        catch(\Exception | \Exception $e){
+            return [false,$e->getMessage()];
+        }
+        catch(\Throwable | \Throwable $e){
+            return [false,$e->getMessage()];
+        }
+    }
+
+    public function getValidationMessages()
+    {
+        return  [
+            'card_name.required'    => __('Card Name is required field'),
+            'token.required'  => __('Card invalid!'),
+        ];
+    }
+
     public function getGateway()
     {
         $this->gateway = Omnipay::create('Stripe');
@@ -156,8 +229,28 @@ class StripeGateway extends BaseGateway
     public function handlePurchaseData($data, $booking, $request)
     {
         $data['currency'] = setting_item('currency_main');
-        $data['token'] = $request->input("token");
+        if(is_api()){
+            $cardData = array(
+                'lastName'     => $request->input("card_name"),
+                'number'       => $request->input("card_number"),
+                'expiryMonth'  => $request->input("expiry_month"),
+                'expiryYear'   => $request->input("expiry_year"),
+                'cvv'          => $request->input("cvv"),
+            );
+            $data["card"] = $cardData;
+
+        }else{
+            $data['token'] = $request->input("token");
+        }
         $data['description'] = setting_item("site_title")." - #".$booking->id;
+        return $data;
+    }
+
+    public function handlePurchaseDataNormal($data, $payment)
+    {
+        $data['currency'] = setting_item('currency_main');
+        $data['token'] = \request()->input("token");
+        $data['description'] = setting_item("site_title")." - #".$payment->id;
         return $data;
     }
 
@@ -177,5 +270,41 @@ class StripeGateway extends BaseGateway
             'html' => $this->getOption('html', ''),
         ];
         return view("Booking::frontend.gateways.stripe",$data);
+    }
+
+    public function getApiDisplayHtml(){
+        return "";
+    }
+    public function getApiOptions()
+    {
+        return [
+            'publishable_key'=>$this->getOption('stripe_enable_sandbox') ? $this->getOption('stripe_test_publishable_key') : $this->getOption('stripe_publishable_key')
+        ];
+    }
+
+    public function getForm()
+    {
+        return [
+            'card_name'    => [
+                'label'=>__('Card Name'),
+                'required'=>true,
+            ],
+            'card_number'  =>[
+                'label'=>__('Card Number'),
+                'required'=>true,
+            ],
+            'expiry_month' => [
+                'label'=>__('Expiry Month'),
+                'required'=>true,
+            ],
+            'expiry_year'  =>[
+                'label'=>__('Expiry Year'),
+                'required'=>true,
+            ],
+            'cvv'          =>[
+                'label'=>__('CVV Code'),
+                'required'=>true,
+            ],
+        ];
     }
 }

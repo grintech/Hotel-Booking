@@ -5,15 +5,15 @@
     <div class="col-lg-9 col-md-12">
         <div class="bravo-list-item">
             <div class="topbar-search">
-                <div class="text">
+                <h2 class="text">
                     @if($rows->total() > 1)
                         {{ __(":count hikes found",['count'=>$rows->total()]) }}
                     @else
                         {{ __(":count hikes found",['count'=>$rows->total()]) }}
                     @endif
-                </div>
+                </h2>
                 <div class="control">
-
+                    @include('Hike::frontend.layouts.search.orderby')
                 </div>
             </div>
             <div class="list-item">

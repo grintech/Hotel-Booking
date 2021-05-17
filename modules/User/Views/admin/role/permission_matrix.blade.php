@@ -1,6 +1,6 @@
 @extends('admin.layouts.app')
 @section('content')
-    <form action="{{url('admin/module/user/role/save_permissions')}}" method="post">
+    <form action="{{route('user.admin.role.save_permissions')}}" method="post">
         @csrf
         <div class="container">
             <div class="d-flex justify-content-between mb20">
