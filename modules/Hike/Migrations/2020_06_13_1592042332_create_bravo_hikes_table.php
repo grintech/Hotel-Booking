@@ -60,6 +60,12 @@ class CreateBravoHikesTable extends Migration
             $table->string('technique', 25)->nullable();
             $table->string('techniques', 25)->nullable();
             $table->text('ical_import_url')->nullable();
+
+            $table->decimal('review_score', 10, 0)->nullable();
+            $table->text('surrounding')->nullable();
+            $table->tinyInteger('enable_service_fee')->nullable();
+            $table->text('service_fee')->nullable();
+
             $table->timestamps();
         });
     }
